@@ -110,6 +110,9 @@ class participantsaction extends Survey_Common_Action
             case "addToSurvey":
                 $this->openAddToSurvey();
                 break;
+            case "customParticipant":
+                $this->openCustomParticipant();
+                break;
             default:
                 // Unknown modal target
                 assert(false);
@@ -1378,6 +1381,30 @@ class participantsaction extends Survey_Common_Action
 
         $html = $this->getController()->renderPartial(
             '/admin/participants/modal_subviews/_addToSurvey',
+            $data,
+            true
+        );
+        ls\ajax\AjaxHelper::output($html);
+    }
+
+        /**
+     * Open modal for create a custom participant.
+     * @return void
+     */
+    public function openCustomParticipant()
+    {
+        // This is in fact a comma-separated list
+        $participant_id = Yii::app()->request->getPost('participant_id');
+
+        $data = array();
+        $data['participant_id'] = $participant_id;
+        $data['count'] = substr_count($participant_id, ',') + 1;
+
+        $surveys = Survey::getSurveysWithTokenTable();
+        $data['surveys'] = $surveys;
+
+        $html = $this->getController()->renderPartial(
+            '/admin/participants/modal_subviews/_customParticipant',
             $data,
             true
         );

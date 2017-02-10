@@ -1,13 +1,28 @@
 <div class="col-xs-12">
     <h3 class="pagetitle row">
-        <div class="col-xs-8 ">
+        <div class="col-xs-4 ">
             <?php eT("Central participant management"); ?>
         </div>
-        <div class="col-xs-4 text-right">
+        <div class="col-xs-8 text-right">
+            <button class="btn btn-default" id="onSiteAnonymousRequest">
+                <i class="fa fa-plus-circle text-success"></i>
+                &nbsp;
+                <?php eT("On Site Anonymous Request"); ?>
+            </button>
             <button class="btn btn-default" id="addParticipantToCPP">
-                <i class="fa fa-plus-circle text-success"></i> 
+                <i class="fa fa-plus-circle text-success"></i>
                 &nbsp;
                 <?php eT("Add new participant"); ?>
+            </button>
+            <button class="btn btn-default" id="sendEmailRequest">
+                <i class="fa fa-plus-circle text-success"></i>
+                &nbsp;
+                <?php eT("Send Email Request"); ?>
+            </button>
+            <button class="btn btn-default" id="sendOnSiteRequest">
+                <i class="fa fa-plus-circle text-success"></i>
+                &nbsp;
+                <?php eT("Send On Site Request"); ?>
             </button>
         </div>
     </h3>

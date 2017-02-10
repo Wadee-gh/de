@@ -49,7 +49,7 @@ LS.CPDB = (function() {
 
 
         return LS.ajax({
-            url: url, 
+            url: url,
             data: data,
             method: 'POST',
             success: firstSuccess,
@@ -67,7 +67,7 @@ LS.CPDB = (function() {
         var postdata = {
             selectedParticipant: [],
             YII_CSRF_TOKEN : LS.data.csrfToken
-        }; 
+        };
 
         if (!all) {
             $('.selector_participantCheckbox:checked').each(function(i,item){
@@ -121,13 +121,13 @@ LS.CPDB = (function() {
                             $(self).modal("hide");
                         });
                         $('#attributes')
-                            .multiselect({ 
-                                includeSelectAllOption:true, 
+                            .multiselect({
+                                includeSelectAllOption:true,
                                 selectAllValue: '0',
                                 selectAllText: sSelectAllText,
                                 nonSelectedText: sNonSelectedText,
                                 nSelectedText: sNSelectedText,
-                                maxHeight: 140 
+                                maxHeight: 140
                             });
                     });
                     /* $.download(exporttocsvall,'searchcondition=dummy',$('#exportcsvallprocessing').dialog("close"));*/
@@ -137,7 +137,7 @@ LS.CPDB = (function() {
     },
 
     // Basic settings and bindings that should take place in all three views
-    basics = function() { 
+    basics = function() {
         // Code for AJAX download
         jQuery.download = function(url, data, method){
             //url and data options required
@@ -173,11 +173,11 @@ LS.CPDB = (function() {
             var data = {modalTarget: 'editparticipant', 'participant_id' : $(this).closest('tr').data('participant_id')};
             //url, data, idString, actionButtonClass, formId, gridViewId
             runBaseModal(
-                openModalParticipantPanel, 
+                openModalParticipantPanel,
                 data,
                 'action_save_modal_editParticipant',
-                'editPartcipantActiveForm', 
-                'list_central_participants' 
+                'editPartcipantActiveForm',
+                'list_central_participants'
             ).done(function() {
                 var val = $('#participantPanel_edit_modal .ls-bootstrap-switch').attr('checked');
                 $('.ls-bootstrap-switch').bootstrapSwitch('state', val == 'checked');
@@ -189,11 +189,11 @@ LS.CPDB = (function() {
             var data = {modalTarget: 'showdeleteparticipant', 'participant_id' : $(this).closest('tr').data('participant_id')};
             //url, data, idString, actionButtonClass, formId, gridViewId
             runBaseModal(
-                    openModalParticipantPanel, 
+                    openModalParticipantPanel,
                     data,
                     'action_save_modal_deleteParticipant',
-                    'deleteParticipantActiveForm', 
-                    'list_central_participants' 
+                    'deleteParticipantActiveForm',
+                    'list_central_participants'
                     );
         });
         $('.action_participant_infoModal').on('click', function(e) {
@@ -204,11 +204,11 @@ LS.CPDB = (function() {
             };
             //url, data, idString, actionButtonClass, formId, gridViewId
             runBaseModal(
-                    openModalParticipantPanel, 
+                    openModalParticipantPanel,
                     data,
                     'action_save_modal_deleteParticipant',
-                    'deleteParticipantActiveForm', 
-                    'list_central_participants' 
+                    'deleteParticipantActiveForm',
+                    'list_central_participants'
                     );
         });
         $('.action_participant_shareParticipant').on('click', function(e) {
@@ -225,6 +225,64 @@ LS.CPDB = (function() {
                 $('.ls-bootstrap-switch').bootstrapSwitch();
             });
         });
+
+        /** added by mark mirasol 2/8/2017 **/
+
+        $('#onSiteAnonymousRequest').on('click', function(e){
+            e.preventDefault();
+            var data = {
+                modalTarget: 'customParticipant',
+                process: 'onSiteAnonymousRequest',
+            };
+            //url, data, idString, actionButtonClass, formId, gridViewId
+            runBaseModal(
+                openModalParticipantPanel,
+                data,
+                'action_save_modal_customParticipant',
+                'customParticipantActiveForm',
+                'list_central_participants'
+            ).done(function() {
+                $('.ls-bootstrap-switch').bootstrapSwitch();
+            });
+        });
+
+        $('#sendEmailRequest').on('click', function(e){
+            e.preventDefault();
+            var data = {
+                modalTarget: 'customParticipant',
+                process: 'sendEmailRequest',
+            };
+            //url, data, idString, actionButtonClass, formId, gridViewId
+            runBaseModal(
+                openModalParticipantPanel,
+                data,
+                'action_save_modal_customParticipant',
+                'customParticipantActiveForm',
+                'list_central_participants'
+            ).done(function() {
+                $('.ls-bootstrap-switch').bootstrapSwitch();
+            });
+        });
+
+        $('#sendOnSiteRequest').on('click', function(e){
+            e.preventDefault();
+            var data = {
+                modalTarget: 'customParticipant',
+                process: 'sendOnSiteRequest',
+            };
+            //url, data, idString, actionButtonClass, formId, gridViewId
+            runBaseModal(
+                openModalParticipantPanel,
+                data,
+                'action_save_modal_customParticipant',
+                'customParticipantActiveForm',
+                'list_central_participants'
+            ).done(function() {
+                $('.ls-bootstrap-switch').bootstrapSwitch();
+            });
+        });
+
+        /** end of added by mark mirasol **/
 
         $('#addParticipantToCPP').on('click', function(e){
             e.preventDefault();
