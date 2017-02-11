@@ -176,15 +176,22 @@ class QuestionGroup extends LSActiveRecord
     }
 
     function getGroups($surveyid) {
-        $language = Survey::model()->findByPk($surveyid)->language;
-        return Yii::app()->db->createCommand()
-        ->select(array('gid', 'group_name'))
-        ->from($this->tableName())
-        ->where(array('and', 'sid=:surveyid', 'language=:language'))
-        ->order('group_order asc')
-        ->bindParam(":language", $language, PDO::PARAM_STR)
-        ->bindParam(":surveyid", $surveyid, PDO::PARAM_INT)
-        ->query()->readAll();
+        $survey = Survey::model()->findByPk($surveyid);
+        //echo print_r($survey,true);
+        if($survey){
+          $language = $survey->language;
+          return Yii::app()->db->createCommand()
+          ->select(array('gid', 'group_name'))
+          ->from($this->tableName())
+          ->where(array('and', 'sid=:surveyid', 'language=:language'))
+          ->order('group_order asc')
+          ->bindParam(":language", $language, PDO::PARAM_STR)
+          ->bindParam(":surveyid", $surveyid, PDO::PARAM_INT)
+          ->query()->readAll();
+        } else {
+          return([]);
+        }
+
     }
 
     public static function deleteWithDependency($groupId, $surveyId)

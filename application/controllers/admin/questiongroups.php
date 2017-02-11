@@ -517,4 +517,46 @@ class questiongroups extends Survey_Common_Action
     {
         parent::_renderWrappedTemplate($sAction, $aViewUrls, $aData);
     }
+
+    /** added by mark mirasol on 2/11/2017. **/
+    /*
+     * Sends the data in JSON format extracted from the database to be displayed using the datatable
+     * Echoes json
+     * @return void
+     */
+    public function getSurveyQuestionGroups_json()
+    {
+        // get surveyid from request.
+        $surveyid = (int) Yii::app()->request->getPost('surveyid');
+        if($surveyid == 0){
+          if(isset($_GET['surveyid'])){
+            $surveyid = (int) $_GET['surveyid'];
+          }
+        }
+        //echo $surveyid."<br>"; die();
+
+        // get records from db.
+        // groups will contain gid and group name from the lime_groups table.
+        $groups = QuestionGroup::model()->getGroups($surveyid);
+        //echo "<pre>".print_r($groups,true)."</pre>"; die();
+
+        $html = "";
+        foreach($groups as $group){
+          /*$html .=
+            '<div class="col-sm-4">
+              <label><input type="checkbox" name="groups[]" value="'.$group['gid'].'">'.$group['group_name'].'</label>
+            </div>';*/
+          for($i=0;$i<20;$i++){
+            $html .=
+            '<div class="col-sm-4">
+              <label><input type="checkbox" name="groups[]" value="'.($group['gid']+$i).'">Group Number '.($i+1).'</label>
+            </div>';
+          }
+        }
+
+        // return json result.
+        echo ls_json_encode(compact('html')); //die();
+
+    }
+    /** end of added by mark mirasol **/
 }

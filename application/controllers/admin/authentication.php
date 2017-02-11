@@ -76,6 +76,42 @@ class Authentication extends Survey_Common_Action
         $this->_renderWrappedTemplate('authentication', 'login', $aData);
     }
 
+    public function customRedirect(){
+        $this->logout2();
+        //echo 'hello'; die();
+        //echo "<pre>".print_r($_REQUEST,true)."</pre>"; die();
+        // get cparticipation record.
+        $vars = $_REQUEST;
+        $token = $vars['token'];
+        $cparticipation = CParticipant::model()->getByToken($token);
+        //echo "<pre>".print_r($cparticipation,true)."</pre>"; die();
+        if(empty($cparticipation)){
+          echo "Invalid survey link."; die();
+        }
+
+        // get status.
+        $status = $cparticipation['status'];
+        /***
+        status values:
+        0 - new, load registration page.
+        1 - submitted registration page, save participant, create token.
+        2 - token created, load survey.
+        **/
+        if($status == 0){
+          $this->_renderWrappedTemplate('authentication', 'customregistration', compact('cparticipation'));
+        } else
+        if($status == 1){
+          $this->_renderWrappedTemplate('authentication', 'testsurvey', compact('cparticipation'));
+        }
+    }
+
+    public function customRegistration()
+    {
+        // If for any reason, the plugin bugs, we can't let the user with a blank screen.
+        $aData = array();
+        $this->_renderWrappedTemplate('authentication', 'customregistration', $aData);
+    }
+
     /**
      * Prepare login and return result
      * It checks if the authdb plugin is registered and active
@@ -216,6 +252,23 @@ class Authentication extends Survey_Common_Action
         App()->getPluginManager()->dispatchEvent($event);
 
         $this->getController()->redirect(array('/admin/authentication/sa/login'));
+    }
+
+    public function logout2()
+    {
+        /* Adding beforeLogout event */
+        $beforeLogout = new PluginEvent('beforeLogout');
+        App()->getPluginManager()->dispatchEvent($beforeLogout);
+        // Expire the CSRF cookie
+        $cookie = new CHttpCookie('YII_CSRF_TOKEN', '');
+        $cookie->expire = time()-3600;
+        Yii::app()->request->cookies['YII_CSRF_TOKEN'] = $cookie;
+        App()->user->logout();
+        //App()->user->setFlash('loginmessage', gT('Logout successful.'));
+
+        /* Adding afterLogout event */
+        $event = new PluginEvent('afterLogout');
+        App()->getPluginManager()->dispatchEvent($event);
     }
 
     /**

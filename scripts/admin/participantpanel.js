@@ -21,8 +21,20 @@ LS.CPDB = (function() {
          */
         var secondSuccess = function(result) {
             $(baseModal).modal('hide');
+            //console.log('secondsuccess');
             $.fn.yiiGridView.update(gridViewId,{});
+            runPostAjaxTasks(formId);
         };
+
+        function runPostAjaxTasks(formId){
+          if(formId == 'customParticipantActiveForm'){
+            var form = $('#'+formId);
+            var redirect = form.find('input[name=redirect]').val();
+            if(redirect.length>0){
+              window.location.href = redirect;
+            }
+          }
+        }
 
         /**
          * @param {string} page - Modal HTML fetched with Ajax
@@ -35,6 +47,8 @@ LS.CPDB = (function() {
                 e.preventDefault();
                 var action = $(baseModal).find('#'+formId).attr('action');
                 var formData = $(baseModal).find('#'+formId).serializeArray();
+                //console.log('firstsuccess');
+                //console.log(action);
                 LS.ajax({
                     url: action,
                     data: formData,
@@ -233,6 +247,7 @@ LS.CPDB = (function() {
             var data = {
                 modalTarget: 'customParticipant',
                 process: 'onSiteAnonymousRequest',
+                title2: 'On Site Anonymous Request',
             };
             //url, data, idString, actionButtonClass, formId, gridViewId
             runBaseModal(
@@ -243,6 +258,7 @@ LS.CPDB = (function() {
                 'list_central_participants'
             ).done(function() {
                 $('.ls-bootstrap-switch').bootstrapSwitch();
+                groupSelectionActions();
             });
         });
 
@@ -251,6 +267,7 @@ LS.CPDB = (function() {
             var data = {
                 modalTarget: 'customParticipant',
                 process: 'sendEmailRequest',
+                title2: 'Send Email Request',
             };
             //url, data, idString, actionButtonClass, formId, gridViewId
             runBaseModal(
@@ -261,6 +278,7 @@ LS.CPDB = (function() {
                 'list_central_participants'
             ).done(function() {
                 $('.ls-bootstrap-switch').bootstrapSwitch();
+                groupSelectionActions();
             });
         });
 
@@ -269,6 +287,7 @@ LS.CPDB = (function() {
             var data = {
                 modalTarget: 'customParticipant',
                 process: 'sendOnSiteRequest',
+                title2: 'Send On Site Request',
             };
             //url, data, idString, actionButtonClass, formId, gridViewId
             runBaseModal(
@@ -279,8 +298,47 @@ LS.CPDB = (function() {
                 'list_central_participants'
             ).done(function() {
                 $('.ls-bootstrap-switch').bootstrapSwitch();
+                groupSelectionActions();
             });
         });
+
+        /** end of added by mark mirasol **/
+
+        /** added by mark mirasol 2/11/2017 **/
+
+        function groupSelectionActions(){
+          // add ajax action to display question groups in survey.
+          $('select[name=survey_id].trigger').change(function(){
+            var val = $(this).val();
+            console.log('survey_id:'+val);
+            updateQuestionGroups(val);
+          });
+        }
+
+        function updateQuestionGroups(surveyid){
+          action = $('select[name=survey_id].trigger').attr('action');
+          var postdata = {
+              surveyid: surveyid,
+              YII_CSRF_TOKEN : LS.data.csrfToken
+          };
+          $.ajax({
+              url: action,
+              data: postdata,
+              method: 'POST',
+              success: function(result) {
+                  //console.log(result);
+                  var r = jQuery.parseJSON(result);
+                  $('#required-groups-inner').html(r.html);
+                  $('#required-groups').show();
+                  if($('#email-div').length>0){
+                    $('#email-div').show();
+                  }
+              },
+              error : function() {
+                  console.log(arguments);
+              }
+          });
+        }
 
         /** end of added by mark mirasol **/
 

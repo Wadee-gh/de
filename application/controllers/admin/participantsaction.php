@@ -1395,10 +1395,20 @@ class participantsaction extends Survey_Common_Action
     {
         // This is in fact a comma-separated list
         $participant_id = Yii::app()->request->getPost('participant_id');
+        $process = Yii::app()->request->getPost('process');
+        $title = Yii::app()->request->getPost('title2');
+
+        $ask_email = 0;
+        if(in_array($process,['sendEmailRequest'])){
+          $ask_email = 1;
+        }
 
         $data = array();
         $data['participant_id'] = $participant_id;
         $data['count'] = substr_count($participant_id, ',') + 1;
+        $data['ask_email'] = $ask_email;
+        $data['process'] = $process;
+        $data['title'] = $title;
 
         $surveys = Survey::getSurveysWithTokenTable();
         $data['surveys'] = $surveys;
@@ -1409,6 +1419,43 @@ class participantsaction extends Survey_Common_Action
             true
         );
         ls\ajax\AjaxHelper::output($html);
+    }
+
+    public function saveCustomParticipant(){
+        // get post data.
+        $vars = $_POST;
+        //echo "<pre>".print_r($_POST,true)."</pre>"; die();
+        if(isset($vars['groups'])){
+          $groups = $vars['groups'];
+          $vars['required_groups'] = json_encode($groups);
+        }
+
+        $data = array();
+        $flist = "survey_id,token,email,required_groups,status";
+        foreach(explode(",",$flist) as $field){
+          $data[$field] = $vars[$field];
+        }
+
+        // save posted data.
+        $row = CParticipant::model()->insertParticipant($data);
+        //echo "<pre>".print_r($row,true)."</pre>"; die();
+        if(isset($row->id)){
+          // successful creation of cparticipant.
+          $status = "success";
+          $message = "Successfully saved custom participation.";
+        } else {
+          // error.
+          $status = "error";
+          $message = $row;
+        }
+
+        if($message){
+          if($status == "error"){
+            ls\ajax\AjaxHelper::outputError(gT($message));
+          } else {
+            ls\ajax\AjaxHelper::outputSuccess(gT($message));
+          }
+        }
     }
 
     /**
