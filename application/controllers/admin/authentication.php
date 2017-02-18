@@ -76,13 +76,13 @@ class Authentication extends Survey_Common_Action
         $this->_renderWrappedTemplate('authentication', 'login', $aData);
     }
 
-    public function customRedirect(){
+    public function customRedirect($token = null){
         $this->logout2();
         //echo 'hello'; die();
         //echo "<pre>".print_r($_REQUEST,true)."</pre>"; die();
         // get cparticipation record.
         $vars = $_REQUEST;
-        $token = $vars['token'];
+        if(!isset($token)) $token = $vars['token'];
         $cparticipation = CParticipant::model()->getByToken($token);
         //echo "<pre>".print_r($cparticipation,true)."</pre>"; die();
         if(empty($cparticipation)){
@@ -101,15 +101,43 @@ class Authentication extends Survey_Common_Action
           $this->_renderWrappedTemplate('authentication', 'customregistration', compact('cparticipation'));
         } else
         if($status == 1){
-          $this->_renderWrappedTemplate('authentication', 'testsurvey', compact('cparticipation'));
+          //$this->_renderWrappedTemplate('authentication', 'testsurvey', compact('cparticipation'));
+          $survey_id = $cparticipation['survey_id'];
+          $token = $cparticipation['lime_token'];
+          $this->getController()->redirect(array("/survey/index/sid/".$survey_id."/token/".$token));
         }
     }
 
     public function customRegistration()
     {
-        // If for any reason, the plugin bugs, we can't let the user with a blank screen.
-        $aData = array();
-        $this->_renderWrappedTemplate('authentication', 'customregistration', $aData);
+        $vars = $_POST;
+        if(!empty($vars)){
+          //echo "<pre>".print_r($vars,true)."</pre>"; die();
+          $flist = "id,first_name,last_name,email,dob";
+          $data = array();
+          foreach(explode(",",$flist) as $field){
+            $data[$field] = $vars[$field];
+          }
+          $result = CParticipant::model()->updateRow($data);
+          //echo "<pre>".print_r($result,true)."</pre>";
+          if($result['status'] == 'error'){
+            die($result['message']);
+          } else {
+            $row = $result['row'];
+            $id = $row->id;
+            $result = Participant::model()->createCustomParticipant($id,$vars);
+            //echo "<pre>".print_r($result,true)."</pre>"; //die();
+            // update token.
+            $lime_token = $result['token'];
+            $status = 1;
+            $data = compact('id','lime_token','status');
+            //echo "<pre>".print_r($data,true)."</pre>"; die();
+            $result = CParticipant::model()->updateRow($data);
+            $cparticipation = CParticipant::model()->getById($id);
+            $token = $cparticipation['token'];
+            $this->customRedirect($token);
+          }
+        }
     }
 
     /**

@@ -608,12 +608,34 @@ class CParticipant extends LSActiveRecord
      */
     public function updateRow($data)
     {
-        $record = $this->findByPk($data['participant_id']);
+        $record = $this->findByPk($data['id']);
         foreach ($data as $key => $value)
         {
             $record->$key = $value;
         }
-        $record->save();
+        $result = $record->save();
+        if (!$result){
+          $status = "error";
+          $message = $this->flattenErrorMessages($oParticipant->getErrors());
+          $row = array();
+        } else {
+          $status = "success";
+          $message = "";
+          $row = $record;
+        }
+        return(compact('status','message','row'));
+    }
+
+    public function getById($id){
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("id='".$id."'")
+            ->from($tbl)
+            ->queryRow();
+        if($row == '') $row = array();
+        //echo "<pre>".print_r($row,true)."</pre>"; die();
+        return($row);
     }
 
     public function getByToken($token){

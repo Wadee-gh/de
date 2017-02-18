@@ -592,6 +592,97 @@ class Participant extends LSActiveRecord
         }
     }
 
+    public function createCustomParticipant($id,$vars){
+        $row = CParticipant::model()->getById($id);
+        //echo "<pre>".print_r($row,true)."</pre>"; die();
+
+        // check if custom participant exists.
+        $email = $row['email'];
+        $participant = Participant::model()->getByEmail($email);
+        //$participant = array();
+        //echo "<pre>".print_r($participant,true)."</pre>";
+
+        if(empty($participant)){
+            // create participant record.
+            $participant_id = Participant::model()->gen_uuid();
+            $data2 = array();
+            $data2['participant_id'] = $participant_id;
+            $data2['blacklisted'] = 'N';
+            $data2['owner_uid'] = 1;
+            $data2['created_by'] = 1;
+            $flist = "first_name,last_name,email,dob";
+            foreach(explode(",",$flist) as $field){
+              $key = str_replace("_","",$field);
+              $data2[$key] = $vars[$field];
+            }
+            //echo "<pre>".print_r($data2,true)."</pre>"; die();
+            $result = Participant::model()->insertParticipant($data2);
+            //echo "<pre>".print_r($result,true)."</pre>"."<br>"; die();
+            if(!isset($result->participant_id)){
+              die("<pre>".print_r($result,true)."</pre>");
+            } else {
+              $participant_id = $result->participant_id;
+            }
+        } else {
+            $participant_id = $participant['participant_id'];
+        }
+
+        // create token.
+        $survey_id = $row['survey_id'];
+        $result = Participant::model()->createParticipantToken($survey_id,$participant_id);
+        //echo "<pre>".print_r($result,true)."</pre>"; //die();
+        return($result);
+    }
+
+    public function createParticipantToken($survey_id,$participant_id){
+        $participant_ids = [$participant_id];
+        $options = array();
+        $options["overwriteauto"] = false;
+        $options["overwriteman"] = false;
+        $options["overwritest"] = false;
+        $options["skip_match"] = true;
+
+        $result = $this->writeParticipantsToTokenTable($survey_id,$participant_ids,[],[],[],[],$options);
+
+            //get token length from survey settings
+            $iSurveyId = $survey_id;
+            $newtoken = Token::model($iSurveyId)->generateTokens($iSurveyId);
+            $newtokencount = $newtoken['0'];
+            $neededtokencount = $newtoken['1'];
+            $aData = array();
+            $message = "";
+            $token = "";
+            if($neededtokencount>$newtokencount){
+              $message = "token creation failed.";
+              $success = false;
+              $token = "";
+            }
+            else {
+              $success = true;
+              $row =  Token::model($iSurveyId)->getByParticipantId($participant_id);
+              //echo "<pre>".print_r($row,true)."</pre>"; die();
+              if($newtokencount > 0){
+                $token = $row['token'];
+              } else {
+                //echo "<pre>".print_r($row,true)."</pre>"; die();
+                // there is a matching token in the db.
+                $isComplete = ($row['completed'] != "N");
+                $noUses = ($row['usesleft'] == 0);
+
+                if($isComplete || $noUses){
+                  $completed = 'N';
+                  $usesleft = 1;
+                }
+                $tid = $row['tid'];
+                $data = compact('tid','completed','usesleft');
+                $result = Token::model($iSurveyId)->updateRow($data);
+                $token = $row['token'];
+              }
+            }
+
+        return(compact('success','message','token'));
+    }
+
     /**
      * Takes result from model->getErrors() and creates a
      * long string of all messages.
@@ -2207,5 +2298,17 @@ class Participant extends LSActiveRecord
         else {
             return '';
         }
+    }
+
+    public function getByEmail($email){
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("email='".$email."'")
+            ->from($tbl)
+            ->queryRow();
+        if($row == '') $row = array();
+        //echo "<pre>".print_r($row,true)."</pre>"; die();
+        return($row);
     }
 }

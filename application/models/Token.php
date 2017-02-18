@@ -125,6 +125,24 @@
             // Refresh schema cache just in case the table existed in the past, and return if table exist
             return $db->schema->getTable($sTableName, true);
         }
+
+        public function getByParticipantId($participant_id){
+            $tbl = $this->tableName();
+            //echo $tbl."<br>"; die();
+            $sql = "SELECT * FROM ".$tbl." WHERE participant_id='".$participant_id."'";
+            //echo $sql."<br>";
+            $row = Yii::app()->db->createCommand($sql)->queryRow();
+            if($row == '') $row = array();
+            //echo "<pre>".print_r($row,true)."</pre>"; die();
+            return($row);
+        }
+
+        public function getByTid($tid){
+            return $this->findByAttributes(array(
+                'tid' => $tid
+            ));
+        }
+
         public function findByToken($token)
         {
             return $this->findByAttributes(array(
@@ -170,6 +188,16 @@
         {
             // According to Yii doc : http://www.yiiframework.com/doc/api/1.1/CSecurityManager#generateRandomString-detail
             return preg_replace('/[^0-9a-zA-Z_~]/', '', $token);
+        }
+
+        public function updateRow($data)
+        {
+            $record = $this->getByTid($data['tid']);
+            foreach ($data as $key => $value)
+            {
+                $record->$key = $value;
+            }
+            $record->save();
         }
         /**
          * Generates a token for all token objects in this survey.

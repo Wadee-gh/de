@@ -542,16 +542,16 @@ class questiongroups extends Survey_Common_Action
 
         $html = "";
         foreach($groups as $group){
-          /*$html .=
+          $html .=
             '<div class="col-sm-4">
               <label><input type="checkbox" name="groups[]" value="'.$group['gid'].'">'.$group['group_name'].'</label>
-            </div>';*/
-          for($i=0;$i<20;$i++){
+            </div>';
+          /*for($i=0;$i<20;$i++){
             $html .=
             '<div class="col-sm-4">
               <label><input type="checkbox" name="groups[]" value="'.($group['gid']+$i).'">Group Number '.($i+1).'</label>
             </div>';
-          }
+          }*/
         }
 
         // return json result.

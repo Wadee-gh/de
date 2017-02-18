@@ -1442,6 +1442,16 @@ class participantsaction extends Survey_Common_Action
         if(isset($row->id)){
           // successful creation of cparticipant.
           $status = "success";
+          if(isset($vars['process'])){
+            $process = $vars['process'];
+            if(in_array($process,explode(",","sendEmailRequest"))){
+              //echo "send email."; die();
+              $id = $row->id;
+              $token = $vars['token'];
+              $survey_id = $vars['survey_id'];
+              $success = $this->sendCustomEmail($survey_id,$id);
+            }
+          }
           $message = "Successfully saved custom participation.";
         } else {
           // error.
@@ -1456,6 +1466,26 @@ class participantsaction extends Survey_Common_Action
             ls\ajax\AjaxHelper::outputSuccess(gT($message));
           }
         }
+    }
+
+    public function sendCustomEmail($iSurveyId,$id){
+        $cparticipation = CParticipant::model()->getById($id);
+        $token = $cparticipation['token'];
+        $email = $cparticipation['email'];
+        $redirect = $this->getController()->createAbsoluteUrl('/admin/authentication/customRedirect',compact('token'));
+        $modmessage = '
+        Click <a href="'.$redirect.'" target="_blank">here</a> to do the survey.<br>
+        <br>
+        </div></div>
+        '; // body, html.
+        $modsubject = "Invitation to participate in a survey"; // subject text.
+        $to = $email; // to email.
+        $from = "lime@gmail.com (Administrator)"; // from email.
+        $bHtml = true; // boolean.
+        $bounce = "lime@gmail.com (Administrator)"; // bounce email.
+        $aRelevantAttachments = array();
+        $customheaders = array('1' => "X-surveyid: " . $iSurveyId,'2' => "X-tokenid: " . $token);
+        $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
     }
 
     /**
@@ -1474,12 +1504,12 @@ class participantsaction extends Survey_Common_Action
         $AttributeNameLanguages = Yii::app()->request->getPost('ParticipantAttributeNameLanguages');
         $ParticipantAttributeNamesDropdown = Yii::app()->request->getPost('ParticipantAttributeNamesDropdown');
         $operation = Yii::app()->request->getPost('oper');
-        if($operation === 'edit') 
+        if($operation === 'edit')
         {
             $ParticipantAttributNamesModel = ParticipantAttributeName::model()->findByPk( $AttributeNameAttributes['attribute_id']);
             $success[] = $ParticipantAttributNamesModel->saveAttribute($AttributeNameAttributes);
         }
-        else 
+        else
         {
             $ParticipantAttributNamesModel = new ParticipantAttributeName;
             $ParticipantAttributNamesModel->setAttributes($AttributeNameAttributes);
@@ -1511,9 +1541,9 @@ class participantsaction extends Survey_Common_Action
                 );
                 $success[] = $ParticipantAttributNamesModel->saveAttributeLanguages($savaLanguageArray);
             }
-        }  
+        }
         ls\ajax\AjaxHelper::outputSuccess(gT("Attribute successfully updated"));
-    } 
+    }
 
     /**
      * Deletes a translation from an Attribute, if it has at least one translation
