@@ -1450,6 +1450,10 @@ class participantsaction extends Survey_Common_Action
               $token = $vars['token'];
               $survey_id = $vars['survey_id'];
               $success = $this->sendCustomEmail($survey_id,$id);
+            } else
+            if(in_array($process,explode(",","onSiteAnonymousRequest"))){
+              $id = $row->id;
+              $result = Participant::model()->createCustomParticipant($id,$vars);
             }
           }
           $message = "Successfully saved custom participation.";

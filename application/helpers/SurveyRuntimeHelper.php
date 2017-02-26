@@ -385,7 +385,7 @@ class SurveyRuntimeHelper {
     {
         global $errormsg;
         extract($args);
-
+        //echo "<pre>".print_r($args,true)."</pre>"; die();
         if (!$thissurvey)
         {
             $thissurvey = getSurveyInfo($surveyid);
@@ -418,7 +418,7 @@ class SurveyRuntimeHelper {
         }
         $radix=getRadixPointData($thissurvey['surveyls_numberformat']);
         $radix = $radix['separator'];
-
+        //echo $surveyMode."<br>"; die();
         $surveyOptions = array(
             'active' => ($thissurvey['active'] == 'Y'),
             'allowsave' => ($thissurvey['allowsave'] == 'Y'),
@@ -489,7 +489,7 @@ class SurveyRuntimeHelper {
                 LimeExpressionManager::JumpTo($_SESSION[$LEMsessid]['step'], false, false);
             }
             $totalquestions = $_SESSION['survey_'.$surveyid]['totalquestions'];
-
+            //echo "<pre>".print_r($_SESSION[$LEMsessid],true)."</pre>"; //die();
             if (!isset($_SESSION[$LEMsessid]['totalsteps']))
             {
                 $_SESSION[$LEMsessid]['totalsteps'] = 0;
@@ -501,8 +501,11 @@ class SurveyRuntimeHelper {
 
             if (isset($_SESSION[$LEMsessid]['LEMpostKey']) && App()->request->getPost('LEMpostKey',$_SESSION[$LEMsessid]['LEMpostKey']) != $_SESSION[$LEMsessid]['LEMpostKey'])
             {
+                //echo "LEMpostKey.<br>";
                 // then trying to resubmit (e.g. Next, Previous, Submit) from a cached copy of the page
                 $moveResult = LimeExpressionManager::JumpTo($_SESSION[$LEMsessid]['step'], false, false, true);// We JumpTo current step without saving: see bug #11404
+                //echo "<pre>".print_r($_POST,true)."</pre>";
+                //echo "<pre>".print_r($moveResult,true)."</pre>"; die();
                 if (isset($moveResult['seq']) &&  App()->request->getPost('thisstep',$moveResult['seq']) == $moveResult['seq'])
                 {
 
@@ -521,6 +524,7 @@ class SurveyRuntimeHelper {
                     $backpopup=gT("Please use the LimeSurvey navigation buttons or index.  It appears you attempted to use the browser back button to re-submit a page.");
                 }
             }
+            //echo $move."<br>"; die();
             if(isset($move) && $move=="clearcancel")
             {
                 $moveResult = LimeExpressionManager::JumpTo($_SESSION[$LEMsessid]['step'], false, true, false, true);
@@ -544,6 +548,7 @@ class SurveyRuntimeHelper {
 
             if (isset($_SESSION[$LEMsessid]['LEMtokenResume']))
             {
+                echo "tokenresume.<br>";
                 LimeExpressionManager::StartSurvey($thissurvey['sid'], $surveyMode, $surveyOptions, false,$LEMdebugLevel);
                 if(isset($_SESSION[$LEMsessid]['maxstep']) && $_SESSION[$LEMsessid]['maxstep']>$_SESSION[$LEMsessid]['step'] && $thissurvey['questionindex'] )// Do it only if needed : we don't need it if we don't have index
                 {
@@ -554,6 +559,7 @@ class SurveyRuntimeHelper {
             }
             else if (!$LEMskipReprocessing)
             {
+                echo "lemskip.<br>";
                 //Move current step ###########################################################################
                 if (isset($move) && $move == 'moveprev' && ($thissurvey['allowprev'] == 'Y' || $thissurvey['questionindex'] > 0))
                 {
@@ -567,6 +573,7 @@ class SurveyRuntimeHelper {
                 if (isset($move) && $move == "movenext")
                 {
                     $moveResult = LimeExpressionManager::NavigateForwards();
+                    //echo "<pre>".print_r($moveResult,true)."</pre>"; die();
                 }
                 if (isset($move) && ($move == 'movesubmit'))
                 {
@@ -601,21 +608,29 @@ class SurveyRuntimeHelper {
                     $move = (int) $move;
                     $moveResult = LimeExpressionManager::JumpTo($move, false, true, true);
                 }
+                //echo "<pre>".print_r($moveResult,true)."</pre>"; die();
                 if (!isset($moveResult) && !($surveyMode != 'survey' && $_SESSION[$LEMsessid]['step'] == 0))
                 {
                     // Just in case not set via any other means, but don't do this if it is the welcome page
                     $moveResult = LimeExpressionManager::GetLastMoveResult(true);
                     $LEMskipReprocessing=true;
                 }
+
             }
+            //echo "<pre>".print_r($moveResult,true)."</pre>"; die();
             if (isset($moveResult) && isset($moveResult['seq']) )// Reload at first page (welcome after click previous fill an empty $moveResult array
             {
+                //echo "<pre>".print_r($moveResult,true)."</pre>"; die();
                 // With complete index, we need to revalidate whole group bug #08806. It's actually the only mode where we JumpTo with force
+                //echo "here1.<br>";
                 if($moveResult['finished'] == true && $move != 'movesubmit' && $thissurvey['questionindex']==2)// we already done if move == 'movesubmit', don't do it again
                 {
                     //LimeExpressionManager::JumpTo(-1, false, false, true);
+                    //echo "here2.<br>";
                     LimeExpressionManager::StartSurvey($surveyid, $surveyMode, $surveyOptions);
+                    //echo "here3.<br>";
                     $moveResult = LimeExpressionManager::JumpTo($_SESSION[$LEMsessid]['totalsteps']+1, false, false, false);// no preview, no save data and NO force
+                    //echo "here4.<br>";
                     if(!$moveResult['mandViolation'] && $moveResult['valid'] && empty($moveResult['invalidSQs']))
                         $moveResult['finished'] = true;
                 }
@@ -625,9 +640,16 @@ class SurveyRuntimeHelper {
                 }
                 else
                 {
+                    //echo "here5.<br>";
                     $_SESSION[$LEMsessid]['step'] = $moveResult['seq'] + 1;  // step is index base 1
                     $stepInfo = LimeExpressionManager::GetStepIndexInfo($moveResult['seq']);
+                    //echo "here6.<br>";
                 }
+                //echo $move."<br>";
+                //echo "<pre>".print_r($args,true)."</pre>";
+                //echo "<pre>".print_r($_SESSION[$LEMsessid],true)."</pre>"; //die();
+                //echo "<pre>".print_r($moveResult,true)."</pre>";
+                //echo "<pre>".print_r($stepInfo,true)."</pre>"; //die();
                 if ($move == "movesubmit" && $moveResult['finished'] == false)
                 {
                     // then there are errors, so don't finalize the survey
@@ -930,6 +952,7 @@ class SurveyRuntimeHelper {
         }
 
         $redata = compact(array_keys(get_defined_vars()));
+        //echo "<pre>".print_r($redata,true)."</pre>"; die();
 
         // IF GOT THIS FAR, THEN DISPLAY THE ACTIVE GROUP OF QUESTIONSs
         //SEE IF $surveyid EXISTS ####################################################################
@@ -1036,6 +1059,7 @@ class SurveyRuntimeHelper {
         foreach ($_SESSION[$LEMsessid]['grouplist'] as $gl)
         {
             $gid = $gl['gid'];
+
             $qnumber = 0;
 
             if ($surveyMode != 'survey')
@@ -1283,6 +1307,9 @@ class SurveyRuntimeHelper {
             echo "\n\n<!-- START THE GROUP (in SurveyRunTime ) -->\n";
             echo "\n\n<div id='group-$_gseq'";
             $gnoshow = LimeExpressionManager::GroupIsIrrelevantOrHidden($_gseq);
+
+            // changes for required groups.
+            //$gnoshow = true;
 
             if  ($gnoshow && !$previewgrp)
             {

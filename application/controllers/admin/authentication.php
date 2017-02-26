@@ -127,12 +127,7 @@ class Authentication extends Survey_Common_Action
             $id = $row->id;
             $result = Participant::model()->createCustomParticipant($id,$vars);
             //echo "<pre>".print_r($result,true)."</pre>"; //die();
-            // update token.
-            $lime_token = $result['token'];
-            $status = 1;
-            $data = compact('id','lime_token','status');
-            //echo "<pre>".print_r($data,true)."</pre>"; die();
-            $result = CParticipant::model()->updateRow($data);
+
             $cparticipation = CParticipant::model()->getById($id);
             $token = $cparticipation['token'];
             $this->customRedirect($token);

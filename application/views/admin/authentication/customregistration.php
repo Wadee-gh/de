@@ -54,8 +54,18 @@
                           </div>
                           <div class="form-group">
                             <label>Email</label>
-                            <input type="email" class="form-control" name="email" value="<?php echo $email;?>" <?php if($email) echo "disabled";?> required placeholder="Email" data-error="The email address is invalid">
-                            <?php if($email) { ?>
+                            <?php
+                              $disabled = false;
+                              if($email) {
+                                if(strpos($email,"dummy") === FALSE){
+                                  $disabled = true;
+                                } else {
+                                  $email = "";
+                                }
+                              }
+                            ?>
+                            <input type="email" class="form-control" name="email" value="<?php echo $email;?>" <?php if($disabled) echo "disabled";?> required placeholder="Email" data-error="The email address is invalid">
+                            <?php if($disabled) { ?>
                             <input type="hidden" name="email" value="<?php echo $email;?>" />
                             <?php } ?>
                             <div class="help-block with-errors"></div>

@@ -613,7 +613,9 @@ class Participant extends LSActiveRecord
             $flist = "first_name,last_name,email,dob";
             foreach(explode(",",$flist) as $field){
               $key = str_replace("_","",$field);
-              $data2[$key] = $vars[$field];
+              $val = "Dummy";
+              if(isset($vars[$field])) $val = $vars[$field];
+              $data2[$key] = $val;
             }
             //echo "<pre>".print_r($data2,true)."</pre>"; die();
             $result = Participant::model()->insertParticipant($data2);
@@ -630,6 +632,13 @@ class Participant extends LSActiveRecord
         // create token.
         $survey_id = $row['survey_id'];
         $result = Participant::model()->createParticipantToken($survey_id,$participant_id);
+        // update token.
+        $lime_token = $result['token'];
+        $status = 1;
+        $data = compact('id','lime_token','status');
+        //echo "<pre>".print_r($data,true)."</pre>"; die();
+        $result = CParticipant::model()->updateRow($data);
+        
         //echo "<pre>".print_r($result,true)."</pre>"; //die();
         return($result);
     }

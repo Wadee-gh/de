@@ -4366,7 +4366,6 @@
 
             $grel = (isset($_SESSION[$LEM->sessid]['relevanceStatus']['G' . $gseq])) ? $_SESSION[$LEM->sessid]['relevanceStatus']['G' . $gseq] : 1;   // group-level relevance based upon grelevance equation
             $gshow = (isset($LEM->indexGseq[$gseq]['show'])) ? $LEM->indexGseq[$gseq]['show'] : true;   // default to true?
-
             return !($grel && $gshow);
         }
 
@@ -4672,6 +4671,7 @@
                 'prettyprint'=> $prettyPrint,
                 'hasErrors' => $hasErrors,
                 );
+
             $_SESSION[$this->sessid]['relevanceStatus']['G' . $groupSeq] = $result;
         }
 
@@ -5692,11 +5692,13 @@
                         }
 
                         $result = $LEM->_ValidateGroup($LEM->currentGroupSeq,$force);
+                        //echo "<pre>".print_r($result,true)."</pre>";
                         if (is_null($result)) {
                             return NULL;    // invalid group - either bad number, or no questions within it
                         }
                         $message .= $result['message'];
                         $updatedValues = array_merge($updatedValues,$result['updatedValues']);
+
                         if (!$preview && (!$result['relevant'] || $result['hidden']))
                         {
                             // then skip this group - assume already saved?
@@ -6045,6 +6047,9 @@
             //////////////////////////////////////////////////////////////////////////
             // STORE METADATA NEEDED FOR SUBSEQUENT PROCESSING AND DISPLAY PURPOSES //
             //////////////////////////////////////////////////////////////////////////
+            $grel2 = $this->_ValidateGroup2($gid);
+            $grel = $grel & $grel2;
+
             $currentGroupInfo = array(
             'gseq' => $groupSeq,
             'message' => $debug_message,
@@ -6078,6 +6083,24 @@
             return $currentGroupInfo;
         }
 
+        function _ValidateGroup2($gid){
+            $LEM =& $this;
+            //global $_SESSION;
+            //echo "Validate_Group2.<br>";
+            $session = $_SESSION[$LEM->sessid];
+            $token = $session['token'];
+            $row = CParticipant::model()->getByLimeToken($token);
+            $data = compact('token','gid','row');
+            //echo "<pre>".print_r($data,true)."</pre>";
+            $rgroups = json_decode($row['required_groups'],true);
+            //echo "<pre>".print_r($rgroups,true)."</pre>";
+            $grel = true;
+            if(!in_array($gid,$rgroups)){
+              $grel = false;
+              $ghidden = true;
+            }
+            return($grel);
+        }
 
 
         /**

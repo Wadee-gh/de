@@ -650,6 +650,19 @@ class CParticipant extends LSActiveRecord
         return($row);
     }
 
+    public function getByLimeToken($token){
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("lime_token='".$token."'")
+            ->from($tbl)
+            ->order("id DESC")
+            ->queryRow();
+        if($row == '') $row = array();
+        //echo "<pre>".print_r($row,true)."</pre>"; die();
+        return($row);
+    }
+
     /*
      * This function returns a list of participants who are either owned or shared
      * with a specific user
