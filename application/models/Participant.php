@@ -200,6 +200,24 @@ class Participant extends LSActiveRecord
         );
         $buttons .= vsprintf($raw_button_template, $infoData);
 
+        // Send Email Request
+        $infoData = array(
+            'action_participant_sendEmailRequest',
+            '',
+            gT("Send Email Request"),
+            'envelope'
+        );
+        $buttons .= vsprintf($raw_button_template, $infoData);
+
+        // On Site Request
+        $infoData = array(
+            'action_participant_onSiteRequest',
+            '',
+            gT("On Site Request"),
+            'desktop'
+        );
+        $buttons .= vsprintf($raw_button_template, $infoData);
+
         $buttons .= "</div>";
         return $buttons;
     }
@@ -351,11 +369,15 @@ class Participant extends LSActiveRecord
                 "name" => 'email'
             ),
             array(
+                "name" => 'dob',
+                "header" => gT("DOB"),
+            ),
+            array(
                 "name" => 'language',
                 "value" => 'getLanguageNameFromCode($data->language, false)',
                 'filter' => $this->allUsedLanguagesWithRealName
             ),
-            array(
+            /*array(
                 "name" => 'countActiveSurveys',
                 "value" => '$data->getCountActiveSurveys()',
                 "header" => gT("Active surveys"),
@@ -371,7 +393,7 @@ class Participant extends LSActiveRecord
                 "value" => '$data->getBlacklistSwitchbutton()',
                 "type" => "raw",
                 "filter" => array('N' => gT("No"), 'Y'=>gT('Yes'))
-            ),
+            ),*/
             array(
                 'name' => 'created',
                 'value' => '$data->createdFormatted',
@@ -434,6 +456,10 @@ class Participant extends LSActiveRecord
             'email'=>array(
                 'asc'=>'t.email',
                 'desc'=>'t.email desc',
+            ),
+            'dob'=>array(
+                'asc'=>'t.dob',
+                'desc'=>'t.dob desc',
             ),
             'language'=>array(
                 'asc'=>'t.language',

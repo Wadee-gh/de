@@ -14,10 +14,6 @@
       $redirect = App()->createUrl('/admin/authentication/customRedirect',compact('token'));
     }
 
-    $status = 0;
-    if($process == "sendOnSiteRequest") $status = 0;
-    if($process == "onSiteAnonymousRequest") $status = 1;
-
 ?>
 
 
@@ -34,9 +30,9 @@
         <input type='hidden' name='redirect' value='<?php echo $redirect; ?>'/>
         <input type='hidden' name='status' value='<?php echo $status; ?>'/>
 
-        <div class='form-group'>
-            <div class='col-sm-12 text-left' style="margin-left:1%">
-                <p><?php echo ngT('1. Select the survey to process.', $count); ?></p>
+        <div class='form-group' id='survey_div'>
+            <div class='col-sm-12 text-left' style="margin-left:1%" id="survey_text">
+                <p><?php echo ngT('Select the survey to process.', $count); ?></p>
             </div>
             <label class='control-label col-sm-2'>
                 <?php eT('Survey'); ?>
@@ -53,7 +49,7 @@
 
         <div class='form-group' style="display:none" id="required-groups">
             <div class='col-sm-12 text-left' style="margin-left:1%">
-                <p><?php eT('2. Select question groups required from user.'); ?></p>
+                <p><?php eT('Select question groups required from user.'); ?></p>
             </div>
             <label class='control-label col-sm-1'>&nbsp;</label>
             <div class='col-sm-11' id="required-groups-inner"></div>
@@ -63,18 +59,18 @@
           if($ask_email == 1){ ?>
           <div class='form-group' id="email-div" style="display:none">
               <div class='col-sm-12 text-left' style="margin-left:1%">
-                  <p><?php eT('3. Enter user\'s email address.'); ?></p>
+                  <p><?php eT('Enter user\'s email address.'); ?></p>
               </div>
               <label class='control-label col-sm-2'>
                 <?php eT('Email'); ?>
               </label>
               <div class='col-sm-10'>
-                  <input type="text" name="email" class="form-control" />
+                  <input type="text" name="email" class="form-control" value="<?php echo $email;?>"/>
               </div>
           </div>
         <?php } else {
           // generate an email address automatically.
-          $email = "dummy".$token."@gmail.com";
+          if($email == "") $email = "dummy".$token."@gmail.com";
         ?>
           <input type="hidden" name="email" class="form-control" value="<?php echo $email;?>" />
         <?php } ?>

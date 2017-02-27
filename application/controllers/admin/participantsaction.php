@@ -1403,12 +1403,26 @@ class participantsaction extends Survey_Common_Action
           $ask_email = 1;
         }
 
+        $status = 0;
+        if($process == "sendOnSiteRequest") $status = 0;
+        if($process == "onSiteAnonymousRequest") $status = 1;
+
+        $email = "";
+        if($participant_id){
+          $participant = Participant::model()->findByPk($participant_id);
+          $email = $participant['email'];
+          $ask_email = 0;
+          $status = 1;
+        }
+
         $data = array();
         $data['participant_id'] = $participant_id;
         $data['count'] = substr_count($participant_id, ',') + 1;
         $data['ask_email'] = $ask_email;
         $data['process'] = $process;
         $data['title'] = $title;
+        $data['email'] = $email;
+        $data['status'] = $status;
 
         $surveys = Survey::getSurveysWithTokenTable();
         $data['surveys'] = $surveys;
@@ -1434,6 +1448,16 @@ class participantsaction extends Survey_Common_Action
         $flist = "survey_id,token,email,required_groups,status";
         foreach(explode(",",$flist) as $field){
           $data[$field] = $vars[$field];
+        }
+
+        $participant_id = $vars['participant_id'];
+        if($participant_id){
+          $participant = Participant::model()->findByPk($participant_id);
+          $flist = "first_name,last_name,dob";
+          foreach(explode(",",$flist) as $field){
+            $key = str_replace("_","",$field);
+            $data[$field] = $participant[$key];
+          }
         }
 
         // save posted data.

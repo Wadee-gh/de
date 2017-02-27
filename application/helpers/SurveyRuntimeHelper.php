@@ -548,7 +548,7 @@ class SurveyRuntimeHelper {
 
             if (isset($_SESSION[$LEMsessid]['LEMtokenResume']))
             {
-                echo "tokenresume.<br>";
+                //echo "tokenresume.<br>";
                 LimeExpressionManager::StartSurvey($thissurvey['sid'], $surveyMode, $surveyOptions, false,$LEMdebugLevel);
                 if(isset($_SESSION[$LEMsessid]['maxstep']) && $_SESSION[$LEMsessid]['maxstep']>$_SESSION[$LEMsessid]['step'] && $thissurvey['questionindex'] )// Do it only if needed : we don't need it if we don't have index
                 {
@@ -559,7 +559,7 @@ class SurveyRuntimeHelper {
             }
             else if (!$LEMskipReprocessing)
             {
-                echo "lemskip.<br>";
+                //echo "lemskip.<br>";
                 //Move current step ###########################################################################
                 if (isset($move) && $move == 'moveprev' && ($thissurvey['allowprev'] == 'Y' || $thissurvey['questionindex'] > 0))
                 {

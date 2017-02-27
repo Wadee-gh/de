@@ -53,6 +53,7 @@
     <div class='row'>
 
         <div class="col-md-9">
+            <?php if (Permission::model()->hasGlobalPermission('superadmin')):?>
             <!-- Display participants -->
             <a class="btn btn-default" href="<?php echo $this->createUrl("admin/participants/sa/displayParticipants"); ?>" role="button">
                 <span class="glyphicon glyphicon-list text-success"></span>
@@ -64,6 +65,7 @@
                 <span class="glyphicon glyphicon-list-alt text-success" ></span>
                 <?php eT("Info");?>
             </a>
+            <?php endif;?>
 
             <!-- Import from CSV file -->
             <?php
@@ -76,6 +78,7 @@
 
 
             <!-- Export to CSV file -->
+            <?php if (Permission::model()->hasGlobalPermission('superadmin')):?>
             <?php
             if (Permission::model()->hasGlobalPermission('participantpanel','export')): ?>
                 <?php if (isset($totalrecords) && $totalrecords > 0): ?>
@@ -92,6 +95,7 @@
                     </span>
                     <?php endif;?>
                 <?php endif;?>
+            <?php endif;?> 
 
             <?php if (Permission::model()->hasGlobalPermission('superadmin','read')):?>
 
@@ -109,11 +113,13 @@
 
             <?php endif;?>
 
+            <?php if (Permission::model()->hasGlobalPermission('superadmin')):?>
             <!-- Share panel -->
             <a class="btn btn-default" href="<?php echo $this->createUrl("admin/participants/sa/sharePanel"); ?>" role="button">
                 <span class="glyphicon glyphicon-share text-success"></span>
                 <?php eT("Share panel");?>
             </a>
+            <?php endif;?>
 
         </div>
 

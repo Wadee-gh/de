@@ -56,7 +56,7 @@
 
     <div class="collapse navbar-collapse js-navbar-collapse pull-right">
         <ul class="nav navbar-nav navbar-right">
-
+            <?php if (Permission::model()->hasGlobalPermission('superadmin')):?>
             <!-- Configuration menu -->
             <?php $this->renderPartial( "/admin/super/_configuration_menu", $dataForConfigMenu ); ?>
 
@@ -106,6 +106,8 @@
                      </li>
 
             <!-- user menu -->
+            <?php endif;?>
+
             <!-- active surveys -->
             <?php if ($activesurveyscount > 0): ?>
                 <li>

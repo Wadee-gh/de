@@ -304,15 +304,83 @@ LS.CPDB = (function() {
 
         /** end of added by mark mirasol **/
 
+        /** added by mark mirasol 2/27/2017 **/
+
+        $('.action_participant_sendEmailRequest').on('click', function(e){
+            e.preventDefault();
+            var data = {
+                modalTarget: 'customParticipant',
+                process: 'sendEmailRequest',
+                title2: 'Send Email Request',
+                participant_id: $(this).closest('tr').data('participant_id')
+            };
+            //url, data, idString, actionButtonClass, formId, gridViewId
+            runBaseModal(
+                openModalParticipantPanel,
+                data,
+                'action_save_modal_customParticipant',
+                'customParticipantActiveForm',
+                'list_central_participants'
+            ).done(function() {
+                $('.ls-bootstrap-switch').bootstrapSwitch();
+                groupSelectionActions();
+            });
+        });
+
+        $('.action_participant_onSiteRequest').on('click', function(e){
+            e.preventDefault();
+            var data = {
+                modalTarget: 'customParticipant',
+                process: 'sendOnSiteRequest',
+                title2: 'Send On Site Request',
+                participant_id: $(this).closest('tr').data('participant_id')  
+            };
+            //url, data, idString, actionButtonClass, formId, gridViewId
+            runBaseModal(
+                openModalParticipantPanel,
+                data,
+                'action_save_modal_customParticipant',
+                'customParticipantActiveForm',
+                'list_central_participants'
+            ).done(function() {
+                $('.ls-bootstrap-switch').bootstrapSwitch();
+                groupSelectionActions();
+            });
+        });
+
+        /** end of added by mark mirasol **/
+
         /** added by mark mirasol 2/11/2017 **/
 
         function groupSelectionActions(){
           // add ajax action to display question groups in survey.
           $('select[name=survey_id].trigger').change(function(){
             var val = $(this).val();
-            console.log('survey_id:'+val);
+            //console.log('survey_id:'+val);
             updateQuestionGroups(val);
           });
+
+          var hasDefault = false;
+          var defaultId = 0;
+          var options = $('select[name=survey_id].trigger').find('option');
+          options.each(function(){
+            var name = $(this).text();
+            var val = $(this).val();
+            //console.log(name+' '+val);
+            if(name == 'Default' || name == 'default'){
+              defaultId = val;
+            }
+          });
+          //console.log(defaultId);
+          $('#survey_div').children().hide();
+          if(defaultId == 0){
+            $('#survey_div #survey_text').html('No survey named \'Default\' found.');
+            $('#survey_div #survey_text').show();
+            $('.action_save_modal_customParticipant').hide();
+          } else {
+            $('select[name=survey_id].trigger').val(defaultId);
+            $('select[name=survey_id].trigger').trigger('change');
+          }
         }
 
         function updateQuestionGroups(surveyid){

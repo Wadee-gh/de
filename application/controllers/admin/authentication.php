@@ -101,6 +101,12 @@ class Authentication extends Survey_Common_Action
           $this->_renderWrappedTemplate('authentication', 'customregistration', compact('cparticipation'));
         } else
         if($status == 1){
+          $token = $cparticipation['lime_token'];
+          if(strlen($token) == 0){
+            $id = $cparticipation['id'];
+            $result = Participant::model()->createCustomParticipant($id,$vars);
+            $cparticipation = CParticipant::model()->getById($id);
+          }
           //$this->_renderWrappedTemplate('authentication', 'testsurvey', compact('cparticipation'));
           $survey_id = $cparticipation['survey_id'];
           $token = $cparticipation['lime_token'];
