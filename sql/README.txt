@@ -1,0 +1,1 @@
+after making changes to the db, clear the tmp/runtime/cache folder.
