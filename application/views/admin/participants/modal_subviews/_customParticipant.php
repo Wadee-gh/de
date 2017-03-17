@@ -29,6 +29,7 @@
         <input type="hidden" name="token" value="<?php echo $token;?>" />
         <input type='hidden' name='redirect' value='<?php echo $redirect; ?>'/>
         <input type='hidden' name='status' value='<?php echo $status; ?>'/>
+        <input type='hidden' name='owner_uid' value='<?php echo $owner_uid; ?>'/> 
 
         <div class='form-group' id='survey_div'>
             <div class='col-sm-12 text-left' style="margin-left:1%" id="survey_text">

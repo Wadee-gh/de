@@ -1423,6 +1423,7 @@ class participantsaction extends Survey_Common_Action
         $data['title'] = $title;
         $data['email'] = $email;
         $data['status'] = $status;
+        $data['owner_uid'] = Yii::app()->user->id;
 
         $surveys = Survey::getSurveysWithTokenTable();
         $data['surveys'] = $surveys;
@@ -1445,7 +1446,7 @@ class participantsaction extends Survey_Common_Action
         }
 
         $data = array();
-        $flist = "survey_id,token,email,required_groups,status";
+        $flist = "survey_id,token,email,required_groups,status,owner_uid";
         foreach(explode(",",$flist) as $field){
           $data[$field] = $vars[$field];
         }

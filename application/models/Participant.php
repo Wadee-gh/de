@@ -634,8 +634,8 @@ class Participant extends LSActiveRecord
             $data2 = array();
             $data2['participant_id'] = $participant_id;
             $data2['blacklisted'] = 'N';
-            $data2['owner_uid'] = 1;
-            $data2['created_by'] = 1;
+            $data2['owner_uid'] = $row['owner_uid'];
+            $data2['created_by'] = $row['owner_uid'];
             $flist = "first_name,last_name,email,dob";
             foreach(explode(",",$flist) as $field){
               $key = str_replace("_","",$field);
