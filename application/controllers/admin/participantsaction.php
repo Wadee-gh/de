@@ -1497,6 +1497,14 @@ class participantsaction extends Survey_Common_Action
         }
     }
 
+    public function getLastResponse(){
+        // get post data.
+        $vars = $_POST;
+        //echo "<pre>".print_r($_POST,true)."</pre>"; die();
+        $participant_id = $_POST['participant_id'];
+        Participant::model()->getLastResponse($participant_id);
+    }
+
     public function sendCustomEmail($iSurveyId,$id){
         $cparticipation = CParticipant::model()->getById($id);
         $token = $cparticipation['token'];

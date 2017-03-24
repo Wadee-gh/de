@@ -77,10 +77,11 @@
             }
             echo "</div>";
         }
-            
+
         ?>
     <div class="row">
         <?php
+            echo "<input type='hidden' id='showrespurl' name='showrespurl' value='".App()->createUrl('/admin/participants/getLastResponse')."' />";
             echo "<input type='hidden' id='searchcondition' name='searchcondition[]' value='".join("||",$searchcondition)."' />";
             $this->widget('bootstrap.widgets.TbGridView', array(
                 'id' => 'list_central_participants',

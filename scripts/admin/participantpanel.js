@@ -333,7 +333,7 @@ LS.CPDB = (function() {
                 modalTarget: 'customParticipant',
                 process: 'sendOnSiteRequest',
                 title2: 'Send On Site Request',
-                participant_id: $(this).closest('tr').data('participant_id')  
+                participant_id: $(this).closest('tr').data('participant_id')
             };
             //url, data, idString, actionButtonClass, formId, gridViewId
             runBaseModal(
@@ -345,6 +345,37 @@ LS.CPDB = (function() {
             ).done(function() {
                 $('.ls-bootstrap-switch').bootstrapSwitch();
                 groupSelectionActions();
+            });
+        });
+
+        /** end of added by mark mirasol **/
+
+        /** added by mark mirasol 3/24/2017 **/
+
+        $('.action_view_response').on('click', function(e){
+            e.preventDefault();
+            //console.log('view response clicked.');
+            action = $('#showrespurl').val();
+            var postdata = {
+                YII_CSRF_TOKEN : LS.data.csrfToken,
+                participant_id: $(this).closest('tr').data('participant_id')
+            };
+            $.ajax({
+                url: action,
+                data: postdata,
+                method: 'POST',
+                success: function(result) {
+                    console.log(result);
+                    var r = jQuery.parseJSON(result);
+                    if(r.status == 'success'){
+                      window.location = r.url;
+                    } else {
+                      alert(r.message);
+                    }
+                },
+                error : function() {
+                    console.log(arguments);
+                }
             });
         });
 

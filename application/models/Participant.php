@@ -183,10 +183,16 @@ class Participant extends LSActiveRecord
         }
 
         // Survey information
-        $infoData = array(
+        /*$infoData = array(
             'action_participant_infoModal',
             '',
             gT("List active surveys"),
+            'search'
+        );*/
+        $infoData = array(
+            'action_view_response',
+            '',
+            gT("View Response"),
             'search'
         );
         $buttons .= vsprintf($raw_button_template, $infoData);
@@ -2345,5 +2351,61 @@ class Participant extends LSActiveRecord
         if($row == '') $row = array();
         //echo "<pre>".print_r($row,true)."</pre>"; die();
         return($row);
+    }
+
+    public function getLastResponse($participant_id){
+        // find survey named Default.
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("surveyls_title IN ('Default','default')")
+            ->from('{{surveys_languagesettings}}')
+            ->queryRow();
+        if($row == '') $row = array();
+        if(!empty($row)){
+          //echo "<pre>".print_r($row,true)."</pre>"; die();
+          $sid = $row['surveyls_survey_id'];
+          $status = 'success';
+          $message = '';
+          $respid = $this->getLastResponseId($sid,$participant_id);
+          if($respid == ''){
+            $status = 'error';
+            $message = 'No response found.';
+            echo json_encode(compact('status','message')); die();
+          }
+          $url = App()->createUrl('/admin/responses/sa/view/surveyid/'.$sid.'/id/'.$respid);
+          echo json_encode(compact('status','message','url')); die();
+        } else {
+          $status = 'error';
+          $message = 'No survey named \'Default\' found.';
+          echo json_encode(compact('status','message')); die();
+        }
+    }
+
+    public function getLastResponseId($sid,$participant_id){
+        // get participant info.
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("participant_id IN ('".$participant_id."')")
+            ->from('{{tokens_'.$sid.'}}')
+            ->queryRow();
+        if($row == '') $row = array();
+        if(!empty($row)){
+          $token = $row['token'];
+          //echo $token; die();
+          $row2 = Yii::app()->db->createCommand()
+              ->select('*')
+              ->where("token IN ('".$token."')")
+              ->from('{{survey_'.$sid.'}}')
+              ->order('id DESC')
+              ->queryRow();
+          if($row2 == '') $row2 = array();
+          if(!empty($row2)){
+            return($row2['id']);
+          } else {
+            return('');
+          }
+        } else {
+          return('');
+        }
     }
 }
