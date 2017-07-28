@@ -181,7 +181,7 @@ class QuestionGroup extends LSActiveRecord
         if($survey){
           $language = $survey->language;
           return Yii::app()->db->createCommand()
-          ->select(array('gid', 'group_name'))
+          ->select(array('gid', 'group_name','group_title'))
           ->from($this->tableName())
           ->where(array('and', 'sid=:surveyid', 'language=:language'))
           ->order('group_order asc')
