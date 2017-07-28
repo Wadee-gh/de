@@ -1,5 +1,7 @@
 <?php
 
+header('Location: admin');
+exit;
     /**
      * This class will handle survey creation and manipulation.
      */
