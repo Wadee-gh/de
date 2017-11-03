@@ -4,11 +4,13 @@
             <?php eT("Central participant management"); ?>
         </div>
         <div class="col-xs-8 text-right">
+
             <button class="btn btn-default" id="onSiteAnonymousRequest">
                 <i class="fa fa-plus-circle text-success"></i>
                 &nbsp;
                 <?php eT("On Site Anonymous Request"); ?>
-            </button>
+            </button> 
+
             <button class="btn btn-default" id="addParticipantToCPP">
                 <i class="fa fa-plus-circle text-success"></i>
                 &nbsp;

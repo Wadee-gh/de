@@ -649,6 +649,8 @@ class Participant extends LSActiveRecord
               if(isset($vars[$field])) $val = $vars[$field];
               $data2[$key] = $val;
             }
+
+              $data2['dob'] = '1980-01-01';
             //echo "<pre>".print_r($data2,true)."</pre>"; die();
             $result = Participant::model()->insertParticipant($data2);
             //echo "<pre>".print_r($result,true)."</pre>"."<br>"; die();

@@ -13,7 +13,6 @@
                 <div class="panel-body">
                     <div class="row">
                           <img alt="logo" id="profile-img" class="profile-img-card center-block" src="<?php echo LOGO_URL;?>" />
-                             <p><?php eT("Administration");?></p>
                     </div>
                 </div>
 
@@ -86,21 +85,9 @@
                                 {
                                     $languageData[$sLangKey] =  html_entity_decode($aLanguage['nativedescription'], ENT_NOQUOTES, 'UTF-8') . " - " . $aLanguage['description'];
                                 }
-                                echo CHtml::label(gT('Language'), 'loginlang');
-
-                                $this->widget('yiiwheels.widgets.select2.WhSelect2', array(
-                                    'name' => 'loginlang',
-                                    'data' => $languageData,
-                                    'pluginOptions' => array(
-                                    'options' => array(
-                                        'width' => '230px'
-                                    ),
-                                    'htmlOptions' => array(
-                                        'id' => 'loginlang'
-                                    ),
-                                    'value' => 'default'
-                                )));
                                 ?>
+<br />
+<br />
 
                                 <?php   if (Yii::app()->getConfig("demoMode") === true && Yii::app()->getConfig("demoModePrefill") === true)
                                 { ?>
@@ -122,6 +109,8 @@
                                     {
                                         ?>
                                         <a href='<?php echo $this->createUrl("admin/authentication/sa/forgotpassword"); ?>'><?php eT("Forgot your password?"); ?></a><br />
+Request Demo : mike.arbach@gmail.com
+
                                         <?php
                                     }
                                     ?>
