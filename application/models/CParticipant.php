@@ -275,7 +275,7 @@ class CParticipant extends LSActiveRecord
         $participantAttributes = ParticipantAttribute::model()->getAttributeInfo($this->participant_id);
         foreach($participantAttributes as $singleAttribute) {
             if($singleAttribute['attribute_id'] == $attribute_id) {
-                return $singleAttribute['value']; 
+                return $singleAttribute['value'];
             }
         }
         return "";
@@ -496,7 +496,7 @@ class CParticipant extends LSActiveRecord
             $criteria->addCondition('t.owner_uid = ' . Yii::app()->user->id . ' OR ' . Yii::app()->user->id . ' = shares.share_uid OR shares.share_uid = -1');
         }
 
-        $pageSize = Yii::app()->user->getState('pageSizeParticipantView', Yii::app()->params['defaultPageSize']);      
+        $pageSize = Yii::app()->user->getState('pageSizeParticipantView', Yii::app()->params['defaultPageSize']);
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'sort' => $sort,
@@ -661,6 +661,139 @@ class CParticipant extends LSActiveRecord
         if($row == '') $row = array();
         //echo "<pre>".print_r($row,true)."</pre>"; die();
         return($row);
+    }
+
+    public function getParticipantName($token){
+        $ret = '';
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("lime_token='".$token."'")
+            ->from($tbl)
+            ->order("id DESC")
+            ->queryRow();
+        if(!empty($row)){
+          $ret = $row['first_name']." ".$row['last_name'];
+        }
+        return($ret);
+    }
+
+    public function getCalcDetails($group,$r,$fieldmap,$contains,$parent){
+        $rgroups = array($group);
+        //echo "fieldmap:<br><pre>".print_r($fieldmap,true)."</pre>"; //die();
+        //echo "result:<br><pre>".print_r($r,true)."</pre>";
+        //echo "contains: ".$contains."<br>";
+        $groups = array();
+        foreach($fieldmap as $field){
+          $gid = $field['gid'];
+          if(in_array($gid,$rgroups)){
+            if($field['aid'] != ''){
+              $title = $field['title'].$field['aid'];
+            } else {
+              $title = $field['title'];
+            }
+            //echo "title: ".$title."<br>";
+            $fieldname = $field['fieldname'];
+            $field['result'] = $r[$fieldname];
+            if($contains){
+              if(strpos($title,$contains) !== FALSE){
+                $groups[$gid]['fields'][$fieldname] = $field;
+              }
+            }
+
+            if($title == $parent){
+              //echo "<pre>".print_r($field,true)."</pre>";
+              $name = $field['question'];
+              if(isset($field['subquestion'])) $name .= " ".$field['subquestion'];
+              $groups[$gid]['name'] = $name;
+            }
+          }
+        }
+        //echo "groups:<br><pre>".print_r($groups,true)."</pre>"; die();
+        return($groups);
+    }
+
+    public function getGroupDetails($group,$r,$fieldmap,$contains = ''){
+        $rgroups = array($group);
+        //echo "fieldmap:<br><pre>".print_r($fieldmap,true)."</pre>"; //die();
+        //echo "result:<br><pre>".print_r($r,true)."</pre>";
+        $groups = array();
+        foreach($fieldmap as $field){
+          $gid = $field['gid'];
+          if(in_array($gid,$rgroups)){
+            $name = $field['group_name'];
+            $groups[$gid]['name'] = $name;
+            $title = $field['title'];
+            $fieldname = $field['fieldname'];
+            $field['result'] = $r[$fieldname];
+            if($contains){
+              if(strpos($title,$contains) !== FALSE){
+                $groups[$gid]['fields'][$fieldname] = $field;
+              }
+            } else {
+                $groups[$gid]['fields'][$fieldname] = $field;
+            }
+          }
+        }
+        //echo "groups:<br><pre>".print_r($groups,true)."</pre>"; die();
+        return($groups);
+    }
+
+    public function getGroupResults($rgroups,$r,$fieldmap){
+        //echo "fieldmap:<br><pre>".print_r($fieldmap,true)."</pre>"; //die();
+        $groups = array();
+        foreach($fieldmap as $field){
+          $gid = $field['gid'];
+          if(in_array($gid,$rgroups)){
+            $name = $field['group_name'];
+            $groups[$gid]['name'] = $name;
+            $title = $field['title'];
+            if(strpos($title,'LV1') !== FALSE){
+              $fieldname = $field['fieldname'];
+              $groups[$gid]['fields'][$fieldname] = $field;
+            }
+          }
+        }
+        //echo "result:<br><pre>".print_r($r,true)."</pre>";
+        foreach($groups as $gid => $group){
+          $result = "";
+          if(isset($group['fields'])){
+            $fields = array_keys($group['fields']);
+            foreach($fields as $f){
+              if($result) $result .= "\n";
+              $result .= $r[$f];
+            }
+          } else {
+            if($r['submitdate'] == ''){
+              $result = 'Not Completed';
+            } else {
+              $result = 'Completed';
+            }
+          }
+          $groups[$gid]['result'] = $result;
+        }
+        //echo "groups:<br><pre>".print_r($groups,true)."</pre>"; die();
+        return($groups);
+    }
+
+    public function getRequiredGroups($token,$submitdate){
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("lime_token='".$token."' AND convert_tz(created,@@session.time_zone,'-05:00') <= '".$submitdate."' ")
+            ->from($tbl)
+            ->order("id DESC")
+            ->queryRow();
+        if($row == '') $row = array();
+        $tmp = array();
+        if(isset($row['required_groups'])){
+          $tmp = $row['required_groups'];
+          if($tmp){
+            $tmp = json_decode($tmp,true);
+          }
+        }
+        if(!is_array($tmp)) $tmp = array();
+        return($tmp);
     }
 
     /*

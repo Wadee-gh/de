@@ -32,7 +32,6 @@ class responses extends Survey_Common_Action
     function __construct($controller, $id)
     {
         parent::__construct($controller, $id);
-
         Yii::app()->loadHelper('surveytranslator');
     }
 
@@ -132,6 +131,401 @@ class responses extends Survey_Common_Action
     */
     public function view($iSurveyID, $iId, $sBrowseLang = '')
     {
+        /*if(!isset($_GET['level'])){
+          $this->getController()->redirect(array("admin/responses/sa/view/surveyid/{$iSurveyID}/id/{$iId}/level/1"));
+        }*/
+
+        if(Permission::model()->hasSurveyPermission($iSurveyID,'responses','read'))
+        {
+            //echo "<pre>".print_r($_GET,true)."</pre>"; die();
+            $aData = $this->_getData(array('iId' => $iId, 'iSurveyId' => $iSurveyID, 'browselang' => $sBrowseLang));
+            //echo "<pre>".print_r($aData,true)."</pre>"; die();
+            $sBrowseLanguage = $aData['language'];
+
+            extract($aData);
+
+            $aViewUrls = array();
+
+            // create fieldmap.
+            $fieldmap = createFieldMap($iSurveyID, 'full', false, false, $aData['language']);
+            //echo "<pre>".print_r($fieldmap,true)."</pre>"; die();
+            $bHaveToken=$aData['surveyinfo']['anonymized'] == "N" && tableExists('tokens_' . $iSurveyID);// Boolean : show (or not) the token
+            if(!Permission::model()->hasSurveyPermission($iSurveyID,'tokens','read')) // If not allowed to read: remove it
+            {
+                unset($fieldmap['token']);
+                $bHaveToken=false;
+            }
+            //add token to top of list if survey is not private
+            if ($bHaveToken)
+            {
+                $fnames[] = array("token", gT("Token ID"), 'code'=>'token');
+                $fnames[] = array("firstname", gT("First name"), 'code'=>'firstname');// or token:firstname ?
+                $fnames[] = array("lastname", gT("Last name"), 'code'=>'lastname');
+                $fnames[] = array("email", gT("Email"), 'code'=>'email');
+            }
+            $fnames[] = array("submitdate", gT("Submission date"), gT("Completed"), "0", 'D','code'=>'submitdate');
+            $fnames[] = array("completed", gT("Completed"), "0");
+
+            foreach ($fieldmap as $field)
+            {
+                if ($field['fieldname'] == 'lastpage' || $field['fieldname'] == 'submitdate')
+                    continue;
+                if ($field['type'] == 'interview_time')
+                    continue;
+                if ($field['type'] == 'page_time')
+                    continue;
+                if ($field['type'] == 'answer_time')
+                    continue;
+
+                //$question = $field['question'];
+                $question = viewHelper::getFieldText($field);
+
+                if ($field['type'] != "|")
+                {
+                    $fnames[] = array($field['fieldname'], viewHelper::getFieldText($field),'code'=>viewHelper::getFieldCode($field,array('LEMcompat'=>true)));
+                }
+                elseif ($field['aid'] !== 'filecount')
+                {
+                    $qidattributes = getQuestionAttributeValues($field['qid']);
+
+                    for ($i = 0; $i < $qidattributes['max_num_of_files']; $i++)
+                    {
+                        $filenum=sprintf(gT("File %s"),$i + 1);
+                        if ($qidattributes['show_title'] == 1)
+                            $fnames[] = array($field['fieldname'], "{$filenum} - {$question} (".gT('Title').")",'code'=>viewHelper::getFieldCode($field).'(title)', "type" => "|", "metadata" => "title", "index" => $i);
+
+                        if ($qidattributes['show_comment'] == 1)
+                            $fnames[] = array($field['fieldname'], "{$filenum} - {$question} (".gT('Comment').")",'code'=>viewHelper::getFieldCode($field).'(comment)', "type" => "|", "metadata" => "comment", "index" => $i);
+
+                        $fnames[] = array($field['fieldname'], "{$filenum} - {$question} (".gT('File name').")",'code'=>viewHelper::getFieldCode($field).'(name)', "type" => "|", "metadata" => "name", "index" => $i);
+                        $fnames[] = array($field['fieldname'], "{$filenum} - {$question} (".gT('File size').")",'code'=>viewHelper::getFieldCode($field).'(size)', "type" => "|", "metadata" => "size", "index" => $i);
+
+                        //$fnames[] = array($field['fieldname'], "File ".($i+1)." - ".$field['question']." (extension)", "type"=>"|", "metadata"=>"ext",     "index"=>$i);
+                    }
+                }
+                else
+                {
+                    $fnames[] = array($field['fieldname'], gT("File count"));
+                }
+            }
+
+            $nfncount = count($fnames) - 1;
+            if ($iId < 1)
+            {
+                $iId = 1;
+            }
+
+            $exist = SurveyDynamic::model($iSurveyID)->exist($iId);
+            /*$next = SurveyDynamic::model($iSurveyID)->next($iId,true);
+            $previous = SurveyDynamic::model($iSurveyID)->previous($iId,true);
+            $aData['exist'] = $exist;
+            $aData['next'] = $next;
+            $aData['previous'] = $previous;*/
+            $aData['id'] = $iId;
+
+            $aViewUrls[] = 'browseidheader_view';
+            if($exist)
+            {
+                $oPurifier=new CHtmlPurifier();
+                //SHOW INDIVIDUAL RECORD
+                $oCriteria = new CDbCriteria();
+                if ($bHaveToken)
+                {
+                    $oCriteria = SurveyDynamic::model($iSurveyID)->addTokenCriteria($oCriteria);
+                }
+
+                // set level.
+                $view_title = "View Response Details";
+                if(isset($_GET['qcode'])){
+                  $level = 3;
+                } else
+                if(isset($_GET['group'])){
+                  $level = 2;
+                } else {
+                  $level = 1;
+
+                }
+                $aData['view_title'] = $view_title;
+
+                if($level == 1){
+                  // get token from response.
+                  $token = SurveyDynamic::model($iSurveyID)->getTokenFromResponse($iId);
+                  $oCriteria->addCondition("tokens.token = '".$token."'");
+                }
+                else {
+                  $oCriteria->addCondition("id = '".$iId."'");
+                }
+
+                $iIdresult = SurveyDynamic::model($iSurveyID)->findAllAsArray($oCriteria);
+                //echo "<pre>".print_r($iIdresult,true)."</pre>"; die();
+                $aData['iIdresult'] = $iIdresult;
+
+                $chide = "token,id,responsedid,startlanguage,ipaddress,referrerurl,firstname,lastname,email,completed,submitdate";
+                $hrows = array();
+                //$hrows[] = 'Completed';
+                $flabels = array();
+                foreach($fnames as $fname){
+                  if(in_array($fname['code'],explode(",",$chide))){
+                    $hrows[] = $fname[1];
+                    $flabels[$fname['code']] = $fname[1];
+                  }
+                }
+                $aData['hrows'] = $hrows;
+
+                if($level == 1){
+                  // prepare data for custom table based on level1 questions.
+                  $crows = array();
+                  // for each response, get groups that were selected.
+                  $responses = $iIdresult;
+                  foreach($responses as $r){
+                    $submitdate = $r['submitdate'];
+                    $token = $r['token'];
+                    $rgroups = CParticipant::model()->getRequiredGroups($token,$submitdate);
+                    $groups = CParticipant::model()->getGroupResults($rgroups,$r,$fieldmap);
+                    //echo "<pre>".print_r(compact('token','submitdate','rgroups'),true)."</pre>"; die();
+                    foreach($rgroups as $gid){
+                      $g = $groups[$gid];
+                      $group = $g['name'];
+                      $result = $g['result'];
+                      $link = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid;
+                      if(isset($g['fields'])){
+                        if(count($g['fields']) == 1){
+                          $fields = $g['fields'];
+                          foreach($fields as $field){
+                            $title = $field['title'];
+                            $link .= "/qcode/".$title;
+                          }
+                        }
+                      }
+                      $crows[] = compact('submitdate','group','result','link');
+                    }
+                  }
+                  //echo "<pre>".print_r($crows,true)."</pre>"; die();
+                  if(!empty($crows)){
+                     $aData['crows'] = $crows;
+                     $ccols = explode(",","submitdate,group,result");
+                     $clabels = array();
+                     foreach($ccols as $ccol){
+                       $clabel = ucwords(str_replace("_"," ",$ccol));
+                       if($ccol == 'submitdate') $clabel = 'Date';
+                       $clabels[$ccol] = $clabel;
+                     }
+                     $aData['ccols'] = $ccols;
+                     $aData['clabels'] = $clabels;
+                     $aViewUrls[] = 'browseidrowlv1_view';
+                  }
+
+                  // add view title.
+                  $participant_name = CParticipant::model()->getParticipantName($token);
+                  $view_title = sprintf(gT("View Results for %s"), $participant_name);
+                  $aData['view_title'] = $view_title;
+                } else
+                if($level == 2){
+                  // for each response, get group details.
+                  $responses = $iIdresult;
+                  foreach($responses as $r){
+                    $submitdate = $r['submitdate'];
+                    $token = $r['token'];
+                    $gid = $_GET['group'];
+                    $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap,'LV2');
+                    $crows = array();
+                    if(isset($details[$gid])){
+                      $fields = $details[$gid]['fields'];
+                      foreach($fields as $f){
+                        //$qcode = str_replace("LV2","",$f['title']);
+                        $qcode = $f['title'];
+                        $f['link'] = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/qcode/".$qcode;
+                        $crows[] = $f;
+                      }
+                      // add view title.
+                      $participant_name = CParticipant::model()->getParticipantName($token);
+                      $group_name = $details[$gid]['name'];
+                      $view_title = sprintf(gT("View Details for %s"), $group_name);
+                      $aData['view_title'] = $view_title;
+                      $aData['menu']['uplevel'] =  true;
+                      $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']);
+                    }
+                    //echo "<pre>".print_r($crows,true)."</pre>"; die();
+                    if(!empty($crows)){
+                       $aData['crows'] = $crows;
+                       $ccols = explode(",","question,result");
+                       $clabels = array();
+                       foreach($ccols as $ccol){
+                         $clabel = ucwords(str_replace("_"," ",$ccol));
+                         $clabels[$ccol] = $clabel;
+                       }
+                       $aData['ccols'] = $ccols;
+                       $aData['clabels'] = $clabels;
+                       $aViewUrls[] = 'browseidrowlv1_view';
+                    }
+                  }
+               } else
+               if($level == 3){
+                  // for each response, get group details.
+                  $responses = $iIdresult;
+                  foreach($responses as $r){
+                    $submitdate = $r['submitdate'];
+                    $token = $r['token'];
+                    $gid = $_GET['group'];
+                    $parent = $_GET['qcode'];
+                    $contains = str_replace("LV1","",$parent);
+                    $contains = str_replace("LV2","",$contains);
+                    $contains .= "S";
+                    $details = CParticipant::model()->getCalcDetails($gid,$r,$fieldmap,$contains,$parent);
+                    $crows = array();
+                    if(isset($details[$gid])){
+                      $fields = $details[$gid]['fields'];
+                      foreach($fields as $f){
+                        $title = $f['title'].$f['aid'];
+                        $f['link'] = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/qcode/".$title."/up/".$parent;
+                        if(isset($f['subquestion'])) $f['question'] .= " ".$f['subquestion'];
+                        $crows[] = $f;
+                      }
+                      // add view title.
+                      $participant_name = CParticipant::model()->getParticipantName($token);
+                      $group_name = $details[$gid]['name'];
+                      $view_title = sprintf(gT("View Details for %s"), $group_name);
+                      $aData['view_title'] = $view_title;
+                      $aData['menu']['uplevel'] =  true;
+                      $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid);
+                      if(isset($_GET['up'])){
+                        $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/qcode/".$_GET['up']);
+                      }
+                    }
+                    //echo "<pre>".print_r($crows,true)."</pre>"; die();
+                    if(!empty($crows)){
+                       $aData['crows'] = $crows;
+                       $ccols = explode(",","question,result");
+                       $clabels = array();
+                       foreach($ccols as $ccol){
+                         $clabel = ucwords(str_replace("_"," ",$ccol));
+                         $clabels[$ccol] = $clabel;
+                       }
+                       $aData['ccols'] = $ccols;
+                       $aData['clabels'] = $clabels;
+                       $aViewUrls[] = 'browseidrowlv1_view';
+                    }
+                  }
+                } else {
+
+                    $clist = "firstname,lastname,email";
+                    $ccols = array();
+                    foreach(explode(",",$clist) as $code){
+                      if(isset($iIdresult[0][$code])){
+                        $value = $iIdresult[0][$code];
+                        $label = $flabels[$code];
+                        $ccols[] = compact('code','value','label');
+                      }
+                    }
+                    $aData['ccols'] = $ccols;
+
+                    foreach ($iIdresult as $iIdrow)
+                    {
+                        $iId = $iIdrow['id'];
+                        $rlanguage = $iIdrow['startlanguage'];
+                    }
+                    $aData['bHasFile']=false;
+                    if (isset($rlanguage))
+                    {
+                        $aData['rlanguage'] = $rlanguage;
+                    }
+                    foreach ($iIdresult as $iIdrow)
+                    {
+                        $highlight = false;
+                        for ($i = 0; $i < $nfncount + 1; $i++)
+                        {
+                            if ($fnames[$i][0] != 'completed' && is_null($iIdrow[$fnames[$i][0]]))
+                            {
+                                continue;   // irrelevant, so don't show
+                            }
+                            $inserthighlight = '';
+                            if ($highlight)
+                                $inserthighlight = "class='highlight'";
+
+                            if ($fnames[$i][0] == 'completed')
+                            {
+                                if ($iIdrow['submitdate'] == NULL || $iIdrow['submitdate'] == "N")
+                                {
+                                    $answervalue = "N";
+                                }
+                                else
+                                {
+                                    $answervalue = "Y";
+                                }
+                            }
+                            else
+                            {
+                                if (isset($fnames[$i]['type']) && $fnames[$i]['type'] == "|")
+                                {
+                                    $index = $fnames[$i]['index'];
+                                    $metadata = $fnames[$i]['metadata'];
+                                    $phparray = json_decode_ls($iIdrow[$fnames[$i][0]]);
+
+                                    if (isset($phparray[$index]))
+                                    {
+                                        switch ($metadata)
+                                        {
+                                            case "size":
+                                                $answervalue = sprintf(gT("%s KB"),intval($phparray[$index][$metadata]));
+                                                break;
+                                            case "name":
+                                                $answervalue = CHtml::link(
+                                                    $oPurifier->purify(rawurldecode($phparray[$index][$metadata])),
+                                                    $this->getController()->createUrl("/admin/responses",array("sa"=>"actionDownloadfile","surveyid"=>$surveyid,"iResponseId"=>$iId,"sFileName"=>$phparray[$index][$metadata]))
+                                                );
+                                                break;
+                                            default:
+                                                $answervalue = htmlspecialchars(strip_tags(stripJavaScript($phparray[$index][$metadata])));
+                                        }
+                                        $aData['bHasFile']=true;
+                                    }
+                                    else
+                                        $answervalue = "";
+                                }
+                                else
+                                {
+                                    $answervalue = htmlspecialchars(strip_tags(stripJavaScript(getExtendedAnswer($iSurveyID, $fnames[$i][0], $iIdrow[$fnames[$i][0]], $sBrowseLanguage))), ENT_QUOTES);
+                                }
+                            }
+                            $aData['answervalue'] = $answervalue;
+                            $aData['inserthighlight'] = $inserthighlight;
+                            $aData['fnames'] = $fnames;
+                            $aData['i'] = $i;
+                            $aViewUrls['browseidrow_view'][] = $aData;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Yii::app()->session['flashmessage'] = gT("This response ID is invalid.");
+            }
+
+            $aViewUrls[] = 'browseidfooter_view';
+            $aData['sidemenu']['state'] = false;
+            $aData['menu']['edition'] = true;
+            //$aData['menu']['view'] = true;
+            $aData['menu']['close'] =  true;
+            // This resets the url on the close button to go to the upper view
+            //$aData['menu']['closeurl'] = $this->getController()->createUrl("admin/responses/sa/browse/surveyid/".$iSurveyId);
+            $aData['menu']['closeurl'] = $this->getController()->createUrl("admin/participants/displayParticipants");
+
+            $this->_renderWrappedTemplate('',$aViewUrls, $aData);
+        }
+        else
+        {
+            $aData = array();
+            $aData['surveyid'] = $iSurveyID;
+            $message = array();
+            $message['title']= gT('Access denied!');
+            $message['message']= gT('You do not have permission to access this page.');
+            $message['class']= "error";
+            $this->_renderWrappedTemplate('survey', array("message"=>$message), $aData);
+        }
+    }
+
+    public function view_old($iSurveyID, $iId, $sBrowseLang = '')
+    {
         if(Permission::model()->hasSurveyPermission($iSurveyID,'responses','read'))
         {
             $aData = $this->_getData(array('iId' => $iId, 'iSurveyId' => $iSurveyID, 'browselang' => $sBrowseLang));
@@ -229,6 +623,33 @@ class responses extends Survey_Common_Action
 
                 $oCriteria->addCondition("id = {$iId}");
                 $iIdresult = SurveyDynamic::model($iSurveyID)->findAllAsArray($oCriteria);
+
+                //echo "<pre>".print_r($iIdresult,true)."</pre>"; die();
+                $aData['iIdresult'] = $iIdresult;
+
+                $chide = "token,id,responsedid,startlanguage,ipaddress,referrerurl,firstname,lastname,email,completed,submitdate";
+                $hrows = array();
+                $hrows[] = 'Completed';
+                $flabels = array();
+                foreach($fnames as $fname){
+                  if(in_array($fname['code'],explode(",",$chide))){
+                    $hrows[] = $fname[1];
+                    $flabels[$fname['code']] = $fname[1];
+                  }
+                }
+                $aData['hrows'] = $hrows;
+
+                $clist = "firstname,lastname,email,submitdate";
+                $ccols = array();
+                foreach(explode(",",$clist) as $code){
+                  if(isset($iIdresult[0][$code])){
+                    $value = $iIdresult[0][$code];
+                    $label = $flabels[$code];
+                    $ccols[] = compact('code','value','label');
+                  }
+                }
+                $aData['ccols'] = $ccols;
+
                 foreach ($iIdresult as $iIdrow)
                 {
                     $iId = $iIdrow['id'];

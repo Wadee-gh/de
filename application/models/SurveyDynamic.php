@@ -404,11 +404,12 @@ class SurveyDynamic extends LSActiveRecord
         else
             $wherefilterstate='1=1';
 
+        $token = $this->getTokenFromResponse($srid);
         if(Yii::app()->db->schema->getTable($this->tableName())){
             $data=Yii::app()->db->createCommand()
                 ->select("id")
                 ->from($this->tableName())
-                ->where(array('and',$wherefilterstate,'id > :id'), array(':id'=>$srid))
+                ->where(array('and',$wherefilterstate,'id > :id','token = :token'), array(':id'=>$srid,':token' =>$token))
                 ->order('id ASC')
                 ->queryRow();
             if($data)
@@ -437,11 +438,12 @@ class SurveyDynamic extends LSActiveRecord
         else
             $wherefilterstate='1=1';
 
+        $token = $this->getTokenFromResponse($srid);
         if(Yii::app()->db->schema->getTable($this->tableName())){
             $data=Yii::app()->db->createCommand()
                 ->select("id")
                 ->from($this->tableName())
-                ->where(array('and',$wherefilterstate,'id < :id'), array(':id'=>$srid))
+                ->where(array('and',$wherefilterstate,'id < :id','token = :token'), array(':id'=>$srid,':token' =>$token))  
                 ->order('id DESC')
                 ->queryRow();
             if($data)
@@ -701,5 +703,22 @@ class SurveyDynamic extends LSActiveRecord
                 }
             }
         }
+    }
+
+    public function getTokenFromResponse($srid)
+    {
+        $token = '';
+        if(Yii::app()->db->schema->getTable($this->tableName())){
+            $data=Yii::app()->db->createCommand()
+                ->select("token")
+                ->from($this->tableName())
+                ->where('id=:id', array(':id'=>$srid))
+                ->queryRow();
+            if($data)
+            {
+                $token = $data['token'];
+            }
+        }
+        return($token);
     }
 }

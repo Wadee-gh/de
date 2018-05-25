@@ -220,7 +220,7 @@
                         <span class="icon-export text-success downloadfile"></span>
                         <?php eT("Export this response"); ?>
                     </a>
-                <?php endif;?>
+                <?php endif; ?>
 
             <a href='<?php echo $this->createUrl("admin/responses/sa/view/surveyid/$surveyid/id/$previous"); ?>' title='<?php eT("Show previous..."); ?>'
                 class="btn btn-default <?php if (!$previous) {echo 'disabled';}?>">
@@ -231,6 +231,13 @@
                 <span class="icon-dataforward text-success" title='<?php eT("Show next..."); ?>'></span> <?php eT("Show next..."); ?>
             </a>
 
+            <?php endif;?>
+
+            <?php if(isset($menu) && isset($menu['uplevel']) && $menu['uplevel']): ?>
+                <a class="btn btn-default" href="<?php echo  $menu['uplevelurl'];  ?>" role="button">
+                    <span class="icon-databack text-success" title='<?php eT("Up One Level"); ?>'></span>
+                    <?php eT("Up One Level");?>
+                </a>
             <?php endif;?>
 
             <?php if(isset($menu) && isset($menu['close']) && $menu['close']): ?>
