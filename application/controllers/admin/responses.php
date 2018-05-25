@@ -344,6 +344,9 @@ class responses extends Survey_Common_Action
                       $aData['view_title'] = $view_title;
                       $aData['menu']['uplevel'] =  true;
                       $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']);
+                      if(empty($fields)){
+                        $this->getController()->redirect(array("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']));
+                      }
                     }
                     //echo "<pre>".print_r($crows,true)."</pre>"; die();
                     if(!empty($crows)){
