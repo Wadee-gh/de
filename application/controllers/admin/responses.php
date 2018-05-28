@@ -241,8 +241,11 @@ class responses extends Survey_Common_Action
                 } else
                 if(isset($_GET['group'])){
                   $level = 2;
-                } else {
+                } else
+                if(isset($_GET['id'])){
                   $level = 1;
+                } else {
+                  $level = 0;
 
                 }
                 $aData['view_title'] = $view_title;
@@ -335,6 +338,13 @@ class responses extends Survey_Common_Action
                         //$qcode = str_replace("LV2","",$f['title']);
                         $qcode = $f['title'];
                         $f['link'] = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/qcode/".$qcode;
+                        if(isset($f['subquestion'])) $f['question'] .= " ".$f['subquestion'];
+                        //echo "<pre>".print_r($f,true)."</pre>"; //die();
+                        //echo "<pre>".print_r($fnames,true)."</pre>"; die();
+                        //$answervalue = htmlspecialchars(strip_tags(stripJavaScript(getExtendedAnswer($iSurveyID, $fnames[$i][0], $iIdrow[$fnames[$i][0]], $sBrowseLanguage))), ENT_QUOTES);
+                        $fieldname = $f['fieldname'];
+                        $answervalue = htmlspecialchars(strip_tags(stripJavaScript(getExtendedAnswer($iSurveyID,$fieldname,$r[$fieldname], $sBrowseLanguage))), ENT_QUOTES);
+                        $f['result'] = $answervalue;
                         $crows[] = $f;
                       }
                       // add view title.

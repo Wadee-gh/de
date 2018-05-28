@@ -697,7 +697,11 @@ class CParticipant extends LSActiveRecord
             $field['result'] = $r[$fieldname];
             if($contains){
               if(strpos($title,$contains) !== FALSE){
-                $groups[$gid]['fields'][$fieldname] = $field;
+                $title2 = str_replace($contains,"",$title);
+                // only show immediate children. allows multiple sublevels.
+                if(strpos($title2,"S") === FALSE){
+                  $groups[$gid]['fields'][$fieldname] = $field;
+                }
               }
             }
 
