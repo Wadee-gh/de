@@ -241,11 +241,8 @@ class responses extends Survey_Common_Action
                 } else
                 if(isset($_GET['group'])){
                   $level = 2;
-                } else
-                if(isset($_GET['id'])){
-                  $level = 1;
                 } else {
-                  $level = 0;
+                  $level = 1;
 
                 }
                 $aData['view_title'] = $view_title;
@@ -336,12 +333,9 @@ class responses extends Survey_Common_Action
                       $fields = $details[$gid]['fields'];
                       foreach($fields as $f){
                         //$qcode = str_replace("LV2","",$f['title']);
-                        $qcode = $f['title'];
-                        $f['link'] = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/qcode/".$qcode;
+                        $title = $f['title'].$f['aid'];
+                        $f['link'] = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/qcode/".$title;
                         if(isset($f['subquestion'])) $f['question'] .= " ".$f['subquestion'];
-                        //echo "<pre>".print_r($f,true)."</pre>"; //die();
-                        //echo "<pre>".print_r($fnames,true)."</pre>"; die();
-                        //$answervalue = htmlspecialchars(strip_tags(stripJavaScript(getExtendedAnswer($iSurveyID, $fnames[$i][0], $iIdrow[$fnames[$i][0]], $sBrowseLanguage))), ENT_QUOTES);
                         $fieldname = $f['fieldname'];
                         $answervalue = htmlspecialchars(strip_tags(stripJavaScript(getExtendedAnswer($iSurveyID,$fieldname,$r[$fieldname], $sBrowseLanguage))), ENT_QUOTES);
                         $f['result'] = $answervalue;
@@ -392,6 +386,9 @@ class responses extends Survey_Common_Action
                         $title = $f['title'].$f['aid'];
                         $f['link'] = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/qcode/".$title."/up/".$parent;
                         if(isset($f['subquestion'])) $f['question'] .= " ".$f['subquestion'];
+                        $fieldname = $f['fieldname'];
+                        $answervalue = htmlspecialchars(strip_tags(stripJavaScript(getExtendedAnswer($iSurveyID,$fieldname,$r[$fieldname], $sBrowseLanguage))), ENT_QUOTES);
+                        $f['result'] = $answervalue;
                         $crows[] = $f;
                       }
                       // add view title.
