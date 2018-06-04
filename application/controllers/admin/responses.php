@@ -363,7 +363,7 @@ class responses extends Survey_Common_Action
                        }
                        $aData['ccols'] = $ccols;
                        $aData['clabels'] = $clabels;
-                       $aViewUrls[] = 'browseidrowlv1_view';
+                       $aViewUrls[] = 'browseidrowlv2_view';
                     }
                   }
                } else
@@ -413,7 +413,7 @@ class responses extends Survey_Common_Action
                        }
                        $aData['ccols'] = $ccols;
                        $aData['clabels'] = $clabels;
-                       $aViewUrls[] = 'browseidrowlv1_view';
+                       $aViewUrls[] = 'browseidrowlv3_view';
                     }
                   }
                 } else {
