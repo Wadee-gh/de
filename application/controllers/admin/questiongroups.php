@@ -544,7 +544,7 @@ class questiongroups extends Survey_Common_Action
         foreach($groups as $group){
           $html .=
             '<div class="col-sm-4">
-              <label title="'.$group['group_title'].'"><input type="checkbox" name="groups[]" value="'.$group['gid'].'">'.$group['group_name'].'</label>
+              <label><input type="checkbox" name="groups[]" value="'.$group['gid'].'">'.$group['group_name'].'</label>
             </div>';
           /*for($i=0;$i<20;$i++){
             $html .=
