@@ -330,6 +330,12 @@ class responses extends Survey_Common_Action
                     $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap,'LV2');
                     $crows = array();
                     if(isset($details[$gid])){
+                      if(!isset($details[$gid]['fields'])){
+                        $lv1_details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap,'LV1');
+                        if(!isset($lv1_details[$gid]['fields'])){
+                          $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap);
+                        }
+                      }
                       $fields = $details[$gid]['fields'];
                       foreach($fields as $f){
                         //$qcode = str_replace("LV2","",$f['title']);
