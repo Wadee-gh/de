@@ -710,6 +710,7 @@ class CParticipant extends LSActiveRecord
               $name = $field['question'];
               if(isset($field['subquestion'])) $name .= " ".$field['subquestion'];
               $groups[$gid]['name'] = $name;
+              $groups[$gid]['fields'][$fieldname] = $field;   
             }
           }
         }
