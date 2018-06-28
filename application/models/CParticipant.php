@@ -710,7 +710,7 @@ class CParticipant extends LSActiveRecord
               $name = $field['question'];
               if(isset($field['subquestion'])) $name .= " ".$field['subquestion'];
               $groups[$gid]['name'] = $name;
-              $groups[$gid]['fields'][$fieldname] = $field;   
+              $groups[$gid]['fields'][$fieldname] = $field;
             }
           }
         }
@@ -724,19 +724,31 @@ class CParticipant extends LSActiveRecord
         //echo "result:<br><pre>".print_r($r,true)."</pre>";
         $groups = array();
         foreach($fieldmap as $field){
-          $gid = $field['gid'];
-          if(in_array($gid,$rgroups)){
-            $name = $field['group_name'];
-            $groups[$gid]['name'] = $name;
-            $title = $field['title'];
-            $fieldname = $field['fieldname'];
-            $field['result'] = $r[$fieldname];
-            if($contains){
-              if(strpos($title,$contains) !== FALSE){
-                $groups[$gid]['fields'][$fieldname] = $field;
+          $qid = $field['qid'];
+          if($qid){
+            $gid = $field['gid'];
+            if(in_array($gid,$rgroups)){
+              $type = $field['type'];
+              $groups[$gid]['questions'][$qid]['type'] = $type;
+              $tlist = "1,5,A,B,C,E,F,G,H,L,M,Y,Z,!";
+              if(in_array($type,explode(",",$tlist))){
+                $groups[$gid]['questions'][$qid]['answers'] = Question::model()->getOrderedAnswers2($qid);
               }
-            } else {
-                $groups[$gid]['fields'][$fieldname] = $field;
+
+              $name = $field['group_name'];
+              $groups[$gid]['name'] = $name;
+              $title = $field['title'];
+              $fieldname = $field['fieldname'];
+              $field['result'] = $r[$fieldname];
+              $groups[$gid]['questions'][$qid]['fields'][] = $fieldname;
+
+              if($contains){
+                if(strpos($title,$contains) !== FALSE){
+                  $groups[$gid]['fields'][$fieldname] = $field;
+                }
+              } else {
+                  $groups[$gid]['fields'][$fieldname] = $field;
+              }
             }
           }
         }

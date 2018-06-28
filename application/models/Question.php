@@ -735,6 +735,37 @@ class Question extends LSActiveRecord
         return $button;
     }
 
+    public function getOrderedAnswers2($qid, $random=0, $alpha=0)
+    {
+        $language = "en";
+        //question attribute random order set?
+        if ($random==1)
+        {
+            $ansquery = "SELECT * FROM {{answers}} WHERE qid='$qid' AND language='$language' and scale_id=0 ORDER BY ".dbRandom();
+        }
+
+        //question attribute alphasort set?
+        elseif ($alpha==1)
+        {
+            $ansquery = "SELECT * FROM {{answers}} WHERE qid='$qid' AND language='$language' and scale_id=0 ORDER BY answer";
+        }
+
+        //no question attributes -> order by sortorder
+        else
+        {
+            $ansquery = "SELECT * FROM {{answers}} WHERE qid='$qid' AND language='$language' and scale_id=0 ORDER BY sortorder, answer";
+        }
+
+        //echo "<br>".$ansquery."<br>";
+        $rows = dbExecuteAssoc($ansquery)->readAll();
+        $ret = array();
+        foreach($rows as $row){
+          $ret[$row['code']] = $row['answer'];
+        }
+        return $ret;
+
+    }
+
     public function getOrderedAnswers($random=0, $alpha=0)
     {
         //question attribute random order set?
