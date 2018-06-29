@@ -684,11 +684,19 @@ class CParticipant extends LSActiveRecord
         $row = Yii::app()->db->createCommand()
             ->select('*')
             ->where("lime_token='".$token."'")
-            ->from($tbl)
+            ->from("{{custom_participants}}")
             ->order("id DESC")
             ->queryRow();
         if(!empty($row)){
           $ret = $row['first_name']." ".$row['last_name']." ".$row['dob'];
+          $row2 = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("email='".$row['email']."'")
+            ->from("{{participants}}")
+            ->queryRow();
+          if(!empty($row2)){
+            $ret = $row2['firstname']." ".$row2['lastname']." ".$row2['dob'];
+          }
         }
         return($ret);
     }

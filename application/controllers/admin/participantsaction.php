@@ -598,6 +598,7 @@ class participantsaction extends Survey_Common_Action
             unset($aData['owner_uid']);
         }
 
+        //echo "<pre>".print_r($aData,true)."</pre>"; die();
         $participant->attributes = $aData;
         $success['participant'] = $participant->save();
 

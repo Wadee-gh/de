@@ -71,6 +71,7 @@ class Participant extends LSActiveRecord
             array('participant_id', 'length', 'max' => 50),
             array('firstname, lastname', 'length', 'max' => 150),
             array('language', 'length', 'max' => 40),
+            array('dob', 'length', 'max' => 40), 
             array('firstname, lastname, language', 'LSYii_Validators'),
             array('email', 'length', 'max' => 254),
             array('blacklisted', 'length', 'max' => 1),
