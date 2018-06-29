@@ -60,6 +60,7 @@
             </label>
             <div class='col-sm-10'>
                 <input class='form-control' name='Participant[email]' value='<?php echo $model->email; ?>' required data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
+                <div class="help-block with-errors"></div> 
             </div>
         </div>
         <script src="<?php echo App()->baseUrl; ?>/scripts/validator.js" type="text/javascript"></script>
