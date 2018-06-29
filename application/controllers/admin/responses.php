@@ -316,8 +316,8 @@ class responses extends Survey_Common_Action
                   }
 
                   // add view title.
-                  $participant_name = CParticipant::model()->getParticipantName($token);
-                  $view_title = sprintf(gT("View Results for %s"), $participant_name);
+                  $participant_name_dob = CParticipant::model()->getParticipantNameDob($token);
+                  $view_title = sprintf(gT("View Results for: %s"), $participant_name_dob);
                   $aData['view_title'] = $view_title;
                 } else
                 if($level == 2){
@@ -351,9 +351,9 @@ class responses extends Survey_Common_Action
                         $crows[] = $f;
                       }
                       // add view title.
-                      $participant_name = CParticipant::model()->getParticipantName($token);
+                      $participant_name_dob = CParticipant::model()->getParticipantNameDob($token);
                       $group_name = $details[$gid]['name'];
-                      $view_title = sprintf(gT("View Details for %s"), $group_name);
+                      $view_title = sprintf(gT("View Details for %s"), $group_name.": ".$participant_name_dob);
                       $aData['view_title'] = $view_title;
                       $aData['menu']['uplevel'] =  true;
                       $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']);
@@ -401,9 +401,9 @@ class responses extends Survey_Common_Action
                         $crows[] = $f;
                       }
                       // add view title.
-                      $participant_name = CParticipant::model()->getParticipantName($token);
+                      $participant_name_dob = CParticipant::model()->getParticipantNameDob($token);
                       $group_name = $details[$gid]['name'];
-                      $view_title = sprintf(gT("View Details for %s"), $group_name);
+                      $view_title = sprintf(gT("View Details for %s"), $group_name.": ".$participant_name_dob);
                       $aData['view_title'] = $view_title;
                       $aData['menu']['uplevel'] =  true;
                       $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid);
@@ -553,7 +553,7 @@ class responses extends Survey_Common_Action
         {
             //echo "<pre>".print_r($_GET,true)."</pre>"; die();
             $aData = $this->_getData(array('iId' => $iId, 'iSurveyId' => $iSurveyID, 'browselang' => $sBrowseLang));
-            //echo "<pre>".print_r($aData,true)."</pre>"; die();
+            //echo "aData:<pre>".print_r($aData,true)."</pre>"; //die();
             $sBrowseLanguage = $aData['language'];
 
             extract($aData);
@@ -562,7 +562,7 @@ class responses extends Survey_Common_Action
 
             // create fieldmap.
             $fieldmap = createFieldMap($iSurveyID, 'full', false, false, $aData['language']);
-            //echo "<pre>".print_r($fieldmap,true)."</pre>"; die();
+            //echo "fieldmap:<pre>".print_r($fieldmap,true)."</pre>"; //die();
             $bHaveToken=$aData['surveyinfo']['anonymized'] == "N" && tableExists('tokens_' . $iSurveyID);// Boolean : show (or not) the token
             if(!Permission::model()->hasSurveyPermission($iSurveyID,'tokens','read')) // If not allowed to read: remove it
             {
@@ -702,15 +702,6 @@ class responses extends Survey_Common_Action
                       $group = $g['name'];
                       $result = $g['result'];
                       $link = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid;
-                      /*if(isset($g['fields'])){
-                        if(count($g['fields']) == 1){
-                          $fields = $g['fields'];
-                          foreach($fields as $field){
-                            $title = $field['title'];
-                            $link .= "/qcode/".$title;
-                          }
-                        }
-                      }*/
                       $crows[] = compact('submitdate','group','result','link');
                     }
                   }
@@ -743,18 +734,13 @@ class responses extends Survey_Common_Action
                     $token = $r['token'];
                     $gid = $_GET['group'];
 
-                    /*$surveyid = $iSurveyID;
-                    $redata = array();
-                    $tmp = new SurveyRuntimeHelper();
-                    $tmp->run($surveyid,$redata);
-                    exit;*/
-
                     $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap);
-                    if(!isset($details[$gid]['questions'])){
+                    //echo "<pre>".print_r($details,true)."</pre>"; die();
+                    if(isset($details[$gid]['questions'])){
                       $qs = $details[$gid]['questions'];
                       foreach($qs as $q){
-                        //$tmp =
-                        $aData['output'] = $tmp;
+                        // generate question output.
+                        $aData['output'] = $this->get_question_output($q);
                         $aViewUrls['browseidrowlv2_view'][] = $aData;
                       }
                     }
@@ -1804,68 +1790,73 @@ class responses extends Survey_Common_Action
         parent::_renderWrappedTemplate('responses', $aViewUrls, $aData);
     }
 
-    public function get_question_display($q){
-            echo "\n\n<!-- PRESENT THE QUESTIONS (in SurveyRunTime )  -->\n";
+    public function get_question_output($q){
+        echo "q:<br><pre>".print_r($q,true)."</pre>"; //die();
+        //echo "\n\n<!-- PRESENT THE QUESTIONS (in SurveyRunTime )  -->\n";
 
-            foreach ($qanda as $qa) // one entry per QID
+        /*foreach ($qanda as $qa) // one entry per QID
+        {
+            // Test if finalgroup is in this qid (for all in one survey, else we do only qanda for needed question (in one by one or group by goup)
+            if ($gid != $qa['finalgroup']) {
+                continue;
+            }*/
+
+            $qid = $q['qid'];
+            $qa = getQuestionAttributeValues($qid);
+            echo "qa:<br><pre>".print_r($qa,true)."</pre>";
+            $qinfo = LimeExpressionManager::GetQuestionStatus($qid);
+            echo "qinfo:<br><pre>".print_r($qinfo,true)."</pre>"; die();
+            /*$lastgrouparray = explode("X", $qa[7]);
+            $lastgroup = $lastgrouparray[0] . "X" . $lastgrouparray[1]; // id of the last group, derived from question id
+            $lastanswer = $qa[7];*/
+
+            /*$n_q_display = '';
+            if ($qinfo['hidden'] && $qinfo['info']['type'] != '*')
             {
-                // Test if finalgroup is in this qid (for all in one survey, else we do only qanda for needed question (in one by one or group by goup)
-                if ($gid != $qa['finalgroup']) {
-                    continue;
-                }
-                $qid = $qa[4];
-                $qinfo = LimeExpressionManager::GetQuestionStatus($qid);
-                $lastgrouparray = explode("X", $qa[7]);
-                $lastgroup = $lastgrouparray[0] . "X" . $lastgrouparray[1]; // id of the last group, derived from question id
-                $lastanswer = $qa[7];
-
-                $n_q_display = '';
-                if ($qinfo['hidden'] && $qinfo['info']['type'] != '*')
-                {
-                    continue; // skip this one
-                }
-
-
-                $aReplacement=array();
-                $question = $qa[0];
-                //===================================================================
-                // The following four variables offer the templating system the
-                // capacity to fully control the HTML output for questions making the
-                // above echo redundant if desired.
-                $question['sgq'] = $qa[7];
-                $question['aid'] = !empty($qinfo['info']['aid']) ? $qinfo['info']['aid'] : 0;
-                $question['sqid'] = !empty($qinfo['info']['sqid']) ? $qinfo['info']['sqid'] : 0;
-                //===================================================================
-
-                $oTemplate = Template::model()->getInstance('', $surveyid);
-                $sTemplatePath = $oTemplate->path;
-                $sTemplateViewPath = $oTemplate->viewPath;
-
-                $question_template = file_get_contents($sTemplateViewPath.'question.pstpl');
-                // Fix old template : can we remove it ? Old template are surely already broken by another issue
-                if (preg_match('/\{QUESTION_ESSENTIALS\}/', $question_template) === false || preg_match('/\{QUESTION_CLASS\}/', $question_template) === false)
-                {
-                    // if {QUESTION_ESSENTIALS} is present in the template but not {QUESTION_CLASS} remove it because you don't want id="" and display="" duplicated.
-                    $question_template = str_replace('{QUESTION_ESSENTIALS}', '', $question_template);
-                    $question_template = str_replace('{QUESTION_CLASS}', '', $question_template);
-                    $question_template ="<div {QUESTION_ESSENTIALS} class='{QUESTION_CLASS} {QUESTION_MAN_CLASS} {QUESTION_INPUT_ERROR_CLASS}'"
-                                        . $question_template
-                                        . "</div>";
-                }
-                $redata = compact(array_keys(get_defined_vars()));
-                $aQuestionReplacement=$this->getQuestionReplacement($qa);
-                echo templatereplace($question_template, $aQuestionReplacement, $redata, false, false, $qa[4]);
-
+                continue; // skip this one
             }
-            if (!empty($qanda))
+
+
+            $aReplacement=array();
+            $question = $qa[0];
+            //===================================================================
+            // The following four variables offer the templating system the
+            // capacity to fully control the HTML output for questions making the
+            // above echo redundant if desired.
+            $question['sgq'] = $qa[7];
+            $question['aid'] = !empty($qinfo['info']['aid']) ? $qinfo['info']['aid'] : 0;
+            $question['sqid'] = !empty($qinfo['info']['sqid']) ? $qinfo['info']['sqid'] : 0;
+            //===================================================================
+
+            $oTemplate = Template::model()->getInstance('', $surveyid);
+            $sTemplatePath = $oTemplate->path;
+            $sTemplateViewPath = $oTemplate->viewPath;
+
+            $question_template = file_get_contents($sTemplateViewPath.'question.pstpl');
+            // Fix old template : can we remove it ? Old template are surely already broken by another issue
+            if (preg_match('/\{QUESTION_ESSENTIALS\}/', $question_template) === false || preg_match('/\{QUESTION_CLASS\}/', $question_template) === false)
             {
-                if ($surveyMode == 'group') {
-                    echo "<input type='hidden' name='lastgroup' value='$lastgroup' id='lastgroup' />\n"; // for counting the time spent on each group
-                }
-                if ($surveyMode == 'question') {
-                    echo "<input type='hidden' name='lastanswer' value='$lastanswer' id='lastanswer' />\n";
-                }
+                // if {QUESTION_ESSENTIALS} is present in the template but not {QUESTION_CLASS} remove it because you don't want id="" and display="" duplicated.
+                $question_template = str_replace('{QUESTION_ESSENTIALS}', '', $question_template);
+                $question_template = str_replace('{QUESTION_CLASS}', '', $question_template);
+                $question_template ="<div {QUESTION_ESSENTIALS} class='{QUESTION_CLASS} {QUESTION_MAN_CLASS} {QUESTION_INPUT_ERROR_CLASS}'"
+                                    . $question_template
+                                    . "</div>";
             }
+            $redata = compact(array_keys(get_defined_vars()));
+            $aQuestionReplacement=$this->getQuestionReplacement($qa);
+            echo templatereplace($question_template, $aQuestionReplacement, $redata, false, false, $qa[4]);*/
+
+        /*}
+        if (!empty($qanda))
+        {
+            if ($surveyMode == 'group') {
+                echo "<input type='hidden' name='lastgroup' value='$lastgroup' id='lastgroup' />\n"; // for counting the time spent on each group
+            }
+            if ($surveyMode == 'question') {
+                echo "<input type='hidden' name='lastanswer' value='$lastanswer' id='lastanswer' />\n";
+            }
+        }*/
     }
 
 }

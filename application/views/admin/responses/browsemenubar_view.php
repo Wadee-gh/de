@@ -233,6 +233,13 @@
 
             <?php endif;?>
 
+             <?php if(isset($menu) && isset($menu['close']) && $menu['close']): ?>
+                <a class="btn btn-default" href="#" role="button">
+                    <span class="glyphicon glyphicon-print" title='<?php eT("Print"); ?>'></span>
+                    <?php eT("Print");?>
+                </a>
+            <?php endif;?>
+
             <?php if(isset($menu) && isset($menu['uplevel']) && $menu['uplevel']): ?>
                 <a class="btn btn-default" href="<?php echo  $menu['uplevelurl'];  ?>" role="button">
                     <span class="icon-databack text-success" title='<?php eT("Up One Level"); ?>'></span>

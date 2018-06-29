@@ -678,6 +678,21 @@ class CParticipant extends LSActiveRecord
         return($ret);
     }
 
+    public function getParticipantNameDob($token){
+        $ret = '';
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("lime_token='".$token."'")
+            ->from($tbl)
+            ->order("id DESC")
+            ->queryRow();
+        if(!empty($row)){
+          $ret = $row['first_name']." ".$row['last_name']." ".$row['dob'];
+        }
+        return($ret);
+    }
+
     public function getCalcDetails($group,$r,$fieldmap,$contains,$parent){
         $rgroups = array($group);
         //echo "fieldmap:<br><pre>".print_r($fieldmap,true)."</pre>"; //die();
@@ -728,6 +743,7 @@ class CParticipant extends LSActiveRecord
           if($qid){
             $gid = $field['gid'];
             if(in_array($gid,$rgroups)){
+              $groups[$gid]['questions'][$qid]['qid'] = $qid;
               $type = $field['type'];
               $groups[$gid]['questions'][$qid]['type'] = $type;
               $tlist = "1,5,A,B,C,E,F,G,H,L,M,Y,Z,!";
@@ -740,7 +756,7 @@ class CParticipant extends LSActiveRecord
               $title = $field['title'];
               $fieldname = $field['fieldname'];
               $field['result'] = $r[$fieldname];
-              $groups[$gid]['questions'][$qid]['fields'][] = $fieldname;
+              $groups[$gid]['questions'][$qid]['fields'][$fieldname] = $field;
 
               if($contains){
                 if(strpos($title,$contains) !== FALSE){
