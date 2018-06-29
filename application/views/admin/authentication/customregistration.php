@@ -49,8 +49,17 @@
                           </div>
                           <div class="form-group">
                             <label>Date of Birth</label>
-                            <input type="text" class="form-control" name="dob" value="<?php echo $dob;?>" required placeholder="yyyy-mm-dd" data-error="Please match the requested format yyyy-mm-dd" pattern="^\d{4}[\-\/\s]?((((0[13578])|(1[02]))[\-\/\s]?(([0-2][0-9])|(3[01])))|(((0[469])|(11))[\-\/\s]?(([0-2][0-9])|(30)))|(02[\-\/\s]?[0-2][0-9]))$">
+                            <input type="text" class="form-control form_date" name="dob" value="<?php echo $dob;?>" required placeholder="yyyy-mm-dd" data-error="Please match the requested format yyyy-mm-dd" pattern="^\d{4}[\-\/\s]?((((0[13578])|(1[02]))[\-\/\s]?(([0-2][0-9])|(3[01])))|(((0[469])|(11))[\-\/\s]?(([0-2][0-9])|(30)))|(02[\-\/\s]?[0-2][0-9]))$">
                             <div class="help-block with-errors"></div>
+                            <script type="text/javascript">
+                                $(".form_date").datetimepicker({
+                                  format: 'YYYY-MM-DD',
+                                  /*widgetPositioning: {
+                                    horizontal: 'auto',
+                                    vertical: 'bottom'
+                                  }*/
+                                });
+                            </script>
                           </div>
                           <div class="form-group">
                             <label>Email</label>
@@ -64,12 +73,18 @@
                                 }
                               }
                             ?>
-                            <input type="email" class="form-control" name="email" value="<?php echo $email;?>" <?php if($disabled) echo "disabled";?> required placeholder="Email" data-error="The email address is invalid">
+                            <input type="email" class="form-control" name="email" value="<?php echo $email;?>" <?php if($disabled) echo "disabled";?> required placeholder="Email" data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$">
                             <?php if($disabled) { ?>
                             <input type="hidden" name="email" value="<?php echo $email;?>" />
                             <?php } ?>
                             <div class="help-block with-errors"></div>
                           </div>
+
+                          <script src="<?php echo App()->baseUrl; ?>/scripts/validator.js" type="text/javascript"></script>
+                          <script type="text/javascript">
+                            $('#registrationform').validator();
+                          </script>
+
                         </div>
                     </div>
 

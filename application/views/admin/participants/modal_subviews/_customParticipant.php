@@ -4,7 +4,7 @@
         array(
             'id' => 'customParticipantActiveForm',
             'action' => App()->createUrl('/admin/participants/saveCustomParticipant'),
-            'htmlOptions' => array('class' => 'form-horizontal'), // for inset effect
+            'htmlOptions' => array('class' => 'form-horizontal','data-toggle' => "validator"), // for inset effect
         )
     );
 
@@ -15,7 +15,6 @@
     }
 
 ?>
-
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -66,7 +65,8 @@
                 <?php eT('Email'); ?>
               </label>
               <div class='col-sm-10'>
-                  <input type="text" name="email" class="form-control" value="<?php echo $email;?>"/>
+                  <input type="text" name="email" class="form-control" required value="<?php echo $email;?>" data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
+                  <div class="help-block with-errors"></div>
               </div>
           </div>
         <?php } else {
@@ -86,6 +86,11 @@
         </div>-->
 
     </div>
+
+    <script src="<?php echo App()->baseUrl; ?>/scripts/validator.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $('#customParticipantActiveForm').validator();
+    </script>
 
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><?php eT('Close') ?></button>

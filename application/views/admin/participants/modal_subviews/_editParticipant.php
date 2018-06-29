@@ -39,12 +39,34 @@
         </div>
         <div class='form-group'>
             <label class='control-label col-sm-2'>
+                <?php eT('Date of Birth:'); ?>
+            </label>
+            <div class='col-sm-10'>
+                <input class='form-control form_date' name='Participant[dob]' value='<?php echo $model->dob; ?>' />
+            </div>
+            <script type="text/javascript">
+                $(".form_date").datetimepicker({
+                  format: 'YYYY-MM-DD',
+                  /*widgetPositioning: {
+                    horizontal: 'auto',
+                    vertical: 'bottom'
+                  }*/
+                });
+            </script>
+        </div>
+        <div class='form-group'>
+            <label class='control-label col-sm-2'>
                 <?php eT('E-mail:'); ?>
             </label>
             <div class='col-sm-10'>
-                <input class='form-control' name='Participant[email]' value='<?php echo $model->email; ?>' />
+                <input class='form-control' name='Participant[email]' value='<?php echo $model->email; ?>' required data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
             </div>
         </div>
+        <script src="<?php echo App()->baseUrl; ?>/scripts/validator.js" type="text/javascript"></script>
+        <script type="text/javascript">
+          $('#editPartcipantActiveForm').validator();
+        </script>
+
         <div class='form-group'>
             <label class='control-label col-sm-2'><?php eT("Blacklist user:"); ?></label>
             <div class='col-sm-8'>

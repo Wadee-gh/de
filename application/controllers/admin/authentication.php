@@ -98,6 +98,7 @@ class Authentication extends Survey_Common_Action
         2 - token created, load survey.
         **/
         if($status == 0){
+          Yii::app()->clientScript->registerPackage('bootstrap-datetimepicker');
           $this->_renderWrappedTemplate('authentication', 'customregistration', compact('cparticipation'));
         } else
         if($status == 1){
