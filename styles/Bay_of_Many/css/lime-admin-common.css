@@ -2387,10 +2387,13 @@ div.custom_lv2 td.radio label {
   padding-left: 20px;
 }
 
-div.custom_lv2 input[type=radio] {
-  margin-left: 50%;
+div.custom_lv2 div.label-text {
+  display: inline;
 }
 
+div.custom_lv2 td.radio input[type=radio] {
+  margin-left: 50%;
+}
 
 .visible-xs-block, .visible-xs-inline, .visible-xs-inline-block, .visible-sm-block, .visible-sm-inline, .visible-sm-inline-block, .visible-md-block, .visible-md-inline, .visible-md-inline-block, .visible-lg-block, .visible-lg-inline, .visible-lg-inline-block {
   display: none !important;
