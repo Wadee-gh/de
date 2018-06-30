@@ -726,6 +726,7 @@ class responses extends Survey_Common_Action
                   $aData['view_title'] = $view_title;
                 } else
                 if($level == 2){
+                  Yii::app()->loadHelper('expressions.em_manager');
                   Yii::app()->loadHelper('frontend');
                   Yii::app()->loadHelper('qanda');
                   Yii::app()->setConfig('surveyID',$iSurveyID);
@@ -740,11 +741,17 @@ class responses extends Survey_Common_Action
                     //echo "<pre>".print_r($fieldmap,true)."</pre>"; die();
                     foreach($fieldmap as $fkey => $field){
                       $title = $field['title'];
+                      $aid = $field['aid'];
+                      if($aid){
+                        $title = $title."_".$aid;
+                        //echo $title."<br>"; die();
+                      }
                       if($title){
                         $_SESSION['survey_'.$iSurveyID][$title] = $r[$fkey];
                         $_SESSION['survey_'.$iSurveyID][$fkey] = $r[$fkey];
                       }
                     }
+                    //echo "<pre>".print_r($_SESSION['survey_'.$iSurveyID],true)."</pre>"; die();
                     $saved_id = $r['id'];
                     $token = $r['token'];
                     $redata = compact('saved_id','token');
@@ -1798,11 +1805,10 @@ class responses extends Survey_Common_Action
             $qanda=array();
 
             //echo "fieldarray:<br><pre>".print_r($_SESSION[$LEMsessid]['fieldarray'],true)."</pre>"; die();
+            //echo "data:<br><pre>".print_r($_SESSION[$LEMsessid],true)."</pre>"; die();
             //echo "gid: ".$gid."<br>";
             foreach ($_SESSION[$LEMsessid]['fieldarray'] as $key => $ia)
             {
-                $_SESSION[$LEMsessid][$ia[1]] = $r[$ia[1]];
-                $_SESSION[$LEMsessid][$ia[2]] = $r[$ia[1]];
                 ++$qnumber;
                 $ia[9] = $qnumber; // incremental question count;
 
@@ -1824,7 +1830,15 @@ class responses extends Survey_Common_Action
                     //Get the answers/inputnames
                     // TMSW - can content of retrieveAnswers() be provided by LEM?  Review scope of what it provides.
                     // TODO - retrieveAnswers is slow - queries database separately for each question. May be fixed in _CI or _YII ports, so ignore for now
+
                     //echo "ia:<br><pre>".print_r($ia,true)."</pre>";
+                    if($ia[4] == '*'){
+                      /*echo "ia:<br><pre>".print_r($ia,true)."</pre>";
+                      echo "value1:<br><pre>".print_r($_SESSION[$LEMsessid][$ia[1]],true)."</pre>";
+                      echo "value2:<br><pre>".print_r($_SESSION[$LEMsessid][$ia[2]],true)."</pre>";
+                      //echo "data:<br><pre>".print_r($_SESSION[$LEMsessid],true)."</pre>";
+                      die();*/
+                    }
                     list($plus_qanda, $plus_inputnames) = retrieveAnswers($ia, $surveyid);
                     //echo "plus_qanda:<br><pre>".print_r($plus_qanda,true)."</pre>"; //die();
                     //echo "plus_inputnames:<br><pre>".print_r($plus_inputnames,true)."</pre>"; die();
@@ -1877,6 +1891,7 @@ class responses extends Survey_Common_Action
 
         ob_start();
 
+            //echo "<pre>".print_r($qa,true)."</pre>";
             $qid = $qa[4];
             $qinfo = LimeExpressionManager::GetQuestionStatus($qid);
             //echo "qinfo:<br><pre>".print_r($qinfo,true)."</pre>";
@@ -1892,6 +1907,7 @@ class responses extends Survey_Common_Action
 
             $aReplacement=array();
             $question = $qa[0];
+
             //===================================================================
             // The following four variables offer the templating system the
             // capacity to fully control the HTML output for questions making the
@@ -1914,7 +1930,7 @@ class responses extends Survey_Common_Action
                 // if {QUESTION_ESSENTIALS} is present in the template but not {QUESTION_CLASS} remove it because you don't want id="" and display="" duplicated.
                 $question_template = str_replace('{QUESTION_ESSENTIALS}', '', $question_template);
                 $question_template = str_replace('{QUESTION_CLASS}', '', $question_template);
-                $question_template ="<div {QUESTION_ESSENTIALS} class='{QUESTION_CLASS} {QUESTION_MAN_CLASS} {QUESTION_INPUT_ERROR_CLASS}'"
+                $question_template = "<div {QUESTION_ESSENTIALS} class='{QUESTION_CLASS} {QUESTION_MAN_CLASS} {QUESTION_INPUT_ERROR_CLASS}'"
                                     . $question_template
                                     . "</div>";
             }
@@ -1962,12 +1978,11 @@ class responses extends Survey_Common_Action
         $iQid=$aQuestionQanda[4];
         //echo "iQid: ".$iQid."<br>";
         $lemQuestionInfo = LimeExpressionManager::GetQuestionStatus($iQid);
-        //echo "lemQuestionInfo: <br><pre>".print_r($lemQuestionInfo,true)."</pre>"; die();
+        //echo "lemQuestionInfo: <br><pre>".print_r($lemQuestionInfo,true)."</pre>"; //die();
 
         $iSurveyId=Yii::app()->getConfig('surveyID');// Or : by SGQA of question ? by Question::model($iQid)->sid;
         $oSurveyId=Survey::model()->findByPk($iSurveyId);
         $sType=$lemQuestionInfo['info']['type'];
-
 
         // Core value : not replaced
         $aReplacement['QID']=$iQid;
@@ -2015,6 +2030,15 @@ class responses extends Survey_Common_Action
         $aReplacement['QUESTION']=$aQuestionQanda[0]['all'] ; // Deprecated : only used in old template (very old)
         // Core value : user text
         $aReplacement['QUESTION_TEXT'] = $aQuestionQanda[0]['text'];
+        $type = $aQuestionQanda[8];
+        if($type == '*'){
+          //echo "qa:<br><pre>".print_r($aQuestionQanda,true)."</pre>";
+          $LEMsessid = "survey_".$iSurveyId;
+          //echo "data:<br><pre>".print_r($_SESSION[$LEMsessid],true)."</pre>";
+          $answer = $_SESSION[$LEMsessid][$aQuestionQanda[7]];
+          //echo "answer: ".$answer."<br>";
+          $aReplacement['QUESTION_TEXT'] .= " ".$answer;
+        }
         $aReplacement['QUESTIONHELP']=$lemQuestionInfo['info']['help'];// User help
         // To be moved in a extra plugin : QUESTIONHELP img adding
         $sTemplateDir=Template::model()->getTemplatePath($oSurveyId->template);
