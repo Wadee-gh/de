@@ -2375,3 +2375,25 @@ input[type="file"].form-control {
     margin: 0;
   }
 }
+
+/* custom lv2 css. */
+div.custom_lv2 td.radio {
+  display: table-cell;
+  text-align: center;
+  padding-left: 0px;
+}
+
+div.custom_lv2 td.radio label {
+  padding-left: 20px;
+}
+
+div.custom_lv2 input[type=radio] {
+  padding-left: 60%;
+}
+
+
+.visible-xs-block, .visible-xs-inline, .visible-xs-inline-block, .visible-sm-block, .visible-sm-inline, .visible-sm-inline-block, .visible-md-block, .visible-md-inline, .visible-md-inline-block, .visible-lg-block, .visible-lg-inline, .visible-lg-inline-block {
+  display: none !important;
+}
+
+

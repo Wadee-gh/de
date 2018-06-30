@@ -1,4 +1,4 @@
-</table>
+
 </div>
 </div>
 </div>

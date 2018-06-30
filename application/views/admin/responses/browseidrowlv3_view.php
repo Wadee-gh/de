@@ -1,3 +1,4 @@
+<table class='table table-striped'>
 <thead>
   <tr>
     <?php foreach($ccols as $ccol){ ?>
@@ -22,5 +23,6 @@
   </tr>
   <?php } ?>
 </tbody>
+</table>    
 
 

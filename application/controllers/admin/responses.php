@@ -129,7 +129,7 @@ class responses extends Survey_Common_Action
     * @param mixed $iId
     * @param mixed $sBrowseLang
     */
-    public function view($iSurveyID, $iId, $sBrowseLang = '')
+    public function view_old2($iSurveyID, $iId, $sBrowseLang = '')
     {
         /*if(!isset($_GET['level'])){
           $this->getController()->redirect(array("admin/responses/sa/view/surveyid/{$iSurveyID}/id/{$iId}/level/1"));
@@ -372,7 +372,7 @@ class responses extends Survey_Common_Action
                        }
                        $aData['ccols'] = $ccols;
                        $aData['clabels'] = $clabels;
-                       $aViewUrls[] = 'browseidrowlv2_view';
+                       $aViewUrls[] = 'browseidrowlv3_view';
                     }
                   }
                } else
@@ -543,7 +543,7 @@ class responses extends Survey_Common_Action
         }
     }
 
-    public function view_dev($iSurveyID, $iId, $sBrowseLang = '')
+    public function view($iSurveyID, $iId, $sBrowseLang = '')
     {
         /*if(!isset($_GET['level'])){
           $this->getController()->redirect(array("admin/responses/sa/view/surveyid/{$iSurveyID}/id/{$iId}/level/1"));
@@ -726,70 +726,34 @@ class responses extends Survey_Common_Action
                   $aData['view_title'] = $view_title;
                 } else
                 if($level == 2){
-                  // for each response, get group details.
-                  //Yii::import('application.helpers.SurveyRuntimeHelper');
+                  Yii::app()->loadHelper('frontend');
+                  Yii::app()->loadHelper('qanda');
+                  Yii::app()->setConfig('surveyID',$iSurveyID);
+                  buildsurveysession($iSurveyID);
+                  //echo "<pre>".print_r($_SESSION,true)."</pre>"; die();
+                  //echo "<pre>".print_r($_SESSION['survey_'.$iSurveyID]['fieldarray'],true)."</pre>"; die();
+                  $gid = $_GET['group'];
+                  $qanda = $this->get_qanda($gid,'survey_'.$iSurveyID);
+                  //echo "<pre>".print_r($qanda,true)."</pre>"; die();
+                  foreach($qanda as $qa){
+                    $output = $this->get_question_output($surveyid,$qa);
+                    $aData['output'] = $output;
+                    $aViewUrls['browseidrowlv2_view'][] = $aData;
+                  }
+
                   $responses = $iIdresult;
                   foreach($responses as $r){
                     $submitdate = $r['submitdate'];
                     $token = $r['token'];
-                    $gid = $_GET['group'];
-
-                    $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap);
-                    //echo "<pre>".print_r($details,true)."</pre>"; die();
-                    if(isset($details[$gid]['questions'])){
-                      $qs = $details[$gid]['questions'];
-                      foreach($qs as $q){
-                        // generate question output.
-                        $aData['output'] = $this->get_question_output($q);
-                        $aViewUrls['browseidrowlv2_view'][] = $aData;
-                      }
-                    }
-                    //echo "<pre>".print_r(compact('gid','r','fieldmap','details'),true)."</pre>"; die();
-                    //$details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap,'LV2');
-                    /*$crows = array();
-                    if(isset($details[$gid])){
-                      if(!isset($details[$gid]['fields'])){
-                        $lv1_details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap,'LV1');
-                        if(!isset($lv1_details[$gid]['fields'])){
-                          $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap);
-                        }
-                      }
-                      $fields = $details[$gid]['fields'];
-                      foreach($fields as $f){
-                        //$qcode = str_replace("LV2","",$f['title']);
-                        $title = $f['title'].$f['aid'];
-                        $f['link'] = "admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/qcode/".$title;
-                        if(isset($f['subquestion'])) $f['question'] .= " ".$f['subquestion'];
-                        $fieldname = $f['fieldname'];
-                        $answervalue = htmlspecialchars(strip_tags(stripJavaScript(getExtendedAnswer($iSurveyID,$fieldname,$r[$fieldname], $sBrowseLanguage))), ENT_QUOTES);
-                        $f['result'] = $answervalue;
-                        $crows[] = $f;
-                      }
-                      // add view title.
-                      $participant_name = CParticipant::model()->getParticipantName($token);
-                      $group_name = $details[$gid]['name'];
-                      $view_title = sprintf(gT("View Details for %s"), $group_name);
-                      $aData['view_title'] = $view_title;
-                      $aData['menu']['uplevel'] =  true;
-                      $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']);
-                      if(empty($fields)){
-                        $this->getController()->redirect(array("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']));
-                      }
-                    }
-                    //echo "<pre>".print_r($crows,true)."</pre>"; die();
-                    if(!empty($crows)){
-                       $aData['crows'] = $crows;
-                       $ccols = explode(",","question,result");
-                       $clabels = array();
-                       foreach($ccols as $ccol){
-                         $clabel = ucwords(str_replace("_"," ",$ccol));
-                         $clabels[$ccol] = $clabel;
-                       }
-                       $aData['ccols'] = $ccols;
-                       $aData['clabels'] = $clabels;
-                       $aViewUrls[] = 'browseidrowlv2_view';
-                    }*/
+                    $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap,'');
+                    $participant_name_dob = CParticipant::model()->getParticipantNameDob($token);
+                    $group_name = $details[$gid]['name'];
+                    $view_title = sprintf(gT("View Details for %s"), $group_name.": ".$participant_name_dob);
+                    $aData['view_title'] = $view_title;
+                    $aData['menu']['uplevel'] =  true;
+                    $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']);
                   }
+
                } else
                if($level == 3){
                   // for each response, get group details.
@@ -1790,32 +1754,123 @@ class responses extends Survey_Common_Action
         parent::_renderWrappedTemplate('responses', $aViewUrls, $aData);
     }
 
-    public function get_question_output($q){
-        echo "q:<br><pre>".print_r($q,true)."</pre>"; //die();
-        //echo "\n\n<!-- PRESENT THE QUESTIONS (in SurveyRunTime )  -->\n";
+    public function get_qanda($gid,$LEMsessid){
+        //echo "<pre>".print_r($q,true)."</pre>"; die();
+        //setNoAnswerMode($thissurvey);
 
-        /*foreach ($qanda as $qa) // one entry per QID
-        {
-            // Test if finalgroup is in this qid (for all in one survey, else we do only qanda for needed question (in one by one or group by goup)
-            if ($gid != $qa['finalgroup']) {
-                continue;
+        //Iterate through the questions about to be displayed:
+        $inputnames = array();
+
+        /*foreach ($_SESSION[$LEMsessid]['grouplist'] as $gl)
+        {*/
+            //$gid = $gl['gid'];
+            //$gid = $q['gid'];
+
+            $qnumber = 0;
+
+            /*if ($surveyMode != 'survey')
+            {
+                $onlyThisGID = $stepInfo['gid'];
+                if ($onlyThisGID != $gid)
+                {
+                    continue;
+                }
             }*/
 
-            $qid = $q['qid'];
-            $qa = getQuestionAttributeValues($qid);
-            echo "qa:<br><pre>".print_r($qa,true)."</pre>";
+            // TMSW - could iterate through LEM::currentQset instead
+
+            //// To diplay one question, all the questions are processed ?
+            $qanda=array();
+
+            //echo "<pre>".print_r($_SESSION[$LEMsessid]['fieldarray'],true)."</pre>"; die();
+            //echo "gid: ".$gid."<br>";
+            foreach ($_SESSION[$LEMsessid]['fieldarray'] as $key => $ia)
+            {
+                ++$qnumber;
+                $ia[9] = $qnumber; // incremental question count;
+
+                if ((isset($ia[10]) && $ia[10] == $gid) || (!isset($ia[10]) && $ia[5] == $gid))// Make $qanda only for needed question $ia[10] is the randomGroup and $ia[5] the real group
+                {
+                    /*if ($surveyMode == 'question' && $ia[0] != $stepInfo['qid'])
+                    {
+                        continue;
+                    }*/
+                    //echo "ia:<br><pre>".print_r($ia,true)."</pre>";
+                    $qidattributes = getQuestionAttributeValues($ia[0]);
+                    //echo "qidattributes:<br><pre>".print_r($qidattributes,true)."</pre>"; //die();
+
+                    if ($ia[4] != '*' && ($qidattributes === false || !isset($qidattributes['hidden']) || $qidattributes['hidden'] == 1))
+                    {
+                        continue;
+                    }
+
+                    //Get the answers/inputnames
+                    // TMSW - can content of retrieveAnswers() be provided by LEM?  Review scope of what it provides.
+                    // TODO - retrieveAnswers is slow - queries database separately for each question. May be fixed in _CI or _YII ports, so ignore for now
+                    list($plus_qanda, $plus_inputnames) = retrieveAnswers($ia, $surveyid);
+                    //echo "plus_qanda:<br><pre>".print_r($plus_qanda,true)."</pre>"; //die();
+                    //echo "plus_inputnames:<br><pre>".print_r($plus_inputnames,true)."</pre>"; die();
+                    if ($plus_qanda)
+                    {
+                        $plus_qanda[] = $ia[4];
+                        $plus_qanda[] = $ia[6]; // adds madatory identifyer for adding mandatory class to question wrapping div
+                        // Add a finalgroup in qa array , needed for random attribute : TODO: find a way to have it in new quanda_helper in 2.1
+                        if(isset($ia[10]))
+                            $plus_qanda['finalgroup']=$ia[10];
+                        else
+                            $plus_qanda['finalgroup']=$ia[5];
+                        $qanda[] = $plus_qanda;
+                    }
+
+                    //echo "qanda:<br><pre>".print_r($qanda,true)."</pre>";
+
+                    if ($plus_inputnames)
+                    {
+                        $inputnames = addtoarray_single($inputnames, $plus_inputnames);
+                    }
+
+                    /*//Display the "mandatory" popup if necessary
+                    // TMSW - get question-level error messages - don't call **_popup() directly
+                    if ($okToShowErrors && $stepInfo['mandViolation'])
+                    {
+                        list($mandatorypopup, $popup) = mandatory_popup($ia, $notanswered);
+                    }
+
+                    //Display the "validation" popup if necessary
+                    if ($okToShowErrors && !$stepInfo['valid'])
+                    {
+                        list($validationpopup, $vpopup) = validation_popup($ia, $notvalidated);
+                    }
+
+                    // Display the "file validation" popup if necessary
+                    if ($okToShowErrors && isset($filenotvalidated))
+                    {
+                        list($filevalidationpopup, $fpopup) = file_validation_popup($ia, $filenotvalidated);
+                    }*/
+                }
+                /*if ($ia[4] == "|")
+                    $upload_file = TRUE;*/
+            } //end iteration
+        //}
+        return($qanda);
+    }
+
+    public function get_question_output($surveyid,$qa){
+
+        ob_start();
+
+            $qid = $qa[4];
             $qinfo = LimeExpressionManager::GetQuestionStatus($qid);
-            echo "qinfo:<br><pre>".print_r($qinfo,true)."</pre>"; die();
-            /*$lastgrouparray = explode("X", $qa[7]);
+            //echo "qinfo:<br><pre>".print_r($qinfo,true)."</pre>";
+            $lastgrouparray = explode("X", $qa[7]);
             $lastgroup = $lastgrouparray[0] . "X" . $lastgrouparray[1]; // id of the last group, derived from question id
-            $lastanswer = $qa[7];*/
+            $lastanswer = $qa[7];
 
             /*$n_q_display = '';
             if ($qinfo['hidden'] && $qinfo['info']['type'] != '*')
             {
                 continue; // skip this one
-            }
-
+            }*/
 
             $aReplacement=array();
             $question = $qa[0];
@@ -1833,6 +1888,7 @@ class responses extends Survey_Common_Action
             $sTemplateViewPath = $oTemplate->viewPath;
 
             $question_template = file_get_contents($sTemplateViewPath.'question.pstpl');
+            //echo "<pre>".print_r(compact('question_template'),true)."</pre>"; die();
             // Fix old template : can we remove it ? Old template are surely already broken by another issue
             if (preg_match('/\{QUESTION_ESSENTIALS\}/', $question_template) === false || preg_match('/\{QUESTION_CLASS\}/', $question_template) === false)
             {
@@ -1843,20 +1899,196 @@ class responses extends Survey_Common_Action
                                     . $question_template
                                     . "</div>";
             }
-            $redata = compact(array_keys(get_defined_vars()));
-            $aQuestionReplacement=$this->getQuestionReplacement($qa);
-            echo templatereplace($question_template, $aQuestionReplacement, $redata, false, false, $qa[4]);*/
+            $redata = array();
+            $aQuestionReplacement= $this->getQuestionReplacement($qa);
+            //echo "qa:<br><pre>".print_r($qa,true)."</pre>";
+            //echo "data:<br><pre>".print_r(compact('question_template','aQuestionReplacement','redata'),true)."</pre>";
+            echo templatereplace($question_template, $aQuestionReplacement, $redata, false, false, $qa[4]); //die();
 
-        /*}
-        if (!empty($qanda))
+        $output = ob_get_contents();
+        ob_end_clean();
+        return($output);
+    }
+
+    public function getQuestionReplacement($aQuestionQanda)
+    {
+
+        // Get the default replacement and set empty value by default
+        $aReplacement=array(
+            "QID"=>"",
+            //"GID"=>"", // Attention : set in replacement helper too (by gid).
+            "SGQ"=>"",
+            "AID"=>"",
+            "QUESTION_CODE"=>"",
+            "QUESTION_NUMBER"=>"",
+            "QUESTION"=>"",
+            "QUESTION_TEXT"=>"",
+            "QUESTIONHELP"=>"", // User help
+            "QUESTIONHELPPLAINTEXT"=>"",
+            "QUESTION_CLASS"=>"",
+            "QUESTION_MAN_CLASS"=>"",
+            "QUESTION_INPUT_ERROR_CLASS"=>"",
+            "ANSWER"=>"",
+            "QUESTION_HELP"=>"", // Core help
+            "QUESTION_VALID_MESSAGE"=>"",
+            "QUESTION_FILE_VALID_MESSAGE"=>"",
+            "QUESTION_MAN_MESSAGE"=>"",
+            "QUESTION_MANDATORY"=>"",
+            "QUESTION_ESSENTIALS"=>"",
+        );
+        if(!is_array($aQuestionQanda) || empty($aQuestionQanda[0]))
         {
-            if ($surveyMode == 'group') {
-                echo "<input type='hidden' name='lastgroup' value='$lastgroup' id='lastgroup' />\n"; // for counting the time spent on each group
-            }
-            if ($surveyMode == 'question') {
-                echo "<input type='hidden' name='lastanswer' value='$lastanswer' id='lastanswer' />\n";
-            }
+            return $aReplacement;
+        }
+        $iQid=$aQuestionQanda[4];
+        //echo "iQid: ".$iQid."<br>";
+        $lemQuestionInfo = LimeExpressionManager::GetQuestionStatus($iQid);
+        //echo "lemQuestionInfo: <br><pre>".print_r($lemQuestionInfo,true)."</pre>"; die();
+
+        $iSurveyId=Yii::app()->getConfig('surveyID');// Or : by SGQA of question ? by Question::model($iQid)->sid;
+        $oSurveyId=Survey::model()->findByPk($iSurveyId);
+        $sType=$lemQuestionInfo['info']['type'];
+
+
+        // Core value : not replaced
+        $aReplacement['QID']=$iQid;
+        $aReplacement['GID']=$aQuestionQanda[6];// Not sure for aleatory : it's the real gid or the updated gid ? We need original gid or updated gid ?
+        $aReplacement['SGQ']=$aQuestionQanda[7];
+        $aReplacement['AID']=isset($aQuestionQanda[0]['aid']) ? $aQuestionQanda[0]['aid'] : "" ;
+        $sCode=$aQuestionQanda[5];
+        $iNumber=$aQuestionQanda[0]['number'];
+
+        $showqnumcode_global_ = getGlobalSetting('showqnumcode');
+        $aSurveyinfo = getSurveyInfo($iSurveyId);
+
+        // Check global setting to see if survey level setting should be applied
+        if($showqnumcode_global_ == 'choose') { // Use survey level settings
+            $showqnumcode_ = $aSurveyinfo['showqnumcode']; //B, N, C, or X
+        } else { // Use global setting
+            $showqnumcode_ = $showqnumcode_global_; //both, number, code, or none
+        }
+
+        switch ($showqnumcode_)
+        {
+            case 'both':
+            case 'B': // Both
+                $aReplacement['QUESTION_CODE']=$sCode;
+                $aReplacement['QUESTION_NUMBER']=$iNumber;
+                break;
+            case 'number':
+            case 'N': // Number only
+                $aReplacement['QUESTION_CODE']="";
+                $aReplacement['QUESTION_NUMBER']=$iNumber;
+                break;
+            case 'code':
+            case 'C': // Code only
+                $aReplacement['QUESTION_CODE']=$sCode;
+                $aReplacement['QUESTION_NUMBER']="";
+                break;
+            case 'none':
+            case 'X':
+            default: // Neither
+                $aReplacement['QUESTION_CODE']="";
+                $aReplacement['QUESTION_NUMBER']="";
+                break;
+        }
+
+        $aReplacement['QUESTION']=$aQuestionQanda[0]['all'] ; // Deprecated : only used in old template (very old)
+        // Core value : user text
+        $aReplacement['QUESTION_TEXT'] = $aQuestionQanda[0]['text'];
+        $aReplacement['QUESTIONHELP']=$lemQuestionInfo['info']['help'];// User help
+        // To be moved in a extra plugin : QUESTIONHELP img adding
+        $sTemplateDir=Template::model()->getTemplatePath($oSurveyId->template);
+        $sTemplateUrl=Template::model()->getTemplateURL($oSurveyId->template);
+        //echo "<pre>".print_r(compact('sTemplateUrl'),true)."</pre>"; die();
+
+        if(flattenText($aReplacement['QUESTIONHELP'], true,true) != '')
+        {
+            $aReplacement['QUESTIONHELP']= Yii::app()->getController()->renderPartial('/survey/system/questionhelp/questionhelp', array('questionHelp'=>$aReplacement['QUESTIONHELP']), true);
+
+        }
+        // Core value :the classes
+        $aReplacement['QUESTION_CLASS'] = Question::getQuestionClass($sType);
+
+        //get additional question classes from question attribute
+        $aQuestionAttributes = getQuestionAttributeValues($aQuestionQanda[4]);
+
+        //add additional classes
+        if(isset($aQuestionAttributes['cssclass']))
+        {
+            $aReplacement['QUESTION_CLASS'] .= " ".$aQuestionAttributes['cssclass'];
+        }
+
+        $aMandatoryClass = array();
+        if ($lemQuestionInfo['info']['mandatory'] == 'Y')// $aQuestionQanda[0]['mandatory']=="*"
+        {
+            $aMandatoryClass[]= 'mandatory';
+        }
+        if ($lemQuestionInfo['anyUnanswered'] && $_SESSION['survey_' . $iSurveyId]['maxstep'] != $_SESSION['survey_' . $iSurveyId]['step'])// This is working ?
+        {
+            $aMandatoryClass[]= 'missing';
+        }
+        $aReplacement['QUESTION_MAN_CLASS']=!empty($aMandatoryClass) ? " ".implode(" ",$aMandatoryClass) : "";
+        $aReplacement['QUESTION_INPUT_ERROR_CLASS']=$aQuestionQanda[0]['input_error_class'];
+        // Core value : LS text : EM and not
+        $aReplacement['ANSWER']=$aQuestionQanda[1];
+        $aReplacement['QUESTION_HELP']=$aQuestionQanda[0]['help'];// Core help only, not EM
+        $aReplacement['QUESTION_VALID_MESSAGE']=$aQuestionQanda[0]['valid_message'];// $lemQuestionInfo['validTip']
+        $aReplacement['QUESTION_FILE_VALID_MESSAGE']=$aQuestionQanda[0]['file_valid_message'];// $lemQuestionInfo['??']
+        $aReplacement['QUESTION_MAN_MESSAGE']=$aQuestionQanda[0]['man_message'];
+        $aReplacement['QUESTION_MANDATORY']=$aQuestionQanda[0]['mandatory'];
+        // For QUESTION_ESSENTIALS
+        $aHtmlOptions=array();
+        /*if ((!$lemQuestionInfo['relevant']) || ($lemQuestionInfo['hidden']))// && $lemQuestionInfo['info']['type'] == '*'))
+        {
+            $aHtmlOptions['style'] = 'display: none;';
         }*/
+
+        // Launch the event
+        $event = new PluginEvent('beforeQuestionRender');
+        // Some helper
+        $event->set('surveyId', $iSurveyId);
+        $event->set('type', $sType);
+        $event->set('code', $sCode);
+        $event->set('qid', $iQid);
+        $event->set('gid', $aReplacement['GID']);
+        // User text
+        $event->set('text', $aReplacement['QUESTION_TEXT']);
+        $event->set('questionhelp', $aReplacement['QUESTIONHELP']);
+        // The classes
+        $event->set('class', $aReplacement['QUESTION_CLASS']);
+        $event->set('man_class', $aReplacement['QUESTION_MAN_CLASS']);
+        $event->set('input_error_class', $aReplacement['QUESTION_INPUT_ERROR_CLASS']);
+        // LS core text
+        $event->set('answers', $aReplacement['ANSWER']);
+        $event->set('help', $aReplacement['QUESTION_HELP']);
+        $event->set('man_message', $aReplacement['QUESTION_MAN_MESSAGE']);
+        $event->set('valid_message', $aReplacement['QUESTION_VALID_MESSAGE']);
+        $event->set('file_valid_message', $aReplacement['QUESTION_FILE_VALID_MESSAGE']);
+        // htmlOptions for container
+        $event->set('aHtmlOptions', $aHtmlOptions);
+
+        App()->getPluginManager()->dispatchEvent($event);
+        // User text
+        $aReplacement['QUESTION_TEXT'] = $event->get('text');
+        $aReplacement['QUESTIONHELP'] = $event->get('questionhelp');
+        $aReplacement['QUESTIONHELPPLAINTEXT']=strip_tags(addslashes($aReplacement['QUESTIONHELP']));
+        // The classes
+        $aReplacement['QUESTION_CLASS'] = $event->get('class');
+        $aReplacement['QUESTION_MAN_CLASS'] = $event->get('man_class');
+        $aReplacement['QUESTION_INPUT_ERROR_CLASS'] = $event->get('input_error_class');
+        // LS core text
+        $aReplacement['ANSWER'] = $event->get('answers');
+        $aReplacement['QUESTION_HELP'] = $event->get('help');
+        $aReplacement['QUESTION_MAN_MESSAGE'] = $event->get('man_message');
+        $aReplacement['QUESTION_VALID_MESSAGE'] = $event->get('valid_message');
+        $aReplacement['QUESTION_FILE_VALID_MESSAGE'] = $event->get('file_valid_message');
+        $aReplacement['QUESTION_MANDATORY'] = $event->get('mandatory',$aReplacement['QUESTION_MANDATORY']);
+        // Always add id for QUESTION_ESSENTIALS
+        $aHtmlOptions['id']="question{$iQid}";
+        $aReplacement['QUESTION_ESSENTIALS']=CHtml::renderAttributes($aHtmlOptions);
+
+        return $aReplacement;
     }
 
 }

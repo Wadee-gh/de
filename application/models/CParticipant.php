@@ -752,6 +752,8 @@ class CParticipant extends LSActiveRecord
             $gid = $field['gid'];
             if(in_array($gid,$rgroups)){
               $groups[$gid]['questions'][$qid]['qid'] = $qid;
+              $groups[$gid]['questions'][$qid]['sid'] = $field['sid'];
+              $groups[$gid]['questions'][$qid]['gid'] = $gid;
               $type = $field['type'];
               $groups[$gid]['questions'][$qid]['type'] = $type;
               $tlist = "1,5,A,B,C,E,F,G,H,L,M,Y,Z,!";

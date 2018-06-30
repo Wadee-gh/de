@@ -33,6 +33,7 @@
   $crows2 = array_values($crows2);
 
 ?>
+<table class='table table-striped'>
 <thead>
   <tr>
     <?php foreach($ccols2 as $ccol){ ?>
@@ -53,5 +54,6 @@
   </tr>
   <?php } ?>
 </tbody>
+</table>
 
 
