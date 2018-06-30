@@ -731,18 +731,33 @@ class responses extends Survey_Common_Action
                   Yii::app()->setConfig('surveyID',$iSurveyID);
                   buildsurveysession($iSurveyID);
                   //echo "<pre>".print_r($_SESSION,true)."</pre>"; die();
+                  //echo "<pre>".print_r($_SESSION['survey_'.$iSurveyID],true)."</pre>"; die();
                   //echo "<pre>".print_r($_SESSION['survey_'.$iSurveyID]['fieldarray'],true)."</pre>"; die();
-                  $gid = $_GET['group'];
-                  $qanda = $this->get_qanda($gid,'survey_'.$iSurveyID);
-                  //echo "<pre>".print_r($qanda,true)."</pre>"; die();
-                  foreach($qanda as $qa){
-                    $output = $this->get_question_output($surveyid,$qa);
-                    $aData['output'] = $output;
-                    $aViewUrls['browseidrowlv2_view'][] = $aData;
-                  }
-
                   $responses = $iIdresult;
+                  //echo "<pre>".print_r($responses,true)."</pre>"; die();
                   foreach($responses as $r){
+                    //echo "<pre>".print_r($r,true)."</pre>"; //die();
+                    //echo "<pre>".print_r($fieldmap,true)."</pre>"; die();
+                    foreach($fieldmap as $fkey => $field){
+                      $title = $field['title'];
+                      if($title){
+                        $_SESSION['survey_'.$iSurveyID][$title] = $r[$fkey];
+                        $_SESSION['survey_'.$iSurveyID][$fkey] = $r[$fkey];
+                      }
+                    }
+                    $saved_id = $r['id'];
+                    $token = $r['token'];
+                    $redata = compact('saved_id','token');
+                    //echo "<pre>".print_r($redata,true)."</pre>"; die();
+                    $gid = $_GET['group'];
+                    $qanda = $this->get_qanda($gid,'survey_'.$iSurveyID,$r);
+                    //echo "<pre>".print_r($qanda,true)."</pre>"; die();
+                    foreach($qanda as $qa){
+                      $output = $this->get_question_output($surveyid,$qa,$redata);
+                      $aData['output'] = $output;
+                      $aViewUrls['browseidrowlv2_view'][] = $aData;
+                    }
+
                     $submitdate = $r['submitdate'];
                     $token = $r['token'];
                     $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap,'');
@@ -1782,10 +1797,12 @@ class responses extends Survey_Common_Action
             //// To diplay one question, all the questions are processed ?
             $qanda=array();
 
-            //echo "<pre>".print_r($_SESSION[$LEMsessid]['fieldarray'],true)."</pre>"; die();
+            //echo "fieldarray:<br><pre>".print_r($_SESSION[$LEMsessid]['fieldarray'],true)."</pre>"; die();
             //echo "gid: ".$gid."<br>";
             foreach ($_SESSION[$LEMsessid]['fieldarray'] as $key => $ia)
             {
+                $_SESSION[$LEMsessid][$ia[1]] = $r[$ia[1]];
+                $_SESSION[$LEMsessid][$ia[2]] = $r[$ia[1]];
                 ++$qnumber;
                 $ia[9] = $qnumber; // incremental question count;
 
@@ -1807,6 +1824,7 @@ class responses extends Survey_Common_Action
                     //Get the answers/inputnames
                     // TMSW - can content of retrieveAnswers() be provided by LEM?  Review scope of what it provides.
                     // TODO - retrieveAnswers is slow - queries database separately for each question. May be fixed in _CI or _YII ports, so ignore for now
+                    //echo "ia:<br><pre>".print_r($ia,true)."</pre>";
                     list($plus_qanda, $plus_inputnames) = retrieveAnswers($ia, $surveyid);
                     //echo "plus_qanda:<br><pre>".print_r($plus_qanda,true)."</pre>"; //die();
                     //echo "plus_inputnames:<br><pre>".print_r($plus_inputnames,true)."</pre>"; die();
@@ -1855,7 +1873,7 @@ class responses extends Survey_Common_Action
         return($qanda);
     }
 
-    public function get_question_output($surveyid,$qa){
+    public function get_question_output($surveyid,$qa,$redata = array()){
 
         ob_start();
 
@@ -1887,6 +1905,7 @@ class responses extends Survey_Common_Action
             $sTemplatePath = $oTemplate->path;
             $sTemplateViewPath = $oTemplate->viewPath;
 
+            //echo $sTemplateViewPath.'question.pstpl'."<br>"; die();
             $question_template = file_get_contents($sTemplateViewPath.'question.pstpl');
             //echo "<pre>".print_r(compact('question_template'),true)."</pre>"; die();
             // Fix old template : can we remove it ? Old template are surely already broken by another issue
@@ -1899,7 +1918,7 @@ class responses extends Survey_Common_Action
                                     . $question_template
                                     . "</div>";
             }
-            $redata = array();
+
             $aQuestionReplacement= $this->getQuestionReplacement($qa);
             //echo "qa:<br><pre>".print_r($qa,true)."</pre>";
             //echo "data:<br><pre>".print_r(compact('question_template','aQuestionReplacement','redata'),true)."</pre>";

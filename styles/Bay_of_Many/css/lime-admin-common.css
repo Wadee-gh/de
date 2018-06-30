@@ -2388,7 +2388,7 @@ div.custom_lv2 td.radio label {
 }
 
 div.custom_lv2 input[type=radio] {
-  padding-left: 60%;
+  margin-left: 50%;
 }
 
 
