@@ -775,7 +775,7 @@ class responses extends Survey_Common_Action
                     $aData['menu']['uplevel'] =  true;
                     $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']);
                   }
-
+                  $aViewUrls[] = 'browseiddisablefields_view';   
                } else
                if($level == 3){
                   // for each response, get group details.
