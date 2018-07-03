@@ -557,6 +557,10 @@ class participantsaction extends Survey_Common_Action
             $aData['blacklisted'] = 'N';
         }
 
+        if (isset($aData['dob'])){
+          $aData['dob'] = date("Y-m-d",strtotime($aData['dob']));
+        }
+
         $extraAttributes = Yii::app()->request->getPost('Attributes', array());
 
         switch ($operation) {

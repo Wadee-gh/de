@@ -71,7 +71,7 @@ class Participant extends LSActiveRecord
             array('participant_id', 'length', 'max' => 50),
             array('firstname, lastname', 'length', 'max' => 150),
             array('language', 'length', 'max' => 40),
-            array('dob', 'length', 'max' => 40), 
+            array('dob', 'length', 'max' => 40),
             array('firstname, lastname, language', 'LSYii_Validators'),
             array('email', 'length', 'max' => 254),
             array('blacklisted', 'length', 'max' => 1),
@@ -373,17 +373,22 @@ class Participant extends LSActiveRecord
                 "name" => 'firstname'
             ),
             array(
-                "name" => 'email'
+                "name" => 'mrn_id',
+                "header" => gT("ID"),
             ),
+            /*array(
+                "name" => 'email'
+            ),*/
             array(
                 "name" => 'dob',
                 "header" => gT("DOB"),
+                'value' => '$data->dob ? date("m/d/Y", strtotime($data->dob)) : ""'
             ),
-            array(
+            /*array(
                 "name" => 'language',
                 "value" => 'getLanguageNameFromCode($data->language, false)',
                 'filter' => $this->allUsedLanguagesWithRealName
-            ),
+            ),*/
             /*array(
                 "name" => 'countActiveSurveys',
                 "value" => '$data->getCountActiveSurveys()',
@@ -463,6 +468,10 @@ class Participant extends LSActiveRecord
             'email'=>array(
                 'asc'=>'t.email',
                 'desc'=>'t.email desc',
+            ),
+            'mrn_id'=>array(
+                'asc'=>'t.mrn_id',
+                'desc'=>'t.mrn_id desc',
             ),
             'dob'=>array(
                 'asc'=>'t.dob',
@@ -643,15 +652,18 @@ class Participant extends LSActiveRecord
             $data2['blacklisted'] = 'N';
             $data2['owner_uid'] = $row['owner_uid'];
             $data2['created_by'] = $row['owner_uid'];
-            $flist = "first_name,last_name,email,dob";
+            $flist = "first_name,last_name,mrn_id,email,dob";
             foreach(explode(",",$flist) as $field){
-              $key = str_replace("_","",$field);
+              $key = $field;
+              if(in_array($field,explode(",","first_name,last_name"))){
+                $key = str_replace("_","",$field);
+              }
               $val = "Dummy";
               if(isset($vars[$field])) $val = $vars[$field];
               $data2[$key] = $val;
             }
 
-              $data2['dob'] = '1980-01-01';
+            //$data2['dob'] = '1980-01-01';
             //echo "<pre>".print_r($data2,true)."</pre>"; die();
             $result = Participant::model()->insertParticipant($data2);
             //echo "<pre>".print_r($result,true)."</pre>"."<br>"; die();

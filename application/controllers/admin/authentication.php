@@ -120,8 +120,9 @@ class Authentication extends Survey_Common_Action
         $vars = $_POST;
         if(!empty($vars)){
           //echo "<pre>".print_r($vars,true)."</pre>"; die();
-          $flist = "id,first_name,last_name,email,dob";
+          $flist = "id,first_name,last_name,mrn_id,email,dob";
           $data = array();
+          $vars['dob'] = date("Y-m-d",strtotime($vars['dob']));
           foreach(explode(",",$flist) as $field){
             $data[$field] = $vars[$field];
           }

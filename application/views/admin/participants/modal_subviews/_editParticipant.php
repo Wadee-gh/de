@@ -42,11 +42,12 @@
                 <?php eT('Date of Birth:'); ?>
             </label>
             <div class='col-sm-10'>
-                <input class='form-control form_date' name='Participant[dob]' value='<?php echo $model->dob; ?>' />
+                <input class='form-control form_date' name='Participant[dob]' value='<?php echo date("m/d/Y",strtotime($model->dob)); ?>' />
             </div>
             <script type="text/javascript">
                 $(".form_date").datetimepicker({
-                  format: 'YYYY-MM-DD',
+                  format: 'MM/DD/YYYY',
+                  /*format: 'YYYY-MM-DD',*/
                   /*widgetPositioning: {
                     horizontal: 'auto',
                     vertical: 'bottom'
@@ -56,11 +57,20 @@
         </div>
         <div class='form-group'>
             <label class='control-label col-sm-2'>
+                <?php eT('ID:'); ?>
+            </label>
+            <div class='col-sm-10'>
+                <input class='form-control' name='Participant[mrn_id]' value='<?php echo $model->mrn_id; ?>'  />
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+        <div class='form-group'>
+            <label class='control-label col-sm-2'>
                 <?php eT('E-mail:'); ?>
             </label>
             <div class='col-sm-10'>
-                <input class='form-control' name='Participant[email]' value='<?php echo $model->email; ?>' required data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
-                <div class="help-block with-errors"></div> 
+                <input class='form-control' name='Participant[email]' value='<?php echo $model->email; ?>' data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
+                <div class="help-block with-errors"></div>
             </div>
         </div>
         <script src="<?php echo App()->baseUrl; ?>/scripts/validator.js" type="text/javascript"></script>
@@ -68,6 +78,8 @@
           $('#editPartcipantActiveForm').validator();
         </script>
 
+        <?php
+        /*
         <div class='form-group'>
             <label class='control-label col-sm-2'><?php eT("Blacklist user:"); ?></label>
             <div class='col-sm-8'>
@@ -75,6 +87,8 @@
                 <input name='Participant[blacklisted]' type='checkbox' <?php if ($model->blacklisted == 'Y'): echo ' checked="checked" '; endif; ?> data-size='small' data-on-color='warning' data-off-color='primary' data-off-text='<?php eT('No'); ?>' data-on-text='<?php eT('Yes'); ?>' class='action_changeBlacklistStatus ls-bootstrap-switch' />
             </div>
         </div>
+        */
+        ?>
 
         <!-- Change owner -->
         <?php if ($model->isOwnerOrSuperAdmin()): ?>

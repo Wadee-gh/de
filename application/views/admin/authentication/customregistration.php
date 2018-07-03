@@ -48,12 +48,18 @@
                             <div class="help-block with-errors"></div>
                           </div>
                           <div class="form-group">
+                            <label>ID</label>
+                            <input type="text" class="form-control" name="mrn_id" value="<?php echo $mrn_id;?>" required placeholder="">
+                            <div class="help-block with-errors"></div>
+                          </div>
+                          <div class="form-group">
                             <label>Date of Birth</label>
-                            <input type="text" class="form-control form_date" name="dob" value="<?php echo $dob;?>" required placeholder="yyyy-mm-dd" data-error="Please match the requested format yyyy-mm-dd" pattern="^\d{4}[\-\/\s]?((((0[13578])|(1[02]))[\-\/\s]?(([0-2][0-9])|(3[01])))|(((0[469])|(11))[\-\/\s]?(([0-2][0-9])|(30)))|(02[\-\/\s]?[0-2][0-9]))$">
+                            <input type="text" class="form-control form_date" name="dob" value="<?php echo $dob;?>" required >
                             <div class="help-block with-errors"></div>
                             <script type="text/javascript">
                                 $(".form_date").datetimepicker({
-                                  format: 'YYYY-MM-DD',
+                                  format: 'MM/DD/YYYY',
+                                  /*format: 'YYYY-MM-DD',*/
                                   /*widgetPositioning: {
                                     horizontal: 'auto',
                                     vertical: 'bottom'
