@@ -539,19 +539,31 @@ class questiongroups extends Survey_Common_Action
         // groups will contain gid and group name from the lime_groups table.
         $groups = QuestionGroup::model()->getGroups($surveyid);
         //echo "<pre>".print_r($groups,true)."</pre>"; die();
+        $freqUsedGroups = QuestionGroup::model()->getFreqUsedGroups($surveyid);
+        //echo "<pre>".print_r($freqUsedGroups,true)."</pre>"; die();
 
         $html = "";
+        if(!empty($freqUsedGroups)){
+          $html .=
+            '<div class="col-sm-12">
+              <label>Frequently Used:</label>
+            </div>';
+            foreach($freqUsedGroups as $group){
+              $html .=
+                '<div class="col-sm-4">
+                  <label><input type="checkbox" name="groups[]" value="'.$group['gid'].'">'.$group['group_name'].'</label>
+                </div>';
+            }
+            $html .=
+            '<div class="col-sm-12">
+              <hr>
+            </div>';
+        }
         foreach($groups as $group){
           $html .=
             '<div class="col-sm-4">
               <label><input type="checkbox" name="groups[]" value="'.$group['gid'].'">'.$group['group_name'].'</label>
             </div>';
-          /*for($i=0;$i<20;$i++){
-            $html .=
-            '<div class="col-sm-4">
-              <label><input type="checkbox" name="groups[]" value="'.($group['gid']+$i).'">Group Number '.($i+1).'</label>
-            </div>';
-          }*/
         }
 
         // return json result.

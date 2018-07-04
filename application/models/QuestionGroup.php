@@ -191,7 +191,58 @@ class QuestionGroup extends LSActiveRecord
         } else {
           return([]);
         }
+    }
 
+    function getFreqUsedGroups($surveyid) {
+        $survey = Survey::model()->findByPk($surveyid);
+        //echo print_r($survey,true);
+        if($survey){
+          // get used groups.
+          $rgroups = Yii::app()->db->createCommand()
+          ->select(array('required_groups'))
+          ->from('{{custom_participants}}')
+          ->where('survey_id=:surveyid')
+          ->bindParam(":surveyid", $surveyid, PDO::PARAM_INT)
+          ->query()->readAll();
+          //echo "<pre>".print_r($rgroups,true)."</pre>"; die();
+          $fgs = array();
+          foreach($rgroups as $row){
+            $rgs = json_decode($row['required_groups'],true);
+            foreach($rgs as $rg){
+              if(!isset($fgs[$rg])) $fgs[$rg] = 0;
+              $fgs[$rg]++;
+            }
+          }
+
+          arsort($fgs);
+          $limit = 7;
+          $fgs = array_slice(array_keys($fgs),0,$limit);
+          //echo "<pre>".print_r($fgs,true)."</pre>"; die();
+
+          // get groups.
+          $language = $survey->language;
+          $groups = Yii::app()->db->createCommand()
+          ->select(array('gid', 'group_name'))
+          ->from($this->tableName())
+          ->where(array('and', 'sid=:surveyid', 'language=:language', "gid IN ('".implode("','",$fgs)."')"))
+          ->order('group_order asc')
+          ->bindParam(":language", $language, PDO::PARAM_STR)
+          ->bindParam(":surveyid", $surveyid, PDO::PARAM_INT)
+          ->query()->readAll();
+
+          foreach($groups as $group){
+            $gid = $group['gid'];
+            $groups[$gid] = $group;
+          }
+
+          $ret = array();
+          foreach($fgs as $gid){
+            $ret[] = $groups[$gid];
+          }
+          return($ret);
+        } else {
+          return([]);
+        }
     }
 
     public static function deleteWithDependency($groupId, $surveyId)

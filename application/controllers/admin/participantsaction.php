@@ -287,8 +287,8 @@ class participantsaction extends Survey_Common_Action
         //Should be all surveys owned by user (or all surveys for super admin)
         $surveys = Survey::model();
         //!!! Is this even possible to execute?
-        if (!Permission::model()->hasGlobalPermission('superadmin','read'))
-            $surveys->permission(Yii::app()->user->getId());
+        /*if (!Permission::model()->hasGlobalPermission('superadmin','read'))
+            $surveys->permission(Yii::app()->user->getId());*/
 
         $aSurveyNames = $surveys->model()->with(array('languagesettings'=>array('condition'=>'surveyls_language=language'), 'owner'))->findAll();
 
@@ -312,8 +312,13 @@ class participantsaction extends Survey_Common_Action
         // if not only the participants on which he has right on (shared and owned)
         else
         {
-            $iUserId = Yii::app()->user->getId();
-            $iTotalRecords = Participant::model()->getParticipantsOwnerCount($iUserId);
+            if(Permission::model()->hasGlobalPermission('participantpanel','read')){
+              //echo "he has read permissions."; die();
+              $iTotalRecords = Participant::model()->count();
+            } else {
+              $iUserId = Yii::app()->user->getId();
+              $iTotalRecords = Participant::model()->getParticipantsOwnerCount($iUserId);
+            }
         }
         $model = new Participant();
         $request = Yii::app()->request;
@@ -343,6 +348,8 @@ class participantsaction extends Survey_Common_Action
             'model' => $model,
             'debug' => $request->getParam('Participant')
         );
+
+        //echo "<pre>".print_r($aData,true)."</pre>"; //die();
 
         $aData['pageSizeParticipantView']= Yii::app()->user->getState('pageSizeParticipantView');
         $searchstring = $request->getPost('searchstring');
