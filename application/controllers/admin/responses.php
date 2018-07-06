@@ -721,9 +721,11 @@ class responses extends Survey_Common_Action
                   }
 
                   // add view title.
-                  $participant_name = CParticipant::model()->getParticipantName($token);
-                  $view_title = sprintf(gT("View Results for %s"), $participant_name);
+                  $participant_name_dob = CParticipant::model()->getParticipantNameDob($token);
+                  $view_title = sprintf(gT("View Results for %s"), $participant_name_dob);
                   $aData['view_title'] = $view_title;
+                  $aData['menu']['print'] =  true;
+                  $aData['menu']['printurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id'])."/print";
                 } else
                 if($level == 2){
                   Yii::app()->loadHelper('expressions.em_manager');
@@ -770,12 +772,15 @@ class responses extends Survey_Common_Action
                     $details = CParticipant::model()->getGroupDetails($gid,$r,$fieldmap,'');
                     $participant_name_dob = CParticipant::model()->getParticipantNameDob($token);
                     $group_name = $details[$gid]['name'];
-                    $view_title = sprintf(gT("View Details for %s"), $group_name.": ".$participant_name_dob);
+                    $submitdate = date("m/d/Y",strtotime($submitdate));
+                    $view_title = sprintf(gT("View Details for %s"), $participant_name_dob." Group: ".$group_name." Submitted: ".$submitdate);
                     $aData['view_title'] = $view_title;
+                    $aData['menu']['print'] =  true;
+                    $aData['menu']['printurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']."/group/".$gid."/print");
                     $aData['menu']['uplevel'] =  true;
                     $aData['menu']['uplevelurl'] = $this->getController()->createUrl("admin/responses/sa/view/surveyid/".$iSurveyID."/id/".$r['id']);
                   }
-                  $aViewUrls[] = 'browseiddisablefields_view';   
+                  $aViewUrls[] = 'browseiddisablefields_view';
                } else
                if($level == 3){
                   // for each response, get group details.
@@ -921,6 +926,12 @@ class responses extends Survey_Common_Action
                 Yii::app()->session['flashmessage'] = gT("This response ID is invalid.");
             }
 
+            if(isset($_GET['print'])){
+              $participant = CParticipant::model()->getParticipantDetails($token);
+              $data = compact('level','aViewUrls','aData','participant');
+              $this->view_print($data); die();
+            }
+
             $aViewUrls[] = 'browseidfooter_view';
             $aData['sidemenu']['state'] = false;
             $aData['menu']['edition'] = true;
@@ -942,6 +953,128 @@ class responses extends Survey_Common_Action
             $message['class']= "error";
             $this->_renderWrappedTemplate('survey', array("message"=>$message), $aData);
         }
+    }
+
+    public function view_print($data){
+        ob_start();
+        //echo "print friendly version"; //die();
+        //echo "<pre>".print_r($data,true)."</pre>";
+        extract($data);
+        unset($aViewUrls[0]);
+        $sViewPath = '/admin/responses/';
+        //echo "<pre>".print_r($aViewUrls,true)."</pre>"; die();
+        foreach($aViewUrls as $key => $url){
+          if(!is_array($url)){
+            if(in_array($url,explode(",","browseidheader_view,browseiddisablefields_view"))){
+              unset($aViewUrls[$key]);
+            }
+          }
+        }
+        //echo "<pre>".print_r($aViewUrls,true)."</pre>"; die();
+        //echo "<pre>".print_r($participant,true)."</pre>";
+        $title = $aData['view_title'];
+        $title = str_replace("View Details","Print Details",$title);
+        $title = str_replace("DOB:","[ID: ".$participant['mrn_id']."] DOB:",$title);
+        $title = str_replace("Group:","<br>Group:",$title);
+        $title = str_replace("Submitted:","<br>Submitted:",$title);
+        echo "<br><b>".$title."</b><br /><br />";
+        foreach ($aViewUrls as $sViewKey => $viewUrl)
+        {
+            if (empty($sViewKey) || !in_array($sViewKey, array('message', 'output')))
+            {
+                if (is_numeric($sViewKey))
+                {
+                    Yii::app()->getController()->renderPartial($sViewPath . $viewUrl, $aData);
+                }
+                elseif (is_array($viewUrl))
+                {
+                    foreach ($viewUrl as $aSubData)
+                    {
+                        $aSubData = array_merge($aData, $aSubData);
+                        Yii::app()->getController()->renderPartial($sViewPath . $sViewKey, $aSubData);
+                    }
+                }
+            }
+        }
+        $html = ob_get_contents();
+        ob_clean();
+
+        $html = preg_replace('/<!--(.|\s)*?-->/', "", $html);
+        $html = preg_replace('/<input type="hidden"[^>]+\>/', "", $html);
+        $html = preg_replace('/<div[^>]+\>/', "", $html);
+        $html = preg_replace('/<\/div\>/', "<br>", $html);
+        //$html = preg_replace('/<a[^>]+\>/', "", $html);
+        //$html = preg_replace('/<\/a\>/', "", $html);
+        $html = preg_replace('#(<br */?>\s*)(<br */?>\s*)+#i', '<br /><br />', $html);
+
+        /*$html .= 'Test Box: <input size="30" name="test" type="text" value="hello">';
+        $html .= 'Test Radio: <input type="radio" name="testr" value="1" checked>Yes';
+        //echo $html; die();*/
+
+        // create pdf file.
+        Yii::import("application.libraries.admin.pdf",TRUE);
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+        // set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Limesurvey');
+        $pdf->SetTitle('Results Export');
+        $pdf->SetSubject('Results Export');
+        //$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+        // set default header data
+        /*$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 001', PDF_HEADER_STRING, array(0,64,255), array(0,64,128));
+        $pdf->setFooterData(array(0,64,0), array(0,64,128));
+
+        // set header and footer fonts
+        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));*/
+
+        // set default monospaced font
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+        // set margins
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        // set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        // set some language-dependent strings (optional)
+        if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+            require_once(dirname(__FILE__).'/lang/eng.php');
+            $pdf->setLanguageArray($l);
+        }
+
+        // ---------------------------------------------------------
+
+        // set default font subsetting mode
+        //$pdf->setFontSubsetting(true);
+
+        // Set font
+        // dejavusans is a UTF-8 Unicode font, if you only need to
+        // print standard ASCII chars, you can use core fonts like
+        // helvetica or times to reduce file size.
+        //$pdf->SetFont('dejavusans', '', 14, '', true);
+
+        // Add a page
+        // This method has several options, check the source code documentation for more information.
+        $pdf->AddPage();
+
+        // Print text using writeHTMLCell()
+        $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+
+        // ---------------------------------------------------------
+
+        // Close and output PDF document
+        // This method has several options, check the source code documentation for more information.
+        $pdf->Output('export_results.pdf', 'I');
+
+        die();
     }
 
     public function view_old($iSurveyID, $iId, $sBrowseLang = '')

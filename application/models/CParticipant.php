@@ -678,6 +678,29 @@ class CParticipant extends LSActiveRecord
         return($ret);
     }
 
+    public function getParticipantDetails($token){
+        $ret = '';
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("lime_token='".$token."'")
+            ->from("{{custom_participants}}")
+            ->order("id DESC")
+            ->queryRow();
+        if(!empty($row)){
+          $ret = $row;
+          $row2 = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("email='".$row['email']."'")
+            ->from("{{participants}}")
+            ->queryRow();
+          if(!empty($row2)){
+            $ret = $row2;
+          }
+        }
+        return($ret);
+    }
+
     public function getParticipantNameDob($token){
         $ret = '';
         $tbl = $this->tableName();
@@ -695,7 +718,9 @@ class CParticipant extends LSActiveRecord
             ->from("{{participants}}")
             ->queryRow();
           if(!empty($row2)){
-            $ret = $row2['firstname']." ".$row2['lastname']." ".$row2['dob'];
+            $ret = $row2['firstname']." ".$row2['lastname'];
+            //$ret .= "<br>ID: ".$row['mrn_id'];
+            $ret .= " DOB: ".date("m/d/Y",strtotime($row2['dob']));
           }
         }
         return($ret);

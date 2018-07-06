@@ -233,8 +233,8 @@
 
             <?php endif;?>
 
-             <?php if(isset($menu) && isset($menu['close']) && $menu['close']): ?>
-                <a class="btn btn-default" href="#" role="button">
+             <?php if(isset($menu) && isset($menu['print']) && $menu['print']): ?>
+                <a class="btn btn-default" href="<?php echo  $menu['printurl'];  ?>" role="button">
                     <span class="glyphicon glyphicon-print" title='<?php eT("Print"); ?>'></span>
                     <?php eT("Print");?>
                 </a>
