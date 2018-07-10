@@ -670,6 +670,7 @@ class responses extends Survey_Common_Action
                   $oCriteria->addCondition("id = '".$iId."'");
                 }
 
+                $oCriteria->order = 'submitdate DESC';
                 $iIdresult = SurveyDynamic::model($iSurveyID)->findAllAsArray($oCriteria);
                 //echo "<pre>".print_r($iIdresult,true)."</pre>"; die();
                 $aData['iIdresult'] = $iIdresult;
@@ -999,17 +1000,30 @@ class responses extends Survey_Common_Action
         $html = ob_get_contents();
         ob_clean();
 
+        // add css.
+        $style = "
+        <style>
+          body {
+            font-size: 8pt;
+            font-family: helvetica;
+          }
+
+          table {
+            border-collapse: collapse;
+            font-size: 8pt;
+          }
+        </style>
+        ";
+
         $html = preg_replace('/<!--(.|\s)*?-->/', "", $html);
         $html = preg_replace('/<input type="hidden"[^>]+\>/', "", $html);
         $html = preg_replace('/<div[^>]+\>/', "", $html);
         $html = preg_replace('/<\/div\>/', "<br>", $html);
-        //$html = preg_replace('/<a[^>]+\>/', "", $html);
-        //$html = preg_replace('/<\/a\>/', "", $html);
+        $html = preg_replace('/<a[^>]+\>/', "", $html);
+        $html = preg_replace('/<\/a\>/', "", $html);
         $html = preg_replace('#(<br */?>\s*)(<br */?>\s*)+#i', '<br /><br />', $html);
-
-        /*$html .= 'Test Box: <input size="30" name="test" type="text" value="hello">';
-        $html .= 'Test Radio: <input type="radio" name="testr" value="1" checked>Yes';
-        //echo $html; die();*/
+        $html = '<body>'.$html.$style.'</body>';
+        //echo $html; die();
 
         // create pdf file.
         Yii::import("application.libraries.admin.pdf",TRUE);
@@ -1030,9 +1044,6 @@ class responses extends Survey_Common_Action
         $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
         $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));*/
 
-        // set default monospaced font
-        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
         // set margins
         $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
         $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
@@ -1052,27 +1063,14 @@ class responses extends Survey_Common_Action
 
         // ---------------------------------------------------------
 
-        // set default font subsetting mode
-        //$pdf->setFontSubsetting(true);
-
-        // Set font
-        // dejavusans is a UTF-8 Unicode font, if you only need to
-        // print standard ASCII chars, you can use core fonts like
-        // helvetica or times to reduce file size.
-        //$pdf->SetFont('dejavusans', '', 14, '', true);
-
-        // Add a page
-        // This method has several options, check the source code documentation for more information.
-        $pdf->AddPage();
-
-        // Print text using writeHTMLCell()
-        $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
+        $pdf->AddPage('L', 'A4');
+        $pdf->writeHTML($html, true, false, true, false, '');
 
         // ---------------------------------------------------------
 
         // Close and output PDF document
         // This method has several options, check the source code documentation for more information.
-        $pdf->Output('export_results.pdf', 'I');
+        $pdf->Output('export_results_'.date("Ymd").'.pdf', 'I');
 
         die();
     }

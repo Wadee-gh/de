@@ -33,11 +33,34 @@
   $crows2 = array_values($crows2);
 
 ?>
-<table class='table table-striped'>
+<style>
+    table {
+      border-collapse: collapse;
+      font-size: 10pt;
+    }
+
+    th {
+      font-weight: bold;
+    }
+
+    th, td {
+      padding: 8px !important;
+      /*margin: 10px;*/
+      text-align: center;
+      vertical-align: middle !important;
+    }
+
+    tr td.date, tr th.date {
+      text-align: left;
+    }
+</style>
+<table class="table table-striped" border="1" cellpadding="10">
 <thead>
   <tr>
-    <?php foreach($ccols2 as $ccol){ ?>
-    <th><?php echo $clabels2[$ccol];?></th>
+    <?php
+    foreach($ccols2 as $ccol){
+    ?>
+      <th class="<?php echo $ccol;?>"><?php echo $clabels2[$ccol];?></th>
     <?php } ?>
   </tr>
 </thead>
@@ -45,7 +68,7 @@
   <?php foreach($crows2 as $crow){ ?>
   <tr>
     <?php foreach($ccols2 as $ccol){ ?>
-    <td>
+    <td class="<?php echo $ccol;?>">
       <?php
         echo $crow[$ccol];
       ?>
