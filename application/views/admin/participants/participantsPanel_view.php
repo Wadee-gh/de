@@ -3,6 +3,7 @@
 <script type="text/javascript">
     var exporttocsvcountall = "<?php echo Yii::app()->getController()->createUrl("/admin/participants/sa/exporttocsvcountAll"); ?>";
     var exporttocsvall = "<?php echo Yii::app()->getController()->createUrl("exporttocsvAll"); ?>";
+    var exporttopdf = "<?php echo Yii::app()->getController()->createUrl("/admin/responses/sa/view_print_multiple"); ?>";
     var okBtn = "<?php eT("OK", 'js') ?>";
     var error = "<?php eT("Error", 'js') ?>";
     var exportBtn = "<?php eT("Export", 'js') ?>";
@@ -13,10 +14,10 @@
     var exportToCSVURL = "<?php echo Yii::app()->getController()->createUrl("admin/participants/sa/exporttocsv"); ?>";
     var openModalParticipantPanel = "<?php echo ls\ajax\AjaxHelper::createUrl("/admin/participants/sa/openModalParticipantPanel"); ?>";
     var editValueParticipantPanel = "<?php echo Yii::app()->getController()->createUrl("/admin/participants/sa/editValueParticipantPanel"); ?>";
-    
+
     var translate_blacklisted = "<?php echo '<i class=\"fa fa-undo\"></i> '.gT('Remove from blacklist?'); ?>";
     var translate_notBlacklisted = "<?php echo '<i class=\"fa fa-ban\"></i> '.gT('Add to blacklist?'); ?>";
-    var datepickerConfig =     <?php 
+    var datepickerConfig =     <?php
         $dateformatdetails = getDateFormatData(Yii::app()->session['dateformat']);
         echo json_encode(array(
             'dateformatdetails'      => $dateformatdetails['dateformat'],
@@ -95,7 +96,7 @@
                     </span>
                     <?php endif;?>
                 <?php endif;?>
-            <?php endif;?> 
+            <?php endif;?>
 
             <?php if (Permission::model()->hasGlobalPermission('superadmin','read')):?>
 
@@ -140,7 +141,7 @@
 <div class="modal fade" id="participantPanel_edit_modal" tabindex="-1" role="dialog" aria-labelledby="participantPanel_edit_modal">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-     
+
     </div>
   </div>
 </div>
@@ -207,6 +208,60 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?php eT('Close'); ?></button>
                 <button type="button" class="btn btn-default exportButton"><?php eT('Export'); ?></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="exportpdf" title="exportpdf" role="dialog" tabindex="-1" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><?php eT("Export participants"); ?> </h4>
+            </div>
+            <div class="modal-body">
+                <form id="exportpdf_form" class="form form-horizontal">
+                    <input name="YII_CSRF_TOKEN" type="hidden" />
+                    <input name="participants" type="hidden" />
+                    <div class='form-group'>
+                        <label class='control-label col-sm-4' for='attributes'>Date Filter</label>
+                        <div class='col-sm-8'>
+                            <select id="interval" name='interval' class='form-control'>
+                                <option>--Select One--</option>
+                                <option value="date_range">Date Range</option>
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="this_week">This Week</option>
+                                <option value="previous_week">Previous Week</option>
+                                <option value="this_month">This Month</option>
+                                <option value="previous_month">Previous Month</option>
+                                <option value="none">ALL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class='form-group date_range' style="display:none">
+                        <label class='control-label col-sm-4' for='attributes'>From Date</label>
+                        <div class='col-sm-8'>
+                            <input name="from_date" id="from_date" type="text" class="form-control form_date" />
+                        </div>
+                    </div>
+                    <div class='form-group date_range' style="display:none">
+                        <label class='control-label col-sm-4' for='attributes'>To Date</label>
+                        <div class='col-sm-8'>
+                            <input name="to_date" id="to_date" type="text" class="form-control form_date" />
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        $(".form_date").datetimepicker({
+                          format: 'MM/DD/YYYY',
+                        });
+                    </script>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?php eT('Close'); ?></button>
+                <button type="button" class="btn btn-default printButton"><?php eT('Print'); ?></button>
             </div>
         </div>
     </div>

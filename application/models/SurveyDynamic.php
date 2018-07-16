@@ -721,4 +721,17 @@ class SurveyDynamic extends LSActiveRecord
         }
         return($token);
     }
+
+    public function getLastResponseFromToken($token)
+    {
+        $data = array();
+        if(Yii::app()->db->schema->getTable($this->tableName())){
+            $data=Yii::app()->db->createCommand()
+                ->select("*")
+                ->from($this->tableName())
+                ->where('token=:token', array(':token'=>$token))
+                ->queryRow();
+        }
+        return($data);
+    }
 }

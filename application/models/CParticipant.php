@@ -663,6 +663,42 @@ class CParticipant extends LSActiveRecord
         return($row);
     }
 
+    public function getByEmail($email){
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("email='".$email."'")
+            ->from($tbl)
+            ->order("id DESC")
+            ->queryRow();
+        if($row == '') $row = array();
+        //echo "<pre>".print_r($row,true)."</pre>"; die();
+        return($row);
+    }
+
+    public function getResponseIdFromParticipantId($participant_id,$surveyid){
+        // get email from participant id.
+        $participant = Participant::model()->findByPk($participant_id);
+        //echo "<pre>".print_r($participant,true)."</pre>";
+        $email = $participant->email;
+        //echo "email: ".$email."<br>";
+
+        $srid = "";
+        if($email){
+          // get lime token from cpartipants table.
+          $cparticipant = $this->getByEmail($email);
+          //echo "<pre>".print_r($cparticipant,true)."</pre>";
+          $lime_token = $cparticipant['lime_token'];
+          //echo "lime_token: ".$lime_token."<br>";
+          // get response id from survey table.
+          $response = SurveyDynamic::model($surveyid)->getLastResponseFromToken($lime_token);
+          //echo "<pre>".print_r($response,true)."</pre>";
+          $srid = $response['id'];
+          //echo "srid: ".$srid."<br>";
+        }
+        return($srid);
+    }
+
     public function getParticipantName($token){
         $ret = '';
         $tbl = $this->tableName();

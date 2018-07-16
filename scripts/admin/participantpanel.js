@@ -71,6 +71,86 @@ LS.CPDB = (function() {
         });
     },
 
+    /** added by mark mirasol 7/16/2018 **/
+
+    /**
+     * Run when user clicks 'Print'
+     * Used for both all participants and checked participants
+     * @param {boolean} all - If true, export all participants
+     * @return
+     */
+    onClickExport2 = function(all) {
+        var postdata = {
+            selectedParticipant: [],
+            YII_CSRF_TOKEN : LS.data.csrfToken
+        };
+        //alert('hello');
+        if (!all) {
+            $('.selector_participantCheckbox:checked').each(function(i,item){
+                postdata.selectedParticipant.push($(item).val());
+            });
+        }
+
+        function add_interval_actions(){
+          $('#interval').change(function(){
+            var val = $(this).val();
+            //alert(val);
+            if(val == 'date_range'){
+              $('.date_range').show();
+            } else {
+              $('.date_range').hide();
+            }
+          });
+        }
+
+        function submit_print_form(){
+            var form = $('#exportpdf_form');
+            form.attr('action',exporttopdf);
+            form.attr('method','POST');
+            $('[name=YII_CSRF_TOKEN]').val(LS.data.csrfToken);
+            form.submit();
+        }
+
+        $.ajax({
+            url: exporttocsvcountall,
+            data: postdata,
+            method: 'POST',
+
+            /**
+             * @param {string} data
+             * @return
+             */
+            success:  function(data) {
+                count = data;
+                if(count == 0)
+                {
+                    $('#exportcsvallnorow').modal('show');
+                    $('#exportcsvallnorow').on('shown.bs.modal', function(e) {
+                        $(this).find('.exportButton').remove();
+                    });
+                }
+                else
+                {
+                    $('#exportpdf [name=participants]').val(postdata.selectedParticipant.toString());
+                    $('#exportpdf').modal('show');
+                    $('#exportpdf').on('shown.bs.modal', function(e) {
+                        var self = this;
+                        var title = count.replace(' to CSV','').replace('Export','Print result for');
+                        add_interval_actions();
+                        $(this).find('h4.modal-title').text(title);
+                        $(this).find('.printButton').on('click', function() {
+                            submit_print_form();
+                            $(self).modal("hide");
+                        });
+                    });
+                    /* $.download(exporttocsvall,'searchcondition=dummy',$('#exportcsvallprocessing').dialog("close"));*/
+                }
+            }
+        });
+    },
+
+    /** end of added by mark mirasol 7/16/2018 **/
+
     /**
      * Run when user clicks 'Export'
      * Used for both all participants and checked participants
@@ -78,6 +158,7 @@ LS.CPDB = (function() {
      * @return
      */
     onClickExport = function(all) {
+        //alert('hello');
         var postdata = {
             selectedParticipant: [],
             YII_CSRF_TOKEN : LS.data.csrfToken
@@ -468,11 +549,11 @@ LS.CPDB = (function() {
             };
             //url, data, idString, actionButtonClass, formId, gridViewId
             runBaseModal(
-                openModalParticipantPanel, 
+                openModalParticipantPanel,
                 data,
                 'action_save_modal_addToSurvey',
-                'addToSurveyActiveForm', 
-                'list_central_participants' 
+                'addToSurveyActiveForm',
+                'list_central_participants'
             ).done(function() {
                 $('.ls-bootstrap-switch').bootstrapSwitch();
             });
@@ -487,7 +568,7 @@ LS.CPDB = (function() {
         $('#action_toggleAllParticipantShare').on('click', function() {
             $('.selector_participantShareCheckbox').prop('checked', $('#action_toggleAllParticipantShare').prop('checked'));
         });
-        
+
         if(($('#pageSizeParticipantView').val() <= 100) || ($('#pageSizeAttributes').val() <= 100) || ($('#pageSizeShareParticipantView').val() <= 100) ){
             $('.action_changeBlacklistStatus').bootstrapSwitch();
         }
@@ -495,10 +576,10 @@ LS.CPDB = (function() {
         $('.action_changeBlacklistStatus').on('switchChange.bootstrapSwitch', function(event,state){
             var self = this;
             $.ajax({
-                url: editValueParticipantPanel, 
+                url: editValueParticipantPanel,
                 method: "POST",
                 data: {actionTarget: 'changeBlacklistStatus', 'participant_id': $(self).closest('tr').data('participant_id'), 'blacklist': state},
-                dataType: 'json', 
+                dataType: 'json',
                 success: function(resolve){
                     $(self).prop("checked", (resolve.newValue == "Y"));
                 }
@@ -516,25 +597,25 @@ LS.CPDB = (function() {
             e.preventDefault();
             var data = {modalTarget: 'editattribute'};
             runBaseModal(
-                openModalParticipantPanel, 
+                openModalParticipantPanel,
                 data,
                 'action_save_modal_editAttributeName',
-                'editAttributeNameActiveForm', 
-                'list_attributes' 
-            ); 
+                'editAttributeNameActiveForm',
+                'list_attributes'
+            );
         });
         $('.action_attributeNames_editModal').on('click', function(e){
             e.preventDefault();
             var data = {modalTarget: 'editattribute','attribute_id' : $(this).closest('tr').data('attribute_id')};
             runBaseModal(
-                openModalParticipantPanel, 
+                openModalParticipantPanel,
                 data,
                 'action_save_modal_editAttributeName',
-                'editAttributeNameActiveForm', 
-                'list_attributes' 
-            ); 
+                'editAttributeNameActiveForm',
+                'list_attributes'
+            );
         });
-        
+
         $('#action_toggleAllAttributeNames').on('click', function(){
             $('.selector_attributeNamesCheckbox').prop('checked',$('#action_toggleAllAttributeNames').prop('checked'));
         });
@@ -543,10 +624,10 @@ LS.CPDB = (function() {
         $('.action_changeAttributeVisibility').on('switchChange.bootstrapSwitch', function(event,state){
             var self = this;
             $.ajax({
-                url: editValueParticipantPanel, 
+                url: editValueParticipantPanel,
                 method: "POST",
                 data: { actionTarget: 'changeAttributeVisibility', 'attribute_id': $(self).closest('tr').data('attribute_id'), 'visible': state},
-                dataType: 'json', 
+                dataType: 'json',
                 success: function(resolve){
                     $(self).prop("checked", (resolve.newValue == "Y"));
                 }
@@ -564,10 +645,10 @@ LS.CPDB = (function() {
         $('.action_changeEditableStatus').on('switchChange.bootstrapSwitch', function(event, state){
             var self = this;
             $.ajax({
-                url: editValueParticipantPanel, 
+                url: editValueParticipantPanel,
                 method: "POST",
                 data: {actionTarget: 'changeSharedEditableStatus', 'participant_id': $(self).closest('tr').data('participant_id'), 'can_edit': state},
-                dataType: 'json', 
+                dataType: 'json',
                 success: function(resolve){
                     $(self).prop("checked", resolve.newValue);
                 }
@@ -650,7 +731,7 @@ LS.CPDB = (function() {
             case 'attributes' :  attributePanel(); break;
             case 'sharepanel' :  sharePanel(); break;
         }
-        
+
         /**
          * @TODO rewrite export
          */
@@ -666,6 +747,7 @@ LS.CPDB = (function() {
         attributePanel: attributePanel,
         sharePanel: sharePanel,
         onClickExport: onClickExport,
+        onClickExport2: onClickExport2,
         bindButtons: bindButtons,
         shareMassiveAction: shareMassiveAction,
         addParticipantToSurvey: addParticipantToSurvey,

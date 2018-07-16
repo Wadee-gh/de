@@ -665,6 +665,13 @@ class responses extends Survey_Common_Action
                   // get token from response.
                   $token = SurveyDynamic::model($iSurveyID)->getTokenFromResponse($iId);
                   $oCriteria->addCondition("tokens.token = '".$token."'");
+
+                  // check if from_date and to_date are provided.
+                  if(isset($_GET['from_date']) && isset($_GET['to_date'])){
+                    $from_date = $_GET['from_date'];
+                    $to_date = $_GET['to_date'];
+                    $oCriteria->addCondition("date(submitdate) >= '".$from_date."' AND date(submitdate) < '".$to_date."'");
+                  }
                 }
                 else {
                   $oCriteria->addCondition("id = '".$iId."'");
@@ -930,7 +937,15 @@ class responses extends Survey_Common_Action
             if(isset($_GET['print'])){
               $participant = CParticipant::model()->getParticipantDetails($token);
               $data = compact('level','aViewUrls','aData','participant');
-              $this->view_print($data); die();
+              if($_GET['multiple']){
+                $html = $this->create_page($data);
+                return($html);
+              } else {
+                $pages = array();
+                $pages[] = $this->create_page($data);
+                $this->create_pdf($pages);
+              }
+              die();
             }
 
             $aViewUrls[] = 'browseidfooter_view';
@@ -956,7 +971,7 @@ class responses extends Survey_Common_Action
         }
     }
 
-    public function view_print($data){
+    public function create_page($data){
         ob_start();
         //echo "print friendly version"; //die();
         //echo "<pre>".print_r($data,true)."</pre>";
@@ -1024,7 +1039,10 @@ class responses extends Survey_Common_Action
         $html = preg_replace('#(<br */?>\s*)(<br */?>\s*)+#i', '<br /><br />', $html);
         $html = '<body>'.$html.$style.'</body>';
         //echo $html; die();
+        return($html);
+    }
 
+    public function create_pdf($pages){
         // create pdf file.
         Yii::import("application.libraries.admin.pdf",TRUE);
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -1063,8 +1081,11 @@ class responses extends Survey_Common_Action
 
         // ---------------------------------------------------------
 
-        $pdf->AddPage('L', 'A4');
-        $pdf->writeHTML($html, true, false, true, false, '');
+        foreach($pages as $html){
+          $pdf->AddPage('L', 'A4');
+          $pdf->writeHTML($html, true, false, true, false, '');
+        }
+
 
         // ---------------------------------------------------------
 
@@ -1072,6 +1093,86 @@ class responses extends Survey_Common_Action
         // This method has several options, check the source code documentation for more information.
         $pdf->Output('export_results_'.date("Ymd").'.pdf', 'I');
 
+        die();
+    }
+
+    public function getDefaultSid(){
+        $surveys = Survey::getSurveysWithTokenTable();
+        //echo "<pre>".print_r($surveys,true)."</pre>";
+        $surveyId = "";
+        foreach($surveys as $survey){
+          $title = $survey->languagesettings[$survey->language]->surveyls_title;
+          $sid = $survey->sid;
+          //echo $sid." ".$title."<br>";
+          if($title == "Default") $surveyId = $sid;
+        }
+        return($surveyId);
+    }
+
+    public function view_print_multiple(){
+        $vars = $_REQUEST;
+        //echo "<pre>".print_r($vars,true)."</pre>";
+        extract($vars);
+
+        // get surveyId.
+        $surveyid = $this->getDefaultSid();
+        //echo "surveyId: ".$surveyid."<br>";
+
+        // get response_ids.
+        $response_ids = array();
+        if(isset($participants)){
+          $participants = explode(",",$participants);
+          //echo "<pre>".print_r($participants,true)."</pre>"; die();
+          foreach($participants as $key => $p){
+            unset($participants[$key]);
+            $response_ids[] = CParticipant::model()->getResponseIdFromParticipantId($p,$surveyid);
+          }
+        }
+        //echo "response_ids:<br><pre>".print_r($response_ids,true)."</pre>";
+
+        // settings for the view.
+        $_GET['print'] = true;
+        $_GET['multiple'] = true;
+        //$interval = 'previous_week';
+        if($interval == 'today'){
+          $_GET['from_date'] = date('Y-m-d',strtotime("today"));
+          $_GET['to_date'] = date('Y-m-d',strtotime("tomorrow"));
+        } else
+        if($interval == 'yesterday'){
+          $_GET['from_date'] = date('Y-m-d',strtotime("yesterday"));
+          $_GET['to_date'] = date('Y-m-d',strtotime("today"));
+        } else
+        if($interval == 'this_week'){
+          $_GET['from_date'] = date('Y-m-d',strtotime("Monday this week"));
+          $_GET['to_date'] = date('Y-m-d',strtotime("Monday this week +7 days"));
+        } else
+        if($interval == 'previous_week'){
+          $_GET['from_date'] = date('Y-m-d',strtotime("Monday last week"));
+          $_GET['to_date'] = date('Y-m-d',strtotime("Monday last week +7 days"));
+        } else
+        if($interval == 'this_month'){
+          $_GET['from_date'] = date('Y-m-d',strtotime("first day of this month"));
+          $_GET['to_date'] = date('Y-m-d',strtotime(date('Y-m-d',strtotime("last day of this month"))."+1 day"));
+        } else
+        if($interval == 'previous_month'){
+          $_GET['from_date'] = date('Y-m-d',strtotime("first day of last month"));
+          $_GET['to_date'] = date('Y-m-d',strtotime(date('Y-m-d',strtotime("last day of last month"))."+1 day"));
+        } else
+        if($interval == 'date_range'){
+          $_GET['from_date'] = $vars['from_date'];
+          $_GET['to_date'] = date('Y-m-d',strtotime($vars['to_date']."+1 day"));
+        }
+        //echo "<pre>".print_r($_GET,true)."</pre>"; die();
+
+        // get results page for each response id.
+        $pages = array();
+        foreach($response_ids as $srid){
+          $pages[] = $this->view($surveyid,$srid);
+        }
+        //echo "<pre>".print_r($pages,true)."</pre>";
+
+        // generate pdf.
+        $this->create_pdf($pages);
         die();
     }
 

@@ -24,7 +24,7 @@ $this->widget('ext.admin.grid.MassiveActionsWidget.MassiveActionsWidget', array(
             'modalType'     => 'empty',
             'keepopen'      => 'no',
             'sModalTitle'   => gT('Delete one or more participants...'),
-            'htmlModalBody' => 
+            'htmlModalBody' =>
                 '<p>' . gT('Please choose one option.') . '</p>' .
                 // The class 'post-value' will make widget post input/select to controller url
                 '<select name="selectedoption" class="form-control post-value">
@@ -44,6 +44,17 @@ $this->widget('ext.admin.grid.MassiveActionsWidget.MassiveActionsWidget', array(
         // Separator
         array('type'  => 'separator'),
 
+        // Print
+        array(
+            'type' => 'action',
+            'action' => 'print',
+            'url' => '',  // Not relevant
+            'iconClasses' => 'glyphicon glyphicon-print',
+            'text' => gT('Print'),
+            'grid-reload' => 'no',
+            'actionType' => 'custom',
+            'custom-js' => '(function() { LS.CPDB.onClickExport2(); })'
+        ),
         // Export
         array(
             'type' => 'action',
