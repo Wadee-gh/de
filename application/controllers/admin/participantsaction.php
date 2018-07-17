@@ -131,6 +131,9 @@ class participantsaction extends Survey_Common_Action
             case "changeBlacklistStatus":
                 $this->changeblackliststatus();
                 break;
+            case "changeActiveStatus":
+                $this->changeactivestatus();
+                break;
             case "changeAttributeVisibility":
                 $this->changeAttributeVisibility();
                 break;
@@ -349,7 +352,7 @@ class participantsaction extends Survey_Common_Action
             'debug' => $request->getParam('Participant')
         );
 
-        //echo "<pre>".print_r($aData,true)."</pre>"; //die();
+        //echo "<pre>".print_r($aData,true)."</pre>"; die();
 
         $aData['pageSizeParticipantView']= Yii::app()->user->getState('pageSizeParticipantView');
         $searchstring = $request->getPost('searchstring');
@@ -1255,6 +1258,20 @@ class participantsaction extends Survey_Common_Action
         echo json_encode(array(
             "success" => true,
             "newValue" => $blacklistValue
+        ));
+    }
+
+    public function changeactivestatus()
+    {
+        $participantId = Yii::app()->request->getPost('participant_id');
+        $activeStatus = Yii::app()->request->getPost('active');
+        $activeValue = ($activeStatus=="true" ? "Y" : "N" );
+        $participant = Participant::model()->findByPk($participantId);
+        $participant->active = $activeValue;
+        $participant->update(array('active'));
+        echo json_encode(array(
+            "success" => true,
+            "newValue" => $activeValue
         ));
     }
 

@@ -74,9 +74,10 @@ class Participant extends LSActiveRecord
             array('dob', 'length', 'max' => 40),
             array('firstname, lastname, language', 'LSYii_Validators'),
             array('email', 'length', 'max' => 254),
+            array('active', 'length', 'max' => 1),
             array('blacklisted', 'length', 'max' => 1),
             // Please remove those attributes that should not be searched.
-            array('participant_id, firstname, lastname, email, language, countActiveSurveys, blacklisted, owner.full_name', 'safe', 'on' => 'search'),
+            array('participant_id, firstname, lastname, email, language, countActiveSurveys, active, blacklisted, owner.full_name', 'safe', 'on' => 'search'),
         );
     }
 
@@ -349,6 +350,23 @@ class Participant extends LSActiveRecord
         }
     }
 
+    public function getActiveSwitchbutton(){
+        if ($this->userHasPermissionToEdit()) {
+            $inputHtml = "<input type='checkbox' data-size='small' data-on-color='primary' data-off-color='warning' data-off-text='".gT('No')."' data-on-text='".gT('Yes')."' class='action_changeActiveStatus' "
+                . ($this->active == "Y" ? "checked" : "")
+                . "/>";
+            return  $inputHtml;
+        }
+        else {
+            if ($this->active == 'Y') {
+                return gT('Yes');
+            }
+            else {
+                return gT('No');
+            }
+        }
+    }
+
     /**
      * @return array
      */
@@ -375,6 +393,12 @@ class Participant extends LSActiveRecord
             array(
                 "name" => 'mrn_id',
                 "header" => gT("ID"),
+            ),
+            array(
+                "name" => 'active',
+                "value" => '$data->getActiveSwitchbutton()',
+                "type" => "raw",
+                "filter" => array('N' => gT("No"), 'Y'=>gT('Yes'))
             ),
             /*array(
                 "name" => 'email'
@@ -504,6 +528,7 @@ class Participant extends LSActiveRecord
         $criteria->compare('t.firstname', $this->firstname, true, 'AND' ,true);
         $criteria->compare('t.lastname', $this->lastname, true, 'AND' ,true);
         $criteria->compare('t.email', $this->email, true, 'AND' ,true);
+        $criteria->compare('t.active', $this->active, true);
         $criteria->compare('t.language', $this->language, true);
         $criteria->compare('t.blacklisted', $this->blacklisted, true);
         $criteria->compare('t.owner_uid', $this->owner_uid);
@@ -552,11 +577,13 @@ class Participant extends LSActiveRecord
         // Users can only see: 1) Participants they own; 2) participants shared with them; and 3) participants shared with everyone
         // Superadmins can see all users.
         $isSuperAdmin = Permission::model()->hasGlobalPermission('superadmin', 'read');
-        if (!$isSuperAdmin) {
+        $hasReadParticipants = Permission::model()->hasGlobalPermission('participantpanel','read');
+        if (!$isSuperAdmin && !$hasReadParticipants) {
             $criteria->addCondition('t.owner_uid = ' . Yii::app()->user->id . ' OR ' . Yii::app()->user->id . ' = shares.share_uid OR shares.share_uid = -1');
         }
 
-        $pageSize = Yii::app()->user->getState('pageSizeParticipantView', Yii::app()->params['defaultPageSize']);      
+        $pageSize = Yii::app()->user->getState('pageSizeParticipantView', Yii::app()->params['defaultPageSize']);
+        //echo "<pre>".print_r($criteria,true)."</pre>"; //die();
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'sort' => $sort,

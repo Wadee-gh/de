@@ -586,6 +586,24 @@ LS.CPDB = (function() {
             })
         });
 
+        if(($('#pageSizeParticipantView').val() <= 100) || ($('#pageSizeAttributes').val() <= 100) || ($('#pageSizeShareParticipantView').val() <= 100) ){
+            $('.action_changeActiveStatus').bootstrapSwitch();
+        }
+
+        $('.action_changeActiveStatus').on('switchChange.bootstrapSwitch', function(event,state){
+            var self = this;
+            $.ajax({
+                url: editValueParticipantPanel,
+                method: "POST",
+                data: {actionTarget: 'changeActiveStatus', 'participant_id': $(self).closest('tr').data('participant_id'), 'active': state},
+                dataType: 'json',
+                success: function(resolve){
+                    $(self).prop("checked", (resolve.newValue == "Y"));
+                }
+            })
+        });
+
+
         $('#pageSizeParticipantView').on("change", function(){
             $.fn.yiiGridView.update('list_central_participants',{ data:{ pageSizeParticipantView: $(this).val() }});
         });
