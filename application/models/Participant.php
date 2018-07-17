@@ -74,10 +74,11 @@ class Participant extends LSActiveRecord
             array('dob', 'length', 'max' => 40),
             array('firstname, lastname, language', 'LSYii_Validators'),
             array('email', 'length', 'max' => 254),
+            array('mrn_id', 'length', 'max' => 100),
             array('active', 'length', 'max' => 1),
             array('blacklisted', 'length', 'max' => 1),
             // Please remove those attributes that should not be searched.
-            array('participant_id, firstname, lastname, email, language, countActiveSurveys, active, blacklisted, owner.full_name', 'safe', 'on' => 'search'),
+            array('participant_id, firstname, lastname, email, language, countActiveSurveys, mrn_id, active, dob, blacklisted, owner.full_name', 'safe', 'on' => 'search'),
         );
     }
 
@@ -112,7 +113,8 @@ class Participant extends LSActiveRecord
             . "<span class='fa fa-%s' ></span>" //icon class
             . "</button>";
 
-        if ($this->userHasPermissionToEdit()) {
+        $hasReadParticipants = Permission::model()->hasGlobalPermission('participantpanel');
+        if ($this->userHasPermissionToEdit() || $hasReadParticipants) {
             // Edit button
             $editData = array(
                 'action_participant_editModal',
@@ -125,7 +127,7 @@ class Participant extends LSActiveRecord
             // Only owner or superadmin can delete
             $userId = Yii::app()->user->id;
             $isSuperAdmin = Permission::model()->hasGlobalPermission('superadmin', 'read');
-            if ($this->owner_uid == $userId || $isSuperAdmin) {
+            if ($this->owner_uid == $userId || $isSuperAdmin || $hasReadParticipants) {
                 // Delete button
                 $deleteData = array(
                     'action_participant_deleteModal',
@@ -351,12 +353,12 @@ class Participant extends LSActiveRecord
     }
 
     public function getActiveSwitchbutton(){
-        if ($this->userHasPermissionToEdit()) {
+        //if ($this->userHasPermissionToEdit()) {
             $inputHtml = "<input type='checkbox' data-size='small' data-on-color='primary' data-off-color='warning' data-off-text='".gT('No')."' data-on-text='".gT('Yes')."' class='action_changeActiveStatus' "
                 . ($this->active == "Y" ? "checked" : "")
                 . "/>";
             return  $inputHtml;
-        }
+        /*}
         else {
             if ($this->active == 'Y') {
                 return gT('Yes');
@@ -364,7 +366,7 @@ class Participant extends LSActiveRecord
             else {
                 return gT('No');
             }
-        }
+        }*/
     }
 
     /**
@@ -398,7 +400,7 @@ class Participant extends LSActiveRecord
                 "name" => 'active',
                 "value" => '$data->getActiveSwitchbutton()',
                 "type" => "raw",
-                "filter" => array('N' => gT("No"), 'Y'=>gT('Yes'))
+                "filter" => array('' => gT("All"), 'N' => gT("No"), 'Y'=>gT('Yes'))
             ),
             /*array(
                 "name" => 'email'
@@ -528,7 +530,9 @@ class Participant extends LSActiveRecord
         $criteria->compare('t.firstname', $this->firstname, true, 'AND' ,true);
         $criteria->compare('t.lastname', $this->lastname, true, 'AND' ,true);
         $criteria->compare('t.email', $this->email, true, 'AND' ,true);
+        $criteria->compare('t.mrn_id', $this->mrn_id, true);
         $criteria->compare('t.active', $this->active, true);
+        $criteria->compare('t.dob', $this->dob, true);   
         $criteria->compare('t.language', $this->language, true);
         $criteria->compare('t.blacklisted', $this->blacklisted, true);
         $criteria->compare('t.owner_uid', $this->owner_uid);
@@ -2331,7 +2335,7 @@ class Participant extends LSActiveRecord
 
         $owner = $this->owner_uid == $userId;
 
-        if (Permission::model()->hasGlobalPermission('superadmin')) {
+        if (Permission::model()->hasGlobalPermission('superadmin')  || Permission::model()->hasGlobalPermission('participantpanel')) {
             // Superadmins can do anything
             return true;
         }
