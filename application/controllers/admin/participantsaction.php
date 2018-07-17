@@ -228,7 +228,7 @@ class participantsaction extends Survey_Common_Action
 
         $attid = ParticipantAttributeName::model()->getVisibleAttributes();
         //If super admin all the participants will be visible
-        if (Permission::model()->hasGlobalPermission('superadmin','read'))
+        if (Permission::model()->hasGlobalPermission('superadmin','read') || Permission::model()->hasGlobalPermission('participantpanel','read'))
         {
             $iUserID = null;
         } else {
