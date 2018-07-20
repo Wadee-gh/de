@@ -1032,17 +1032,48 @@ class responses extends Survey_Common_Action
             border-collapse: collapse;
             font-size: 8pt;
           }
+
+          th, td {
+            padding: 8px !important;
+            /*margin: 10px;*/
+            text-align: center;
+            vertical-align: middle !important;
+          }
+
+          td.text-center, th.text-center {
+            text-align: center;
+          }
         </style>
         ";
 
+        // remoe comments.
         $html = preg_replace('/<!--(.|\s)*?-->/', "", $html);
-        $html = preg_replace('/<input type="hidden"[^>]+\>/', "", $html);
+
+        // table fixes.
+        $search = '/(<table)/';
+        $html = preg_replace($search, "$1".' border="1" cellpadding="10" ', $html);
+
+        // radio button fixes.
+        $search = '/<input[\s]+class="radio"[^<]+CHECKED[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
+        $base_url = str_replace("index.php","",$this->getController()->createUrl("/"));
+        $html = preg_replace($search, '<img height="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
+        $search = '/<input[\s]+class="radio"[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
+        $html = preg_replace($search, '<img height="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_off_grey_144x144.png".'">', $html);
+        $search = '/(<img src="radio[^<]+)<br\>/';
+        $html = preg_replace($search, "$1", $html);
+
+        // remove divs.
+        $html = preg_replace('/<input type="hidden"[^<]+/', "", $html);
+        $search = '/<div class="em_equation equation hidden"[^<]+<span[^<]+<\/span[^<]+<\/div\>/';
+        $search = '/<span[^<]+<\/span\>/';
+        $html = preg_replace($search, "", $html);
         $html = preg_replace('/<div[^>]+\>/', "", $html);
         $html = preg_replace('/<\/div\>/', "<br>", $html);
         $html = preg_replace('/<a[^>]+\>/', "", $html);
         $html = preg_replace('/<\/a\>/', "", $html);
         $html = preg_replace('#(<br */?>\s*)(<br */?>\s*)+#i', '<br /><br />', $html);
         $html = '<body>'.$html.$style.'</body>';
+        //echo "<pre>".htmlspecialchars($html)."</pre>"; //die();
         //echo $html; die();
         return($html);
     }
