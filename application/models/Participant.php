@@ -532,7 +532,7 @@ class Participant extends LSActiveRecord
         $criteria->compare('t.email', $this->email, true, 'AND' ,true);
         $criteria->compare('t.mrn_id', $this->mrn_id, true);
         $criteria->compare('t.active', $this->active, true);
-        $criteria->compare('t.dob', $this->dob, true);   
+        $criteria->compare('t.dob', $this->dob, true);
         $criteria->compare('t.language', $this->language, true);
         $criteria->compare('t.blacklisted', $this->blacklisted, true);
         $criteria->compare('t.owner_uid', $this->owner_uid);
@@ -690,6 +690,7 @@ class Participant extends LSActiveRecord
                 $key = str_replace("_","",$field);
               }
               $val = "Dummy";
+              if($key == 'dob') $val = date("Y-m-d");
               if(isset($vars[$field])) $val = $vars[$field];
               $data2[$key] = $val;
             }

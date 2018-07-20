@@ -768,6 +768,11 @@ class responses extends Survey_Common_Action
                     //echo "<pre>".print_r($redata,true)."</pre>"; die();
                     $gid = $_GET['group'];
                     $qanda = $this->get_qanda($gid,'survey_'.$iSurveyID,$r);
+                    $_SESSION['survey_'.$iSurveyID]['relevanceStatus']['G0'] = 1;
+                    $_SESSION['survey_'.$iSurveyID]['step'] = 1;
+                    $_SESSION['survey_'.$iSurveyID]['stepno'] = 1;
+                    //echo "<pre>".print_r($_SESSION,true)."</pre>"; die();
+                    //echo "<pre>".print_r($_SESSION['survey_'.$iSurveyID],true)."</pre>"; die();
                     //echo "<pre>".print_r($qanda,true)."</pre>"; die();
                     foreach($qanda as $qa){
                       $output = $this->get_question_output($surveyid,$qa,$redata);
@@ -2052,6 +2057,7 @@ class responses extends Survey_Common_Action
                     }*/
                     //echo "ia:<br><pre>".print_r($ia,true)."</pre>";
                     $qidattributes = getQuestionAttributeValues($ia[0]);
+                    $_SESSION[$LEMsessid]['relevanceStatus'][$ia[0]] = 1;
                     //echo "qidattributes:<br><pre>".print_r($qidattributes,true)."</pre>"; //die();
 
                     if ($ia[4] != '*' && ($qidattributes === false || !isset($qidattributes['hidden']) || $qidattributes['hidden'] == 1))
@@ -2266,7 +2272,7 @@ class responses extends Survey_Common_Action
         if($type == '*'){
           //echo "qa:<br><pre>".print_r($aQuestionQanda,true)."</pre>";
           $LEMsessid = "survey_".$iSurveyId;
-          //echo "data:<br><pre>".print_r($_SESSION[$LEMsessid],true)."</pre>";
+          //echo "data:<br><pre>".print_r($_SESSION[$LEMsessid],true)."</pre>"; die();
           $answer = $_SESSION[$LEMsessid][$aQuestionQanda[7]];
           //echo "answer: ".$answer."<br>";
           $aReplacement['QUESTION_TEXT'] .= " ".$answer;
