@@ -1020,33 +1020,7 @@ class responses extends Survey_Common_Action
         $html = ob_get_contents();
         ob_clean();
 
-        // add css.
-        $style = "
-        <style>
-          body {
-            font-size: 8pt;
-            font-family: helvetica;
-          }
-
-          table {
-            border-collapse: collapse;
-            font-size: 8pt;
-          }
-
-          th, td {
-            padding: 8px !important;
-            /*margin: 10px;*/
-            text-align: center;
-            vertical-align: middle !important;
-          }
-
-          td.text-center, th.text-center {
-            text-align: center;
-          }
-        </style>
-        ";
-
-        // remoe comments.
+        // remove comments.
         $html = preg_replace('/<!--(.|\s)*?-->/', "", $html);
 
         // table fixes.
@@ -1072,7 +1046,7 @@ class responses extends Survey_Common_Action
         $html = preg_replace('/<a[^>]+\>/', "", $html);
         $html = preg_replace('/<\/a\>/', "", $html);
         $html = preg_replace('#(<br */?>\s*)(<br */?>\s*)+#i', '<br /><br />', $html);
-        $html = '<body>'.$html.$style.'</body>';
+        $html = '<body>'.$html.'</body>';
         //echo "<pre>".htmlspecialchars($html)."</pre>"; //die();
         //echo $html; die();
         return($html);
