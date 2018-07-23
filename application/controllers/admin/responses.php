@@ -1029,7 +1029,11 @@ class responses extends Survey_Common_Action
 
         // radio button fixes.
         $search = '/<input[\s]+class="radio"[^<]+CHECKED[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
-        $base_url = str_replace("index.php","",$this->getController()->createUrl("/"));
+        //$base_url = str_replace("index.php","",$this->getController()->createUrl("/"));
+        //echo "<pre>".print_r($_SERVER,true)."</pre>"; die();
+        $script_url = "http://".$_SERVER["SERVER_NAME"] . $_SERVER["SCRIPT_NAME"];
+        $base_url = str_replace(basename($_SERVER["PHP_SELF"]),'',$script_url);
+        $base_url = str_replace("index.php",'',$base_url);
         $html = preg_replace($search, '<img height="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
         $search = '/<input[\s]+class="radio"[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
         $html = preg_replace($search, '<img height="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_off_grey_144x144.png".'">', $html);
