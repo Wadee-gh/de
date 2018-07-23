@@ -668,6 +668,8 @@ class UserAction extends Survey_Common_Action
             'full_name'=> Yii::app()->request->getPost('fullname'),
             'email'=> Yii::app()->request->getPost('email')
             );
+
+            $error1 = false;
             if (Yii::app()->request->getPost('password')!='' && !Yii::app()->getConfig('demoMode'))
             {
                 if (Yii::app()->request->getPost('password')==Yii::app()->request->getPost('repeatpassword'))
@@ -676,9 +678,11 @@ class UserAction extends Survey_Common_Action
                 }
                 else
                 {
+                    $error1= true;
                     Yii::app()->setFlashMessage(gT("Your new password was not saved because the passwords did not match."),'error');
                 }
             }
+
             $uresult = User::model()->updateByPk(Yii::app()->session['loginID'], $aData);
 
             if (Yii::app()->request->getPost('lang')=='auto')
@@ -697,7 +701,10 @@ class UserAction extends Survey_Common_Action
             Yii::app()->session['questionselectormode'] = Yii::app()->request->getPost('questionselectormode');
             Yii::app()->session['templateeditormode'] = Yii::app()->request->getPost('templateeditormode');
             Yii::app()->session['dateformat'] = Yii::app()->request->getPost('dateformat');
-            Yii::app()->setFlashMessage(gT("Your personal settings were successfully saved."));
+            if($error1 == false){
+              Yii::app()->setFlashMessage(gT("Your personal settings were successfully saved.")); 
+            }
+
             if (Yii::app()->request->getPost("saveandclose")) {
                 $this->getController()->redirect(array("admin/survey/sa/index"));
             }
@@ -722,7 +729,7 @@ class UserAction extends Survey_Common_Action
         $aData['fullpagebar']['savebutton']['form'] = 'personalsettings';
         $aData['fullpagebar']['saveandclosebutton']['form'] = 'personalsettings';
         $aData['fullpagebar']['closebutton']['url_keep'] = true;
-        $aData['fullpagebar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl("admin/user/sa/index") );
+        $aData['fullpagebar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl("admin") );
 
         // Render personal settings view
         if (isset($_POST['saveandclose']))
