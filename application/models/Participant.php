@@ -580,9 +580,9 @@ class Participant extends LSActiveRecord
 
         // Users can only see: 1) Participants they own; 2) participants shared with them; and 3) participants shared with everyone
         // Superadmins can see all users.
-        $isSuperAdmin = Permission::model()->hasGlobalPermission('superadmin', 'read');
-        $hasReadParticipants = Permission::model()->hasGlobalPermission('participantpanel','read');
-        if (!$isSuperAdmin && !$hasReadParticipants) {
+        //$isSuperAdmin = Permission::model()->hasGlobalPermission('superadmin', 'read');
+        $isSuperAdmin = Permission::model()->hasGlobalPermission('participantpanel','read');
+        if (!$isSuperAdmin) {
             $criteria->addCondition('t.owner_uid = ' . Yii::app()->user->id . ' OR ' . Yii::app()->user->id . ' = shares.share_uid OR shares.share_uid = -1');
         }
 
@@ -1086,7 +1086,8 @@ class Participant extends LSActiveRecord
     */
     public function filterParticipantIDs($aParticipantIDs)
     {
-        if (!Permission::model()->hasGlobalPermission('superadmin','read')) // If not super admin filter the participant IDs first to owner only
+        /*if (!Permission::model()->hasGlobalPermission('superadmin','read'))*/ // If not super admin filter the participant IDs first to owner only
+        if(Permission::model()->hasGlobalPermission('participantpanel','read'))
         {
             $aCondition=array('and','owner_uid=:owner_uid',array('in', 'participant_id', $aParticipantIDs));
             $aParameter=array(':owner_uid'=>Yii::app()->session['loginID']);
@@ -1111,6 +1112,7 @@ class Participant extends LSActiveRecord
            the participant from any tokens table they're in (using the survey_links table to find them)
            and then all the participants attributes. */
         $aParticipantsIDChunks = array_chunk(explode(",", $sParticipantsIDs),100);
+        $count = 0;
         foreach ($aParticipantsIDChunks as $aParticipantsIDs)
         {
             $aParticipantsIDs=$this->filterParticipantIDs($aParticipantsIDs);
@@ -1126,8 +1128,9 @@ class Participant extends LSActiveRecord
                     }
                 }
             }
-            $this->deleteParticipants($sParticipantsIDs, false);
+            $count += $this->deleteParticipants($sParticipantsIDs, false);
         }
+        return($count);
     }
 
     /**
@@ -1144,6 +1147,7 @@ class Participant extends LSActiveRecord
         $aParticipantsIDs = explode(",", $sParticipantsIDs);
         $aParticipantsIDs=$this->filterParticipantIDs($aParticipantsIDs);
 
+        $count = 0;
         foreach ($aParticipantsIDs as $row)
         {
             $tokens = Yii::app()->db->createCommand()
@@ -1190,8 +1194,9 @@ class Participant extends LSActiveRecord
                     }
                 }
             }
-            $this->deleteParticipants($sParticipantsIDs, false);
+            $count += $this->deleteParticipants($sParticipantsIDs, false);
         }
+        return($count);
     }
 
     /**

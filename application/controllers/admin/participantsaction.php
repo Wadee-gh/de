@@ -308,20 +308,16 @@ class participantsaction extends Survey_Common_Action
         }
 
         // if superadmin all the records in the cpdb will be displayed
-        if (Permission::model()->hasGlobalPermission('superadmin','read'))
+        if(Permission::model()->hasGlobalPermission('participantpanel','read'))
+        /*if (Permission::model()->hasGlobalPermission('superadmin','read'))*/
         {
             $iTotalRecords = Participant::model()->count();
         }
         // if not only the participants on which he has right on (shared and owned)
         else
         {
-            if(Permission::model()->hasGlobalPermission('participantpanel','read')){
-              //echo "he has read permissions."; die();
-              $iTotalRecords = Participant::model()->count();
-            } else {
-              $iUserId = Yii::app()->user->getId();
-              $iTotalRecords = Participant::model()->getParticipantsOwnerCount($iUserId);
-            }
+            $iUserId = Yii::app()->user->getId();
+            $iTotalRecords = Participant::model()->getParticipantsOwnerCount($iUserId);
         }
         $model = new Participant();
         $request = Yii::app()->request;
@@ -402,7 +398,7 @@ class participantsaction extends Survey_Common_Action
             $deletedParticipants = Participant::model()->deleteParticipants($participantIds);
         }
         // Deletes from central and token table
-        else if ($selectoption == 'ptt') {
+        else if ($selectoption == 'pt') {
             $deletedParticipants = Participant::model()->deleteParticipantToken($participantIds);
         }
         // Deletes from central , token and assosiated responses as well

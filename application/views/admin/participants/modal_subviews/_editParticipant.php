@@ -70,7 +70,7 @@
                 <?php eT('E-mail:'); ?>
             </label>
             <div class='col-sm-10'>
-                <input class='form-control' name='Participant[email]' value='<?php echo $model->email; ?>' data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
+                <input class='form-control' required name='Participant[email]' value='<?php echo $model->email; ?>' data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
                 <div class="help-block with-errors"></div>
             </div>
         </div>
