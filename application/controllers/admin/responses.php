@@ -1031,7 +1031,8 @@ class responses extends Survey_Common_Action
         $search = '/<input[\s]+class="radio"[^<]+CHECKED[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
         //$base_url = str_replace("index.php","",$this->getController()->createUrl("/"));
         //echo "<pre>".print_r($_SERVER,true)."</pre>"; die();
-        $script_url = "http://".$_SERVER["SERVER_NAME"] . $_SERVER["SCRIPT_NAME"];
+        $protocol = "http" . (($_SERVER["HTTPS"] == "on") ? "s" : "") . "://";
+        $script_url = $protocol.$_SERVER["SERVER_NAME"] . $_SERVER["SCRIPT_NAME"];
         $base_url = str_replace(basename($_SERVER["PHP_SELF"]),'',$script_url);
         $base_url = str_replace("index.php",'',$base_url);
         $html = preg_replace($search, '<img height="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
