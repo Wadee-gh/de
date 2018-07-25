@@ -236,7 +236,7 @@
                                 <option value="previous_week">Previous Week</option>
                                 <option value="this_month">This Month</option>
                                 <option value="previous_month">Previous Month</option>
-                                <option value="none">ALL</option>
+                                <option value="none" selected>ALL</option>
                             </select>
                         </div>
                     </div>

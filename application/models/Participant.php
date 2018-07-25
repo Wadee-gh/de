@@ -689,7 +689,7 @@ class Participant extends LSActiveRecord
               if(in_array($field,explode(",","first_name,last_name"))){
                 $key = str_replace("_","",$field);
               }
-              $val = "Dummy";
+              $val = "Dummy".$id;
               if($key == 'dob') $val = date("Y-m-d");
               if(isset($vars[$field])) $val = $vars[$field];
               $data2[$key] = $val;
