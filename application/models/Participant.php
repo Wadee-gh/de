@@ -2405,6 +2405,18 @@ class Participant extends LSActiveRecord
         return($row);
     }
 
+    public function getByID($mrn_id){
+        $tbl = $this->tableName();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where("mrn_id='".$mrn_id."'")
+            ->from($tbl)
+            ->queryRow();
+        if($row == '') $row = array();
+        //echo "<pre>".print_r($row,true)."</pre>"; die();
+        return($row);
+    }
+
     public function getLastResponse($participant_id){
         // find survey named Default.
         $row = Yii::app()->db->createCommand()

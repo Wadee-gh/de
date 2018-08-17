@@ -1,5 +1,72 @@
 //Namespacing all Methods of the participant panel in one JS-Prototype
 LS = LS || {};
+
+function groupSelectionActions(){
+  // add ajax action to display question groups in survey.
+  $('select[name=survey_id].trigger').change(function(){
+    var val = $(this).val();
+    //console.log('survey_id:'+val);
+    updateQuestionGroups(val);
+  });
+
+  var hasDefault = false;
+  var defaultId = 0;
+  var options = $('select[name=survey_id].trigger').find('option');
+  options.each(function(){
+    var name = $(this).text();
+    var val = $(this).val();
+    //console.log(name+' '+val);
+    if(name == 'Default' || name == 'default'){
+      defaultId = val;
+    }
+  });
+  //console.log(defaultId);
+  $('#survey_div').children().hide();
+  if(defaultId == 0){
+    $('#survey_div #survey_text').html('No survey named \'Default\' found.');
+    $('#survey_div #survey_text').show();
+    $('.action_save_modal_customParticipant').hide();
+  } else {
+    $('select[name=survey_id].trigger').val(defaultId);
+    $('select[name=survey_id].trigger').trigger('change');
+  }
+}
+
+function updateQuestionGroups(surveyid){
+  action = $('select[name=survey_id].trigger').attr('action');
+  var postdata = {
+      surveyid: surveyid,
+      YII_CSRF_TOKEN : LS.data.csrfToken
+  };
+  $.ajax({
+      url: action,
+      data: postdata,
+      method: 'POST',
+      success: function(result) {
+          //console.log(result);
+          var r = jQuery.parseJSON(result);
+          $('#required-groups-inner').html(r.html);
+          $('#required-groups').show();
+          if($('#email-div').length>0){
+            $('#email-div').show();
+          }
+      },
+      error : function() {
+          console.log(arguments);
+      }
+  });
+}
+
+function repeat_last_groups(glist){
+    $('#repeat_last_groups').hide();
+    //alert(glist);
+    var groups = glist.split(",");
+    for (i = 0; i < groups.length; i++) {
+        //alert(groups[i]);
+        $('#check_group_'+groups[i]).prop('checked', true);
+    }
+}
+
 LS.CPDB = (function() {
     var
     // Basic modal used by all submethods
@@ -15,10 +82,6 @@ LS.CPDB = (function() {
      */
     runBaseModal = function(url, data, actionButtonClass, formId, gridViewId){
 
-        /**
-         * @param {object} result
-         * @todo
-         */
         var secondSuccess = function(result) {
             $(baseModal).modal('hide');
             //console.log('secondsuccess');
@@ -36,6 +99,85 @@ LS.CPDB = (function() {
           }
         }
 
+        function postSecond(action,formData){
+            LS.ajax({
+                url: action,
+                data: formData,
+                method: 'POST',
+                success: secondSuccess,
+                error : function() {
+                    console.log(arguments);
+                }
+            });
+        }
+
+        function switchToEditParticipant(obj){
+            /*$('.action_participant_editModal').on('click', function(e){
+                e.preventDefault();*/
+                var data = {modalTarget: 'editparticipant', 'participant_id' : obj.participant_id};
+                //url, data, idString, actionButtonClass, formId, gridViewId
+                runBaseModal(
+                    openModalParticipantPanel,
+                    data,
+                    'action_save_modal_editParticipant',
+                    'editPartcipantActiveForm',
+                    'list_central_participants'
+                ).done(function() {
+                    var val = $('#participantPanel_edit_modal .ls-bootstrap-switch').attr('checked');
+                    $('.ls-bootstrap-switch').bootstrapSwitch('state', val == 'checked');
+                });
+            //});
+        }
+
+        function switchToSendEmailRequest(obj){
+            //e.preventDefault();
+            var data = {
+                modalTarget: 'customParticipant',
+                process: 'sendEmailRequest',
+                title2: 'Send Email Request',
+                participant_id: obj.participant_id
+            };
+            //url, data, idString, actionButtonClass, formId, gridViewId
+            runBaseModal(
+                openModalParticipantPanel,
+                data,
+                'action_save_modal_customParticipant',
+                'customParticipantActiveForm',
+                'list_central_participants'
+            ).done(function() {
+                $('.ls-bootstrap-switch').bootstrapSwitch();
+                groupSelectionActions();
+            });
+        }
+
+        function checkParticipantExists(action,formData,process){
+            $.ajax({
+                url: 'sa/participantExists',
+                data: formData,
+                method: 'POST',
+                success: function(result) {
+                    //alert(result);
+                    var obj = jQuery.parseJSON(result);
+                    if(obj.exists){
+                      if(confirm("User already exists. Use existing profile?")){
+                        if(process == 'addParticipant'){
+                          // switch to Edit Participant instead of Add Participant.
+                          switchToEditParticipant(obj.row);
+                        } else
+                        if(process == 'sendEmailRequest'){
+                          switchToSendEmailRequest(obj.row);
+                        }
+                      }
+                    } else {
+                      // close the dialog and do nothing.
+                    }
+                },
+                error : function() {
+                    console.log(arguments);
+                }
+            });
+        }
+
         /**
          * @param {string} page - Modal HTML fetched with Ajax
          * @todo
@@ -49,18 +191,32 @@ LS.CPDB = (function() {
                 var formData = $(baseModal).find('#'+formId).serializeArray();
                 //console.log('firstsuccess');
                 //console.log(action);
-                LS.ajax({
-                    url: action,
-                    data: formData,
-                    method: 'POST',
-                    success: secondSuccess,
-                    error : function() {
-                        console.log(arguments);
-                    }
-                });
+                //alert(actionButtonClass);
+                if(actionButtonClass == 'action_save_modal_editParticipant'){
+                  var oper = 'edit';
+                  if(data.participant_id == undefined){
+                    oper = 'add';
+                  }
+                  //alert(formId + ' ' + data.participant_id + ' ' + oper);
+                  if(oper == 'add'){
+                    checkParticipantExists(action,formData,'addParticipant');
+                  } else {
+                    postSecond(action,formData);
+                  }
+                } else
+                if(actionButtonClass == 'action_save_modal_customParticipant'){
+                  var process = data.process;
+                  if(process == 'sendEmailRequest'){
+                    checkParticipantExists(action,formData,process);
+                  } else {
+                    postSecond(action,formData);
+                  }
+                } else {
+                  postSecond(action,formData);
+                }
+
             });
         };
-
 
         return LS.ajax({
             url: url,

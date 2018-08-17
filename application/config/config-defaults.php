@@ -574,7 +574,7 @@ $config['RPCInterface'] = 'off';
 * Default is 2 hours
 * @var integer
 */
-$config['iSessionExpirationTime'] = 7200;
+$config['iSessionExpirationTime'] = 60;
 
 /**
 * This parameter can be used to set some question not selectable in LimeReplacementFiels

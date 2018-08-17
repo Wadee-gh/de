@@ -548,6 +548,17 @@ class participantsaction extends Survey_Common_Action
         ls\ajax\AjaxHelper::output($html);
     }
 
+    public function participantExists(){
+        $operation = Yii::app()->request->getPost('oper');
+        $aData = Yii::app()->request->getPost('Participant');
+        $row1 = Participant::model()->getByEmail($aData['email']);
+        $row2 = Participant::model()->getByID($aData['mrn_id']);
+        $row = (empty($row1) ? $row2 : $row1);
+        $exists = !empty($row);
+        echo json_encode(compact('exists','row')); die();
+        ls\ajax\AjaxHelper::output(json_encode(compact('exists','row')));
+    }
+
     /**
      * Either update or create new participant
      */
@@ -1433,15 +1444,19 @@ class participantsaction extends Survey_Common_Action
         if($process == "onSiteAnonymousRequest") $status = 1;
 
         $email = "";
+        $last_groups = "";
         if($participant_id){
           $participant = Participant::model()->findByPk($participant_id);
           $email = $participant['email'];
+          $tmp = CParticipant::model()->getByEmail($email);
+          $last_groups = implode(",",json_decode($tmp['required_groups'],true));
           $ask_email = 0;
           $status = 1;
         }
 
         $data = array();
         $data['participant_id'] = $participant_id;
+        $data['last_groups'] = $last_groups;
         $data['count'] = substr_count($participant_id, ',') + 1;
         $data['ask_email'] = $ask_email;
         $data['process'] = $process;

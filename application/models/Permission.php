@@ -181,6 +181,13 @@ class Permission extends LSActiveRecord
                 'description' => gT("Permission to create surveys (for which all permissions are automatically given) and view, update and delete surveys from other users"),
                 'img'=>'survey'
             ),
+            'responses' => array(
+                'import' => false,
+                /*'export' => false,*/
+                'title' => gT("Responses"),
+                'description' => gT("Permission to create, view, update and delete responses"),
+                'img'=>'survey'
+            ),
             'users' => array(
                 'import' => false,
                 'export' => false,

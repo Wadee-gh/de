@@ -49,7 +49,16 @@
 
         <div class='form-group' style="display:none" id="required-groups">
             <div class='col-sm-12 text-left' style="margin-left:1%">
-                <p><?php eT('Select question groups required from user.'); ?></p>
+                <p>
+                  <?php eT('Select question groups required from user.'); ?>
+                  <?php
+                  if($last_groups){
+                    //$last_groups = str_replace('"','\"',$last_groups);
+                    //echo $last_groups; //die();
+                    echo('<a id="repeat_last_groups" onclick="repeat_last_groups(\''.$last_groups.'\'); return(false);">Repeat Last</a>');
+                  }
+                  ?>
+                </p>
             </div>
             <label class='control-label col-sm-1'>&nbsp;</label>
             <div class='col-sm-11' id="required-groups-inner"></div>

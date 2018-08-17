@@ -549,7 +549,8 @@ class responses extends Survey_Common_Action
           $this->getController()->redirect(array("admin/responses/sa/view/surveyid/{$iSurveyID}/id/{$iId}/level/1"));
         }*/
 
-        if(Permission::model()->hasSurveyPermission($iSurveyID,'responses','read'))
+        $hasViewResponsePerm = Permission::model()->hasGlobalPermission('responses','read');
+        if(Permission::model()->hasSurveyPermission($iSurveyID,'responses','read') || $hasViewResponsePerm)
         {
             //echo "<pre>".print_r($_GET,true)."</pre>"; die();
             $aData = $this->_getData(array('iId' => $iId, 'iSurveyId' => $iSurveyID, 'browselang' => $sBrowseLang));
@@ -562,9 +563,9 @@ class responses extends Survey_Common_Action
 
             // create fieldmap.
             $fieldmap = createFieldMap($iSurveyID, 'full', false, false, $aData['language']);
-            //echo "fieldmap:<pre>".print_r($fieldmap,true)."</pre>"; //die();
+            //echo "fieldmap:<pre>".print_r($fieldmap,true)."</pre>"; die();
             $bHaveToken=$aData['surveyinfo']['anonymized'] == "N" && tableExists('tokens_' . $iSurveyID);// Boolean : show (or not) the token
-            if(!Permission::model()->hasSurveyPermission($iSurveyID,'tokens','read')) // If not allowed to read: remove it
+            if(!Permission::model()->hasSurveyPermission($iSurveyID,'tokens','read') && !$hasViewResponsePerm) // If not allowed to read: remove it
             {
                 unset($fieldmap['token']);
                 $bHaveToken=false;
