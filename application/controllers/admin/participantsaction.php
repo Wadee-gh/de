@@ -551,8 +551,16 @@ class participantsaction extends Survey_Common_Action
     public function participantExists(){
         $operation = Yii::app()->request->getPost('oper');
         $aData = Yii::app()->request->getPost('Participant');
-        $row1 = Participant::model()->getByEmail($aData['email']);
-        $row2 = Participant::model()->getByID($aData['mrn_id']);
+        if(!empty($aData)){
+          if(isset($aData['email'])) $email = $aData['email'];
+          if(isset($aData['mrn_id'])) $mrn_id = $aData['mrn_id'];
+        } else {
+          $email = Yii::app()->request->getPost('email');
+          $mrn_id = Yii::app()->request->getPost('mrn_id');
+        }
+        //echo "<pre>".print_r($aData,true)."</pre>"; die();
+        $row1 = Participant::model()->getByEmail($email);
+        $row2 = Participant::model()->getByID($mrn_id);
         $row = (empty($row1) ? $row2 : $row1);
         $exists = !empty($row);
         echo json_encode(compact('exists','row')); die();
