@@ -2395,24 +2395,30 @@ class Participant extends LSActiveRecord
 
     public function getByEmail($email){
         $tbl = $this->tableName();
-        $row = Yii::app()->db->createCommand()
-            ->select('*')
-            ->where("email='".$email."'")
-            ->from($tbl)
-            ->queryRow();
-        if($row == '') $row = array();
+        $row = array();
+        if($email){
+          $row = Yii::app()->db->createCommand()
+              ->select('*')
+              ->where("email='".$email."'")
+              ->from($tbl)
+              ->queryRow();
+          if($row == '') $row = array();
+        }
         //echo "<pre>".print_r($row,true)."</pre>"; die();
         return($row);
     }
 
     public function getByID($mrn_id){
         $tbl = $this->tableName();
-        $row = Yii::app()->db->createCommand()
-            ->select('*')
-            ->where("mrn_id='".$mrn_id."'")
-            ->from($tbl)
-            ->queryRow();
-        if($row == '') $row = array();
+        $row = array();
+        if($mrn_id){
+          $row = Yii::app()->db->createCommand()
+              ->select('*')
+              ->where("mrn_id='".$mrn_id."'")
+              ->from($tbl)
+              ->queryRow();
+          if($row == '') $row = array();
+        }
         //echo "<pre>".print_r($row,true)."</pre>"; die();
         return($row);
     }

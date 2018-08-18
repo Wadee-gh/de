@@ -170,6 +170,7 @@ LS.CPDB = (function() {
                       }
                     } else {
                       // close the dialog and do nothing.
+                      postSecond(action,formData);
                     }
                 },
                 error : function() {
