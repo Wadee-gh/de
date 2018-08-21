@@ -63,6 +63,7 @@ class Survey_Common_Action extends CAction
         // Populate the params. eg. surveyid -> iSurveyId
         $params = $this->_addPseudoParams($params);
 
+        $hasViewResponsePerm = Permission::model()->hasGlobalPermission('responses','read');
         if (!empty($params['iSurveyId']))
         {
             if(!Survey::model()->findByPk($params['iSurveyId']))
@@ -70,7 +71,7 @@ class Survey_Common_Action extends CAction
                 Yii::app()->setFlashMessage(gT("Invalid survey ID"),'error');
                 $this->getController()->redirect(array("admin/index"));
             }
-            elseif (!Permission::model()->hasSurveyPermission($params['iSurveyId'], 'survey', 'read'))
+            elseif (!Permission::model()->hasSurveyPermission($params['iSurveyId'], 'survey', 'read') && !$hasViewResponsePerm)
             {
                 Yii::app()->setFlashMessage(gT("No permission"), 'error');
                 $this->getController()->redirect(array("admin/index"));

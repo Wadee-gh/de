@@ -550,6 +550,7 @@ class responses extends Survey_Common_Action
         }*/
 
         $hasViewResponsePerm = Permission::model()->hasGlobalPermission('responses','read');
+        //echo "<pre>".print_r(compact('hasViewResponsePerm'),true)."</pre>"; die();
         if(Permission::model()->hasSurveyPermission($iSurveyID,'responses','read') || $hasViewResponsePerm)
         {
             //echo "<pre>".print_r($_GET,true)."</pre>"; die();
