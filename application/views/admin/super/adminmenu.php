@@ -158,8 +158,14 @@
                     <li>
                         <a href="<?php echo $this->createUrl("/admin/user/sa/personalsettings"); ?>"><?php eT("Your account");?></a>
                     </li>
-
                     <li class="divider"></li>
+
+                    <?php if (Permission::model()->hasGlobalPermission('users','read')):?>
+                    <li>
+                        <a href="<?php echo $this->createUrl("/admin/user/sa/index"); ?>"><?php eT("Your users");?></a>
+                    </li>
+                    <li class="divider"></li>
+                    <?php endif; ?>
 
                     <!-- Logout -->
                     <li>

@@ -525,8 +525,21 @@ class Participant extends LSActiveRecord
             )
         );
 
+        $uid = Yii::app()->user->id;
+        $companyUid = User::model()->getCompanyUid($uid);
+        $oInitialAdmin = User::model()->findByAttributes(array('parent_id' => 0));
+        $initialAdminId = $oInitialAdmin->uid;
+        $superAdmin = $oInitialAdmin && $oInitialAdmin->uid == $uid;
+        //echo "<pre>".print_r(compact('uid','companyUid','initialAdminId','superAdmin'),true)."</pre>"; die();
+
         $criteria = new CDbCriteria;
-        $criteria->join = 'LEFT JOIN {{participant_shares}} AS shares ON t.participant_id = shares.participant_id AND (shares.share_uid = ' . Yii::app()->user->id . ' OR shares.share_uid = -1)';
+        $join = 'LEFT JOIN {{participant_shares}} AS shares ON t.participant_id = shares.participant_id AND (shares.share_uid = ' . Yii::app()->user->id . ' OR shares.share_uid = -1)';
+        if(!$superAdmin){
+          $join .= ' LEFT JOIN {{users}} AS p ON p.uid = t.owner_uid';
+          $criteria->addCondition('p.company_uid = \''.$companyUid.'\'');
+        }
+        $criteria->join = $join;
+
         $criteria->compare('t.firstname', $this->firstname, true, 'AND' ,true);
         $criteria->compare('t.lastname', $this->lastname, true, 'AND' ,true);
         $criteria->compare('t.email', $this->email, true, 'AND' ,true);
@@ -586,6 +599,7 @@ class Participant extends LSActiveRecord
             $criteria->addCondition('t.owner_uid = ' . Yii::app()->user->id . ' OR ' . Yii::app()->user->id . ' = shares.share_uid OR shares.share_uid = -1');
         }
 
+        //echo "<pre>".print_r($criteria,true)."</pre>"; die();
         $pageSize = Yii::app()->user->getState('pageSizeParticipantView', Yii::app()->params['defaultPageSize']);
         //echo "<pre>".print_r($criteria,true)."</pre>"; //die();
         return new CActiveDataProvider($this, array(

@@ -32,6 +32,18 @@
         <input type='hidden' name='uid' value="<?php echo $aUserData['uid'];?>" />
     </div>
 </div>
+<?php if($superAdmin){ ?>
+<div class="form-group">
+    <label for="company_uid" class="col-sm-2 control-label"><?php eT("Company");?></label>
+    <div class="col-sm-3">
+        <?php
+          $models = Company::model()->findAll();
+          $list = CHtml::listData($models,'uid', 'name');
+          echo CHtml::dropDownList('company_uid',$aUserData['company_uid'],$list,array('empty' => '(Select a company)','class'=>"form-control"));
+        ?>
+    </div>
+</div>
+<?php } ?>
 
 <p>
     <input type='submit' class="hidden" value='<?php eT("Save");?>' />

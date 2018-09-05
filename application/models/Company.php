@@ -12,7 +12,7 @@
 *
 */
 
-class User extends LSActiveRecord
+class Company extends LSActiveRecord
 {
     /**
     * @var string Default value for user language
@@ -41,7 +41,7 @@ class User extends LSActiveRecord
     */
     public function tableName()
     {
-        return '{{users}}';
+        return '{{companies}}';
     }
 
     /**
@@ -64,8 +64,7 @@ class User extends LSActiveRecord
     public function rules()
     {
         return array(
-        array('users_name, password, email', 'required'),
-        array('email', 'email'),
+        array('name', 'required'),
         );
     }
 
@@ -99,30 +98,18 @@ class User extends LSActiveRecord
     function parentAndUser($postuserid)
     {
         $user = Yii::app()->db->createCommand()
-        ->select('a.users_name, a.full_name, a.email, a.uid, a.company_uid, b.users_name AS parent, c.name AS company_name')
+        ->select('a.uid, a.name, a.branch, a.address, a.contact, a.phone, a.email, a.website, b.users_name AS parent')
         ->limit(1)
         ->where('a.uid = :postuserid')
-        ->from("{{users}} a")
+        ->from("{{companies}} a")
         ->leftJoin('{{users}} AS b', 'a.parent_id = b.uid')
-        ->leftJoin('{{companies}} AS c', 'a.company_uid = c.uid')
         ->bindParam(":postuserid", $postuserid, PDO::PARAM_INT)
         ->queryRow();
         return $user;
     }
-
     public function getParentUser(){
         $parent_user = $this->parentAndUser( $this->uid );
         return $parent_user['parent'];
-    }
-
-    public function getCompanyUid($postuserid){
-        $user = $this->parentAndUser($postuserid);
-        return $user['company_uid'];
-    }
-
-    public function getCompanyName(){
-        $parent_user = $this->parentAndUser( $this->uid );
-        return $parent_user['company_name'];
     }
 
     public function getSurveysCreated(){
@@ -170,15 +157,13 @@ class User extends LSActiveRecord
     * @param string $new_email
     * @return string
     */
-    public static function insertUser($new_user, $new_pass,$new_full_name,$parent_user,$new_email)
+    public static function insertUser($vars)
     {
         $oUser = new self;
-        $oUser->users_name = $new_user;
-        $oUser->password = hash('sha256', $new_pass);
-        $oUser->full_name = $new_full_name;
-        $oUser->parent_id = $parent_user;
-        $oUser->lang = 'auto';
-        $oUser->email = $new_email;
+        foreach($vars as $key => $val){
+            $oUser->$key = $val;
+        }
+
         if ($oUser->save())
         {
             return $oUser->uid;
@@ -197,7 +182,7 @@ class User extends LSActiveRecord
 	 * Make sure you call the parent implementation so that the event is raised properly.
 	 * @return boolean whether the saving should be executed. Defaults to true.
 	 */
-    public function beforeSave()
+    /*public function beforeSave()
     {
          // Postgres delivers bytea fields as streams :-o - if this is not done it looks like Postgres saves something unexpected
         if (gettype($this->password)=='resource')
@@ -205,7 +190,7 @@ class User extends LSActiveRecord
             $this->password=stream_get_contents($this->password,-1,0);
         }
         return parent::beforeSave();
-    }
+    }*/
 
 
     /**
@@ -341,10 +326,10 @@ class User extends LSActiveRecord
         $setTemplatePermissionUser = "";
         $changeOwnership = "";
 
-        $editUrl = Yii::app()->getController()->createUrl('admin/user/sa/modifyuser');
-        $setPermissionsUrl = Yii::app()->getController()->createUrl('admin/user/sa/setuserpermissions');
-        $setTemplatePermissionsUrl = Yii::app()->getController()->createUrl('admin/user/sa/setusertemplates');
-        $changeOwnershipUrl = Yii::app()->getController()->createUrl('admin/user/sa/setasadminchild');
+        $editUrl = Yii::app()->getController()->createUrl('admin/companies/sa/modifyuser');
+        $setPermissionsUrl = Yii::app()->getController()->createUrl('admin/companies/sa/setuserpermissions');
+        $setTemplatePermissionsUrl = Yii::app()->getController()->createUrl('admin/companies/sa/setusertemplates');
+        $changeOwnershipUrl = Yii::app()->getController()->createUrl('admin/companies/sa/setasadminchild');
 
         $oUser = $this->getName($this->uid);
         if($this->uid == Yii::app()->user->getId())
@@ -361,7 +346,7 @@ class User extends LSActiveRecord
                 </button>";
             if ($this->parent_id != 0 && Permission::model()->hasGlobalPermission('users','delete') )
             {
-                $deleteUrl = Yii::app()->getController()->createUrl('admin/user/sa/deluser', array(
+                $deleteUrl = Yii::app()->getController()->createUrl('admin/companies/sa/deluser', array(
                         "action"=> "deluser",
                         "uid"=>$this->uid,
                         "user" => htmlspecialchars(Yii::app()->user->getId())
@@ -375,7 +360,7 @@ class User extends LSActiveRecord
 
                 data-uid='".$this->uid."'
                 data-action='deluser'
-                data-message='".gT("Delete this user")."'
+                data-message='".gT("Delete this company")."'
                 class='btn btn-default btn-xs'>
                     <span class='fa fa-trash  text-danger'></span>
                 </button>";
@@ -408,7 +393,7 @@ class User extends LSActiveRecord
                     || (Permission::model()->hasGlobalPermission('users','delete')
                     && $this->parent_id == Yii::app()->session['loginID'])) && $this->uid!=1)
                     {
-                    $deleteUrl = Yii::app()->getController()->createUrl('admin/user/sa/deluser', array(
+                    $deleteUrl = Yii::app()->getController()->createUrl('admin/companies/sa/deluser', array(
                         "action"=> "deluser",
                         "uid"=>$this->uid,
                         "user" => htmlspecialchars(Yii::app()->user->getId())
@@ -423,7 +408,7 @@ class User extends LSActiveRecord
                         data-user='".htmlspecialchars($oUser['full_name'])."'
                         data-action='deluser'
                         data-onclick='triggerRunAction($(\"#delete_user_".$this->uid."\"))'
-                        data-message='".gT("Do you want to delete this user?")."'
+                        data-message='".gT("Do you want to delete this company?")."'
                         class='btn btn-default btn-xs '>
                             <span class='fa fa-trash  text-danger'></span>
                         </button>";
@@ -436,10 +421,14 @@ class User extends LSActiveRecord
         return "<div>"
             . $editUser
             . $deleteUser
+            . "</div>";
+        /*return "<div>"
+            . $editUser
+            . $deleteUser
             . $setPermissionsUser
             . $setTemplatePermissionUser
             . $changeOwnership
-            . "</div>";
+            . "</div>";*/
     }
 
     public function getColums(){
@@ -449,33 +438,31 @@ class User extends LSActiveRecord
                 "type" => 'raw',
                 "header" => gT("Action")
             ),
-            array(
+            /*array(
                 "name" => 'uid',
-                "header" => gT("User ID")
+                "header" => gT("ID")
+            ),*/
+            array(
+                "name" => 'name',
+                "header" => gT("Name")
             ),
             array(
-                "name" => 'users_name',
-                "header" => gT("Username")
+                "name" => 'branch',
+                "header" => gT("Branch")
             ),
             array(
-                "name" => 'email',
-                "header" => gT("Email")
+                "name" => 'address',
+                "header" => gT("Address")
             ),
             array(
-                "name" => 'full_name',
-                "header" => gT("Full name")
+                "name" => 'contact',
+                "header" => gT("Contact")
             ),
             array(
-                "name" => 'companyName',
-                "header" => gT("Company")
+                "name" => 'website',
+                "header" => gT("Website")
             )
         );
-        if(Permission::model()->hasGlobalPermission('superadmin','read')) {
-            $cols[] = array(
-                "name" => 'surveysCreated',
-                "header" => gT("No of surveys")
-            );
-        }
 
         $cols[] = array(
             "name" => 'parentUser',
@@ -495,15 +482,11 @@ class User extends LSActiveRecord
      * @return CActiveDataProvider the data provider that can return the models
      * based on the search/filter conditions.
      */
-    public function search($conditions = array())
+    public function search()
     {
         // @todo Please modify the following code to remove attributes that should not be searched.
         $pageSize = Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']);
         $criteria=new CDbCriteria;
-
-        foreach($conditions as $key => $val){
-          $criteria->compare($key,$val);
-        }
 
         // $criteria->compare('uid',$this->uid);
         // $criteria->compare('users_name',$this->users_name,true);
@@ -519,14 +502,12 @@ class User extends LSActiveRecord
         // $criteria->compare('dateformat',$this->dateformat);
         // $criteria->compare('created',$this->created,true);
         // $criteria->compare('modified',$this->modified,true);
-
-        $ret = new CActiveDataProvider($this, array(
+        return new CActiveDataProvider($this, array(
             'criteria'=>$criteria,
             'pagination' => array(
                 'pageSize' => $pageSize
             )
         ));
-        return($ret);
     }
 
 }

@@ -197,7 +197,14 @@
                 <?php if(Permission::model()->hasGlobalPermission('users','read')): ?>
                     <li class="dropdown-item">
                         <a href="<?php echo $this->createUrl("admin/user/sa/index"); ?>">
-                            <?php eT("Manage survey administrators");?>
+                            <?php eT("Manage users");?>
+                        </a>
+                    </li>
+                    <?php endif;?>
+                <?php if(Permission::model()->hasGlobalPermission('users','read')): ?>
+                    <li class="dropdown-item">
+                        <a href="<?php echo $this->createUrl("admin/companies/sa/index"); ?>">
+                            <?php eT("Manage companies");?>
                         </a>
                     </li>
                     <?php endif;?>

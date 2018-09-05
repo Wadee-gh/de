@@ -202,6 +202,7 @@ class AdminController extends LSYii_Controller
         'authentication'   => 'authentication',
         'checkintegrity'   => 'checkintegrity',
         'conditions'       => 'conditionsaction',
+        'companies'       => 'companies',
         'database'         => 'database',
         'databaseupdate'   => 'databaseupdate',
         'dataentry'        => 'dataentry',

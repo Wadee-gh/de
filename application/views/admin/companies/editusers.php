@@ -1,8 +1,8 @@
 <div class="container-fluid">
-<h3 class="pagetitle"><?php eT("User control");?></h3>
+<h3 class="pagetitle"><?php eT("Company List");?></h3>
     <div class="row">
         <div class="col-md-2 col-sm-4 col-xs-12  col-md-offset-10 col-sm-offset-8">
-            <button id="add_user_admin" data-target="#adduser-modal" data-toggle="modal" title="<?php eT('Add a new survey administrator'); ?>" class="btn btn-primary btn-block"><?php eT("Add user");?></button>
+            <button id="add_user_admin" data-target="#adduser-modal" data-toggle="modal" title="<?php eT('Add a new company'); ?>" class="btn btn-primary btn-block"><?php eT("Add company");?></button>
         </div>
 
     </div>
@@ -12,7 +12,7 @@
             $this->widget('bootstrap.widgets.TbGridView', array(
                 'id' => 'all_users',
                 'itemsCssClass' => 'table table-striped items',
-                'dataProvider' => $model->search($search_filters),
+                'dataProvider' => $model->search(),
                 'columns' => $model->colums,
                 'afterAjaxUpdate' => 'bindButtons',
                 'summaryText'   => gT('Displaying {start}-{end} of {count} result(s).').' '. sprintf(gT('%s rows per page'),
@@ -42,55 +42,51 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel"><?php eT("Add a new survey administrator") ?></h4>
+                <h4 class="modal-title" id="myModalLabel"><?php eT("Add a new company") ?></h4>
             </div>
             <div class="modal-body">
                 <div class="row">
-                 <?php echo CHtml::form(array('admin/user/sa/adduser'), 'post', array('class'=>'form-horizontal'));?>
-                    <?php if (App()->getPluginManager()->isPluginActive('AuthLDAP')) {
-                        echo "<div class=\"form-group\">";
-                          echo "<label  class='col-md-4 control-label'>";
-                            eT("Central database");
-                          echo "</label>";
-                          echo "<div class='col-md-8'>";
-                            echo CHtml::dropDownList('user_type',
-                                'DB',
-                                array(
-                                'DB' => gT("Internal database authentication",'unescaped'),
-                                'LDAP' => gT("LDAP authentication",'unescaped')
-                                ),
-                                array(
-                                    'class' => ""
-                                )
-                            );
-                          echo "</div>";
-                        echo "</div>";
-                      } else {
-                          echo "<input type='hidden' id='user_type' name='user_type' value='DB'/>";
-                      }
-                    ?>
-
+                 <?php echo CHtml::form(array('admin/companies/sa/adduser'), 'post', array('class'=>'form-horizontal'));?>
                     <div class="form-group">
-                        <label for="new_user" class="control-label col-md-4"><?php eT("Username:");?></label>
+                        <label for="new_user" class="control-label col-md-4"><?php eT("Name:");?></label>
                         <div class="col-md-8">
-                            <input type='text' class="text input-sm form-control" id='new_user' name='new_user' required />
+                            <input type='text' class="text input-sm form-control" id='name' name='name' required />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="new_email" class="control-label col-md-4" ><?php eT("Email:");?></label>
+                        <label for="new_user" class="control-label col-md-4"><?php eT("Branch:");?></label>
                         <div class="col-md-8">
-                            <input type='email' class="text input-sm form-control" id='new_email' name='new_email' required />
+                            <input type='text' class="text input-sm form-control" id='branch' name='branch' />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="new_full_name" class="control-label col-md-4"><?php eT("Full name:");?></label>
+                        <label for="new_user" class="control-label col-md-4"><?php eT("Address:");?></label>
                         <div class="col-md-8">
-                            <input type='text' class="text input-sm form-control" id='new_full_name' name='new_full_name' required />
+                            <input type='text' class="text input-sm form-control" id='address' name='address'  />
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-md-12 text-right">
-                            <?php eT("The password will be generated and sent by email.") ?>
+                        <label for="new_user" class="control-label col-md-4"><?php eT("Contact:");?></label>
+                        <div class="col-md-8">
+                            <input type='text' class="text input-sm form-control" id='contact' name='contact' />
+                        </div>
+                    </div>
+                    <!--<div class="form-group">
+                        <label for="new_user" class="control-label col-md-4"><?php eT("Phone:");?></label>
+                        <div class="col-md-8">
+                            <input type='text' class="text input-sm form-control" id='phone' name='phone' />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_user" class="control-label col-md-4"><?php eT("Email:");?></label>
+                        <div class="col-md-8">
+                            <input type='text' class="text input-sm form-control" id='email' name='email' />
+                        </div>
+                    </div>-->
+                    <div class="form-group">
+                        <label for="new_user" class="control-label col-md-4"><?php eT("Website:");?></label>
+                        <div class="col-md-8">
+                            <input type='text' class="text input-sm form-control" id='website' name='website' />
                         </div>
                     </div>
                     <div class="col-md-12">&nbsp;</div>

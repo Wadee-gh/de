@@ -23,7 +23,7 @@ if (!defined('BASEPATH'))
 * @package        LimeSurvey
 * @subpackage    Backend
 */
-class UserAction extends Survey_Common_Action
+class Companies extends Survey_Common_Action
 {
     public function __construct($controller, $id)
     {
@@ -56,7 +56,7 @@ class UserAction extends Survey_Common_Action
         }
 
         App()->getClientScript()->registerPackage('jquery-tablesorter');
-        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'users.js');
+        $this->registerScriptFile( 'ADMIN_SCRIPT_PATH', 'companies.js');
 
         $aData = array();
         // Page size
@@ -65,19 +65,11 @@ class UserAction extends Survey_Common_Action
         }
         $aData['pageSize']= Yii::app()->user->getState('pageSize', (int)Yii::app()->params['defaultPageSize']);
 
-        $aData['title_bar']['title'] = gT('User administration');
+        $aData['title_bar']['title'] = gT('Company List');
         $aData['fullpagebar']['closebutton']['url'] = true;
-
-        $sfilters = array();
-        $superAdmin = $this->isSuperAdmin();
-        if(!$superAdmin){
-          $sfilters['parent_id'] = Yii::app()->session['loginID'];
-        }
-        $aData['search_filters'] = $sfilters;
-
-        $model = new User();
+        $model = new Company();
         $aData['model']=$model;
-        $this->_renderWrappedTemplate('user', 'editusers', $aData);
+        $this->_renderWrappedTemplate('companies', 'editusers', $aData);
     }
 
     private function _getSurveyCountForUser(array $user)
@@ -94,95 +86,32 @@ class UserAction extends Survey_Common_Action
     {
         if (!Permission::model()->hasGlobalPermission('users','create')) {
             Yii::app()->setFlashMessage(gT("You do not have permission to access this page."),'error');
-            $this->getController()->redirect(array("admin/user/sa/index"));
+            $this->getController()->redirect(array("admin/companies/sa/index"));
         }
 
-        $new_user = flattenText(Yii::app()->request->getPost('new_user'), false, true);
+        $name = flattenText(Yii::app()->request->getPost('name'), false, true);
         $aViewUrls = array();
-        if (empty($new_user)) {
-            $aViewUrls['message'] = array('title' => gT("Failed to add user"), 'message' => gT("A username was not supplied or the username is invalid."), 'class'=> 'text-warning');
+        if (empty($name)) {
+            $aViewUrls['message'] = array('title' => gT("Failed to add company"), 'message' => gT("A name was not supplied."), 'class'=> 'text-warning');
         }
-        elseif (User::model()->find("users_name=:users_name",array(':users_name'=>$new_user))) {
+        elseif (Company::model()->find("name=:name",array(':name'=>$name))) {
             // TODO: If error, we want to keep the form values. Can't do it nicely without CActiveForm?
-            Yii::app()->setFlashMessage(gT("The username already exists."), 'error');
-            $this->getController()->redirect(array('/admin/user/sa/index'));
+            Yii::app()->setFlashMessage(gT("The company already exists."), 'error');
+            $this->getController()->redirect(array('/admin/companies/sa/index'));
         }
         else
         {
-            $event = new PluginEvent('createNewUser');
-            $event->set('errorCode',AuthPluginBase::ERROR_NOT_ADDED);
-            $event->set('errorMessageTitle',gT("Failed to add user"));
-            $event->set('errorMessageBody',gT("Plugin is not active"));
-            App()->getPluginManager()->dispatchEvent($event);
-
-            if ($event->get('errorCode') != AuthPluginBase::ERROR_NONE)
-            {
-                $aViewUrls['message'] = array('title' => $event->get('errorMessageTitle'), 'message' => $event->get('errorMessageBody'), 'class'=> 'text-warning');
+            $varlist ="name,branch,address,contact,phone,email,website";
+            $vars = array();
+            foreach(explode(",",$varlist) as $var){
+                $vars[$var] = $$var = flattenText(Yii::app()->request->getPost($var), false, true);
             }
-            else
-            {
-                $iNewUID = $event->get('newUserID');
-                $new_pass = $event->get('newPassword');
-                $new_email = $event->get('newEmail');
-                $new_full_name = $event->get('newFullName');
-                // add default template to template rights for user
-                Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => Yii::app()->getConfig("defaulttemplate"), 'entity'=>'template', 'read_p' => 1, 'entity_id'=>0));
-                // add new user to userlist
-                $sresult = User::model()->getAllRecords(array('uid' => $iNewUID));
-                $srow = count($sresult);
+            $vars['parent_id'] = Yii::app()->user->id;
+            //echo "<pre>".print_r($vars,true)."</pre>"; die();
+            Company::model()->insertUser($vars);
 
-                // copy the company uid of parent.
-                $parentId = Yii::app()->session['loginID'];
-                $companyUid = User::model()->getCompanyUid($parentId);
-                $oRecord = User::model()->findByPk($iNewUID);
-                $oRecord->company_uid = $companyUid;
-                //echo "<pre>".print_r(compact('NewUID','parentId','companyUid'),true)."</pre>"; die();
-                $uresult = $oRecord->save();
-
-                // send Mail
-                $body = sprintf(gT("Hello %s,"), $new_full_name) . "<br /><br />\n";
-                $body .= sprintf(gT("this is an automated email to notify that a user has been created for you on the site '%s'."), Yii::app()->getConfig("sitename")) . "<br /><br />\n";
-                $body .= gT("You can use now the following credentials to log into the site:") . "<br />\n";
-                $body .= gT("Username") . ": " . htmlspecialchars($new_user) . "<br />\n";
-                // authent is not delegated to web server or LDAP server
-                if (Yii::app()->getConfig("auth_webserver") === false  && Permission::model()->hasGlobalPermission('auth_db','read',$iNewUID)) {
-                    // send password (if authorized by config)
-                    if (Yii::app()->getConfig("display_user_password_in_email") === true) {
-                        $body .= gT("Password") . ": " . $new_pass . "<br />\n";
-                    }
-                    else
-                    {
-                        $body .= gT("Password") . ": " . gT("Please contact your LimeSurvey administrator for your password.") . "<br />\n";
-                    }
-                }
-
-                $body .= "<a href='" . $this->getController()->createAbsoluteUrl("/admin") . "'>" . gT("Click here to log in.") . "</a><br /><br />\n";
-                $body .= sprintf(gT('If you have any questions regarding this mail please do not hesitate to contact the site administrator at %s. Thank you!'), Yii::app()->getConfig("siteadminemail")) . "<br />\n";
-
-                $subject = sprintf(gT("User registration at '%s'", "unescaped"), Yii::app()->getConfig("sitename"));
-                $to = $new_user . " <$new_email>";
-                $from = Yii::app()->getConfig("siteadminname") . " <" . Yii::app()->getConfig("siteadminemail") . ">";
-                $extra = '';
-                $classMsg = '';
-                if (SendEmailMessage($body, $subject, $to, $from, Yii::app()->getConfig("sitename"), true, Yii::app()->getConfig("siteadminbounce"))) {
-                    $extra .= "<br />" . gT("Username") . ": $new_user<br />" . gT("Email") . ": $new_email<br />";
-                    $extra .= "<br />" . gT("An email with a generated password was sent to the user.");
-                    $classMsg = 'text-success';
-                    $sHeader= gT("Success");
-                }
-                else
-                {
-                    // has to be sent again or no other way
-                    $tmp = str_replace("{NAME}", "<strong>" . $new_user . "</strong>", gT("Email to {NAME} ({EMAIL}) failed."));
-                    $extra .= "<br />" . str_replace("{EMAIL}", $new_email, $tmp) . "<br />";
-                    $classMsg = 'text-warning';
-                    $sHeader= gT("Warning");
-                }
-
-                $aViewUrls['mboxwithredirect'][] = $this->_messageBoxWithRedirect(gT("Add user"), $sHeader, $classMsg, $extra,
-                $this->getController()->createUrl("admin/user/sa/setuserpermissions"), gT("Set user permissions"),
-                array('action' => 'setuserpermissions', 'user' => $new_user, 'uid' => $iNewUID));
-            }
+            Yii::app()->setFlashMessage(gT("Company added successfully."),'success');
+            $this->getController()->redirect(array("admin/companies/sa/index"));
         }
 
         $this->_renderWrappedTemplate('user', $aViewUrls);
@@ -199,22 +128,9 @@ class UserAction extends Survey_Common_Action
             $this->getController()->redirect(array("admin/user/sa/index"));
         }
 
-        $action = $this->_getPostOrParam("action");
-
         $aViewUrls = array();
 
-        // CAN'T DELETE ORIGINAL SUPERADMIN (with findByAttributes : found the first user without parent)
-        $oInitialAdmin = User::model()->findByAttributes(array('parent_id' => 0));
-
         $postuserid = $this->_getPostOrParam("uid");
-        $postuser = flattenText($this->_getPostOrParam("user"));
-
-        if ($oInitialAdmin && $oInitialAdmin->uid == $postuserid) // it's the original superadmin !!!
-        {
-            Yii::app()->setFlashMessage(gT("Initial Superadmin cannot be deleted!"),'error');
-            $this->getController()->redirect(array("admin/user/sa/index"));
-            return;
-        }
 
         //If there was no uid transferred
         if (!$postuserid)
@@ -224,126 +140,11 @@ class UserAction extends Survey_Common_Action
             return;
         }
 
-        $sresultcount = 0; // 1 if I am parent of $postuserid
-        if (!Permission::model()->hasGlobalPermission('superadmin','read'))
-        {
-            $sresult = User::model()->findAllByAttributes(array('parent_id' => $postuserid, 'parent_id' => Yii::app()->session['loginID']));
-            $sresultcount = count($sresult);
-        }
-
-        if (Permission::model()->hasGlobalPermission('superadmin','read') || $sresultcount > 0 || $postuserid == Yii::app()->session['loginID'])
-        {
-            $transfer_surveys_to = 0;
-            $ownerUser = User::model()->findAll();
-            $aData = array();
-            $aData['users'] = $ownerUser;
-
-            $current_user = Yii::app()->session['loginID'];
-            if (count($ownerUser) == 2) {
-                $action = "finaldeluser";
-                foreach ($ownerUser as &$user)
-                {
-                    if ($postuserid != $user['uid'])
-                        $transfer_surveys_to = $user['uid'];
-                }
-            }
-
-            $ownerUser = Survey::model()->findAllByAttributes(array('owner_id' => $postuserid));
-            if (count($ownerUser) == 0) {
-                $action = "finaldeluser";
-            }
-
-            if ($action == "finaldeluser")
-            {
-                $this->deleteFinalUser($ownerUser, $transfer_surveys_to);
-            }
-            else
-            {
-                $aData['postuserid'] = $postuserid;
-                $aData['postuser'] = $postuser;
-                $aData['current_user'] = $current_user;
-
-                $aViewUrls['deluser'][] = $aData;
-                $this->_renderWrappedTemplate('user', $aViewUrls);
-            }
-        }
-        else
-        {
-            Yii::app()->setFlashMessage(gT("You do not have permission to access this page."),'error');
-            $this->getController()->redirect(array("admin/user/sa/index"));
-        }
-
-        return $aViewUrls;
-    }
-
-    /**
-     * @param $result TODO: Used at all?
-     * @param $transfer_surveys_to  TODO: ?
-     * @return void
-     * @todo Delete what final user?
-     */
-    public function deleteFinalUser($result, $transfer_surveys_to)
-    {
-        if (!Permission::model()->hasGlobalPermission('superadmin','read') && !Permission::model()->hasGlobalPermission('users','delete')) {
-            Yii::app()->setFlashMessage(gT("You do not have permission to access this page."),'error');
-            $this->getController()->redirect(array("admin/user/sa/index"));
-        }
-        $postuserid = (int) Yii::app()->request->getPost("uid");
-        if(!$postuserid)
-        {
-            $postuserid = (int) Yii::app()->request->getParam("uid");
-        }
-        $postuser = flattenText(Yii::app()->request->getPost("user"));
-        // Never delete initial admin (with findByAttributes : found the first user without parent)
-        $oInitialAdmin = User::model()->findByAttributes(array('parent_id' => 0));
-        if ($oInitialAdmin && $oInitialAdmin->uid == $postuserid) // it's the original superadmin !!!
-        {
-            Yii::app()->setFlashMessage(gT("Initial Superadmin cannot be deleted!"),'error');
-            $this->getController()->redirect(array("admin/user/sa/index"));
-        }
-        if (isset($_POST['transfer_surveys_to'])) {
-            $transfer_surveys_to = sanitize_int(Yii::app()->request->getPost("transfer_surveys_to"));
-        }
-        if ($transfer_surveys_to > 0) {
-            $iSurveysTransferred = Survey::model()->updateAll(array('owner_id' => $transfer_surveys_to), 'owner_id='.$postuserid);
-        }
-        $sresult = User::model()->findByAttributes(array('uid' => $postuserid));
-        $fields = $sresult;
-        if (isset($fields['parent_id'])) {
-            $uresult = User::model()->updateAll(array('parent_id' => $fields['parent_id']), 'parent_id='.$postuserid);
-        }
-
         //DELETE USER FROM TABLE
-        $dresult = User::model()->deleteUser($postuserid);
+        $dresult = Company::model()->deleteUser($postuserid);
 
-        // Delete user rights
-        $dresult = Permission::model()->deleteAllByAttributes(array('uid' => $postuserid));
-
-        if ($postuserid == Yii::app()->session['loginID'])
-        {
-            session_destroy();    // user deleted himself
-            $this->getController()->redirect(array("admin/authentication/sa/logout"));
-            die();
-        }
-
-        $extra = "<br />" . sprintf(gT("User '%s' was successfully deleted."),$postuser)."<br /><br />\n";
-        if ($transfer_surveys_to > 0 && $iSurveysTransferred>0) {
-            $user = User::model()->findByPk($transfer_surveys_to);
-            $sTransferred_to = $user->users_name;
-            //$sTransferred_to = $this->getController()->_getUserNameFromUid($transfer_surveys_to);
-            $extra = sprintf(gT("All of the user's surveys were transferred to %s."), $sTransferred_to);
-        }
-
-        $aViewUrls = array();
-        $aViewUrls['mboxwithredirect'][] = $this->_messageBoxWithRedirect("", gT("Success!"), "text-success", $extra);
-        $this->_renderWrappedTemplate('user', $aViewUrls);
-    }
-
-    public function isSuperAdmin(){
-        $oInitialAdmin = User::model()->findByAttributes(array('parent_id' => 0));
-        $initialAdminId = $oInitialAdmin->uid;
-        $parentId = Yii::app()->session['loginID'];
-        return($oInitialAdmin && $oInitialAdmin->uid == $parentId);
+        Yii::app()->setFlashMessage(gT("Company deleted successfully."),'success');
+        $this->getController()->redirect(array("admin/companies/sa/index"));
     }
 
     /**
@@ -355,30 +156,28 @@ class UserAction extends Survey_Common_Action
         if ( Yii::app()->request->getParam('uid') !=''  )
         {
             $postuserid = (int) Yii::app()->request->getParam("uid");
-            $sresult = User::model()->findAllByAttributes(array('uid' => $postuserid, 'parent_id' => Yii::app()->session['loginID']));
+            $sresult = Company::model()->findAllByAttributes(array('uid' => $postuserid, 'parent_id' => Yii::app()->session['loginID']));
             $sresultcount = count($sresult);
-            $superAdmin = $this->isSuperAdmin();
-            //echo "<pre>".print_r(compact('parentId','initialAdminId','superAdmin'),true)."</pre>"; die();
+
 
             if (Permission::model()->hasGlobalPermission('superadmin','read') || Yii::app()->session['loginID'] == $postuserid ||
             (Permission::model()->hasGlobalPermission('users','update') && $sresultcount > 0) )
             {
-                $sresult = User::model()->parentAndUser($postuserid);
+                $sresult = Company::model()->parentAndUser($postuserid);
                 if(empty($sresult))
                 {
                     Yii::app()->setFlashMessage(gT("You do not have permission to access this page."),'error');
-                    $this->getController()->redirect(array("admin/user/sa/index"));
+                    $this->getController()->redirect(array("admin/companies/sa/index"));
                 }
                 $aData = array();
-                $aData['superAdmin'] = $superAdmin;
                 $aData['aUserData'] = $sresult;
 
                 $aData['fullpagebar']['savebutton']['form'] = 'moduserform';
                 // Close button, UrlReferrer;
                 $aData['fullpagebar']['closebutton']['url_keep'] = true;
-                $aData['fullpagebar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl("admin/user/sa/index") );
+                $aData['fullpagebar']['closebutton']['url'] = Yii::app()->request->getUrlReferrer( Yii::app()->createUrl("admin/companies/sa/index") );
 
-                $this->_renderWrappedTemplate('user', 'modifyuser', $aData);
+                $this->_renderWrappedTemplate('companies', 'modifyuser', $aData);
                 return;
             }
             else
@@ -396,82 +195,44 @@ class UserAction extends Survey_Common_Action
     public function moduser()
     {
         $postuserid = (int) Yii::app()->request->getPost("uid");
-        $postuser = flattenText(Yii::app()->request->getPost("user"));
-        $postemail = flattenText(Yii::app()->request->getPost("email"));
-        $postfull_name = flattenText(Yii::app()->request->getPost("full_name"));
-        $display_user_password_in_html = Yii::app()->getConfig("display_user_password_in_html");
         $addsummary = '';
         $aViewUrls = array();
 
-        $sresult = User::model()->findAllByAttributes(array('uid' => $postuserid, 'parent_id' => Yii::app()->session['loginID']));
+        $sresult = Company::model()->findAllByAttributes(array('uid' => $postuserid, 'parent_id' => Yii::app()->session['loginID']));
         $sresultcount = count($sresult);
 
         if ((Permission::model()->hasGlobalPermission('superadmin','read') || $postuserid == Yii::app()->session['loginID'] ||
         ($sresultcount > 0 && Permission::model()->hasGlobalPermission('users','update'))) && !(Yii::app()->getConfig("demoMode") == true && $postuserid == 1)
         )
         {
-            $users_name = html_entity_decode($postuser, ENT_QUOTES, 'UTF-8');
-            $email = html_entity_decode($postemail, ENT_QUOTES, 'UTF-8');
-            $sPassword = Yii::app()->request->getPost('password');
-
-            $full_name = html_entity_decode($postfull_name, ENT_QUOTES, 'UTF-8');
-
-            if (!validateEmailAddress($email))
+            $oRecord = Company::model()->findByPk($postuserid);
+            $varlist ="name,branch,address,contact,phone,email,website";
+            $vars = array();
+            foreach(explode(",",$varlist) as $var){
+                $oRecord->$var = flattenText(Yii::app()->request->getPost($var), false, true);
+            }
+            $uresult = $oRecord->save();    // store result of save in uresult
+            if ($uresult) // When saved successfully
             {
-                Yii::app()->setFlashMessage( gT("Could not modify user data."). ' '. gT("Email address is not valid."),'error');
-                $this->getController()->redirect(array("/admin/user/sa/modifyuser/uid/".$postuserid));
+                Yii::app()->setFlashMessage(gT("Successfully updated company!"),'success');
+                $this->getController()->redirect(array("/admin/companies/sa/modifyuser/uid/".$postuserid));
             }
             else
             {
-                $oRecord = User::model()->findByPk($postuserid);
-                $oRecord->email= $email;
-                $oRecord->full_name= $full_name;
-
-                if(Yii::app()->request->getPost("company_uid") !== null){
-                    $company_uid = (int) Yii::app()->request->getPost("company_uid");
-                    $oRecord->company_uid= $company_uid;
-                }
-
-                if (!empty($sPassword))
-                {
-                    $oRecord->password= hash('sha256', $sPassword);
-                }
-                $uresult = $oRecord->save();    // store result of save in uresult
-
-                if (empty($sPassword))
-                {
-                    Yii::app()->setFlashMessage( gT("Success!") .' <br/> '.gT("Password") . ": (" . gT("Unchanged") . ")", 'success');
-                    $this->getController()->redirect(array("/admin/user/sa/modifyuser/uid/".$postuserid));
-                }
-                elseif ($uresult && !empty($sPassword)) // When saved successfully
-                {
-                    Yii::app()->session['pw_notify'] = $sPassword != '';
-                    if ($display_user_password_in_html === true) {
-                        $displayedPwd = htmlentities($sPassword);
-                    }
-                    else {
-                        $displayedPwd = preg_replace('/./', '*', $sPassword);
-                    }
-                    Yii::app()->setFlashMessage( gT("Success!") .' <br/> '.gT("Password") . ": " . $displayedPwd, 'success');
-                    $this->getController()->redirect(array("/admin/user/sa/modifyuser/uid/".$postuserid));
-                }
-                else
-                {
-                    //Saving the user failed for some reason, message about email is not helpful here
-                    // Username and/or email adress already exists.
-                    Yii::app()->setFlashMessage(  gT("Could not modify user data."),'error');
-                    $this->getController()->redirect(array("/admin/user/sa/modifyuser/uid/".$postuserid));
-                }
+                //Saving the user failed for some reason, message about email is not helpful here
+                // Username and/or email adress already exists.
+                Yii::app()->setFlashMessage(  gT("Could not modify company data."),'error');
+                $this->getController()->redirect(array("/admin/companies/sa/modifyuser/uid/".$postuserid));
             }
         }
         else
         {
-            Yii::app()->setFlashMessage(  gT("Could not modify user data."),'error');
+            Yii::app()->setFlashMessage(  gT("Could not modify company data."),'error');
             $this->getController()->redirect(array("/admin/"));
         }
 
         $aData = array();
-        $aData['fullpagebar']['continuebutton']['url'] = 'admin/user/sa/index';
+        $aData['fullpagebar']['continuebutton']['url'] = 'admin/companies/sa/index';
         $this->_renderWrappedTemplate('user', $aViewUrls, $aData);
     }
 
