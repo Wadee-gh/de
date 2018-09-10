@@ -846,9 +846,11 @@ class CParticipant extends LSActiveRecord
     public function getGroupResults($rgroups,$r,$fieldmap){
         //echo "fieldmap:<br><pre>".print_r($fieldmap,true)."</pre>"; //die();
         $groups = array();
+        //echo "rgroups:<br><pre>".print_r($rgroups,true)."</pre>";
         foreach($fieldmap as $field){
           $gid = $field['gid'];
           if(in_array($gid,$rgroups)){
+            //echo "<pre>".print_r($field,true)."</pre>";
             $name = $field['group_name'];
             $groups[$gid]['name'] = $name;
             $title = $field['title'];
@@ -882,12 +884,15 @@ class CParticipant extends LSActiveRecord
 
     public function getRequiredGroups($token,$submitdate){
         $tbl = $this->tableName();
+        //echo "token: ".$token."<br>";
+        //echo "submitdate: ".$submitdate."<br>";
         $row = Yii::app()->db->createCommand()
             ->select('*')
-            ->where("lime_token='".$token."' AND convert_tz(created,@@session.time_zone,'-05:00') <= '".$submitdate."' ")
+            ->where("lime_token='".$token."' AND created <= '".$submitdate."' ")
             ->from($tbl)
             ->order("id DESC")
             ->queryRow();
+        //echo "<pre>".print_r($row,true)."</pre>";
         if($row == '') $row = array();
         $tmp = array();
         if(isset($row['required_groups'])){

@@ -278,6 +278,7 @@ class responses extends Survey_Common_Action
                   // for each response, get groups that were selected.
                   $responses = $iIdresult;
                   foreach($responses as $r){
+                    echo "r:<pre>".print_r($r,true)."</pre>";
                     $submitdate = $r['submitdate'];
                     $token = $r['token'];
                     $rgroups = CParticipant::model()->getRequiredGroups($token,$submitdate);
@@ -679,9 +680,9 @@ class responses extends Survey_Common_Action
                   $oCriteria->addCondition("id = '".$iId."'");
                 }
 
-                $oCriteria->order = 'submitdate DESC';
+                $oCriteria->order = 'completed DESC';
                 $iIdresult = SurveyDynamic::model($iSurveyID)->findAllAsArray($oCriteria);
-                //echo "<pre>".print_r($iIdresult,true)."</pre>"; die();
+                //echo "<pre>".print_r($iIdresult,true)."</pre>"; //die();
                 $aData['iIdresult'] = $iIdresult;
 
                 $chide = "token,id,responsedid,startlanguage,ipaddress,referrerurl,firstname,lastname,email,completed,submitdate";
@@ -689,9 +690,11 @@ class responses extends Survey_Common_Action
                 //$hrows[] = 'Completed';
                 $flabels = array();
                 foreach($fnames as $fname){
-                  if(in_array($fname['code'],explode(",",$chide))){
-                    $hrows[] = $fname[1];
-                    $flabels[$fname['code']] = $fname[1];
+                  if(isset($fname['code'])){
+                    if(in_array($fname['code'],explode(",",$chide))){
+                      $hrows[] = $fname[1];
+                      $flabels[$fname['code']] = $fname[1];
+                    }
                   }
                 }
                 $aData['hrows'] = $hrows;
@@ -701,8 +704,10 @@ class responses extends Survey_Common_Action
                   $crows = array();
                   // for each response, get groups that were selected.
                   $responses = $iIdresult;
+                  //echo "<pre>".print_r($responses,true)."</pre>";
                   foreach($responses as $r){
-                    $submitdate = $r['submitdate'];
+                    //echo "<pre>".print_r($r,true)."</pre>";
+                    $submitdate = $r['completed'];
                     $token = $r['token'];
                     $rgroups = CParticipant::model()->getRequiredGroups($token,$submitdate);
                     $groups = CParticipant::model()->getGroupResults($rgroups,$r,$fieldmap);
@@ -2089,7 +2094,7 @@ class responses extends Survey_Common_Action
                       //echo "data:<br><pre>".print_r($_SESSION[$LEMsessid],true)."</pre>";
                       die();*/
                     }
-                    list($plus_qanda, $plus_inputnames) = retrieveAnswers($ia, $surveyid);
+                    list($plus_qanda, $plus_inputnames) = retrieveAnswers($ia, $LEMsessid);
                     //echo "plus_qanda:<br><pre>".print_r($plus_qanda,true)."</pre>"; //die();
                     //echo "plus_inputnames:<br><pre>".print_r($plus_inputnames,true)."</pre>"; die();
                     if ($plus_qanda)

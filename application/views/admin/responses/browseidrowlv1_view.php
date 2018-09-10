@@ -70,7 +70,7 @@
     <?php foreach($ccols2 as $ccol){ ?>
     <td class="<?php echo $ccol;?>">
       <?php
-        echo $crow[$ccol];
+        echo isset($crow[$ccol]) ? $crow[$ccol] : "";
       ?>
     </td>
     <?php } ?>
