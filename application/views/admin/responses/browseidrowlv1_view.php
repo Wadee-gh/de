@@ -1,6 +1,7 @@
 <?php
   $ccols2 = array('date');
   $crows2 = array();
+  //echo "<pre>".print_r($crows,true)."</pre>";
   foreach($crows as $crow){
     $group = $crow['group'];
     if(!in_array($group,$ccols2)){

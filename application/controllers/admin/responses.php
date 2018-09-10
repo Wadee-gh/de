@@ -278,12 +278,12 @@ class responses extends Survey_Common_Action
                   // for each response, get groups that were selected.
                   $responses = $iIdresult;
                   foreach($responses as $r){
-                    echo "r:<pre>".print_r($r,true)."</pre>";
+                    //echo "r:<pre>".print_r($r,true)."</pre>";
                     $submitdate = $r['submitdate'];
                     $token = $r['token'];
                     $rgroups = CParticipant::model()->getRequiredGroups($token,$submitdate);
                     $groups = CParticipant::model()->getGroupResults($rgroups,$r,$fieldmap);
-                    //echo "<pre>".print_r(compact('token','submitdate','rgroups'),true)."</pre>"; die();
+                    echo "<pre>".print_r(compact('token','submitdate','rgroups'),true)."</pre>"; //die();
                     foreach($rgroups as $gid){
                       $g = $groups[$gid];
                       $group = $g['name'];
@@ -707,11 +707,11 @@ class responses extends Survey_Common_Action
                   //echo "<pre>".print_r($responses,true)."</pre>";
                   foreach($responses as $r){
                     //echo "<pre>".print_r($r,true)."</pre>";
-                    $submitdate = $r['completed'];
+                    $submitdate = $r['submitdate'];
                     $token = $r['token'];
                     $rgroups = CParticipant::model()->getRequiredGroups($token,$submitdate);
                     $groups = CParticipant::model()->getGroupResults($rgroups,$r,$fieldmap);
-                    //echo "<pre>".print_r(compact('token','submitdate','rgroups'),true)."</pre>"; die();
+                    //echo "<pre>".print_r(compact('token','submitdate','rgroups'),true)."</pre>"; //die();
                     foreach($rgroups as $gid){
                       $g = $groups[$gid];
                       $group = $g['name'];

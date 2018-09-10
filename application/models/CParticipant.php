@@ -888,7 +888,7 @@ class CParticipant extends LSActiveRecord
         //echo "submitdate: ".$submitdate."<br>";
         $row = Yii::app()->db->createCommand()
             ->select('*')
-            ->where("lime_token='".$token."' AND created <= '".$submitdate."' ")
+            ->where("lime_token='".$token."' AND convert_tz(created,@@session.time_zone,'-05:00') <= '".$submitdate."' ")
             ->from($tbl)
             ->order("id DESC")
             ->queryRow();
