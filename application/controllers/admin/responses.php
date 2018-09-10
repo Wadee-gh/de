@@ -707,7 +707,7 @@ class responses extends Survey_Common_Action
                   //echo "<pre>".print_r($responses,true)."</pre>";
                   foreach($responses as $r){
                     //echo "<pre>".print_r($r,true)."</pre>";
-                    $submitdate = $r['submitdate'];
+                    $submitdate = strtotime($r['submitdate']);
                     $token = $r['token'];
                     $rgroups = CParticipant::model()->getRequiredGroups($token,$submitdate);
                     $groups = CParticipant::model()->getGroupResults($rgroups,$r,$fieldmap);

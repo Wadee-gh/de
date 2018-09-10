@@ -23,7 +23,7 @@
   $crows2 = array();
   //echo "<pre>".print_r($crows,true)."</pre>";
   foreach($crows as $crow){
-    $date = $crow['submitdate'];
+    $date = date("Y-m-d H:i:s",$crow['submitdate']);
     $group = $crow['group'];
     $result = CHtml::link($crow['result'],array($crow['link']));
     $crows2[$date]['date'] = $date;
