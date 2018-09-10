@@ -126,7 +126,7 @@
 
 
 
-
+        <?php /*
         <div class="col-md-3 text-right">
             <a class="btn btn-default" href="<?php echo $this->createUrl('admin/index'); ?>" role="button">
                 <span class="glyphicon glyphicon-backward"></span>
@@ -134,6 +134,7 @@
                 <?php eT('Return to admin home'); ?>
             </a>
         </div>
+        */ ?>
     </div>
 </div>
 
