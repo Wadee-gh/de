@@ -49,7 +49,8 @@
     <?php endif; ?>
 
     <?php echo $datepickerlang;?>
-    <title><?php echo $sitename;?></title>
+    <title><?php echo User::model()->getCompanyBranch(Yii::app()->session['loginID']); ?>
+            <?php //echo $sitename; ?></title>
     <link rel="shortcut icon" href="<?php echo $baseurl;?>styles/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="<?php echo $baseurl;?>styles/favicon.ico" type="image/x-icon" />
     <?php echo $firebug ?>

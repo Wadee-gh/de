@@ -99,7 +99,7 @@ class User extends LSActiveRecord
     function parentAndUser($postuserid)
     {
         $user = Yii::app()->db->createCommand()
-        ->select('a.users_name, a.full_name, a.email, a.uid, a.company_uid, b.users_name AS parent, c.name AS company_name')
+        ->select('a.users_name, a.full_name, a.email, a.uid, a.company_uid, b.users_name AS parent, c.name AS company_name,c.branch')
         ->limit(1)
         ->where('a.uid = :postuserid')
         ->from("{{users}} a")
@@ -123,6 +123,11 @@ class User extends LSActiveRecord
     public function getCompanyName(){
         $parent_user = $this->parentAndUser( $this->uid );
         return $parent_user['company_name'];
+    }
+
+    public function getCompanyBranch($postuserid){
+        $parent_user = $this->parentAndUser($postuserid);
+        return $parent_user['company_name']." - ".$parent_user['branch'];
     }
 
     public function getSurveysCreated(){

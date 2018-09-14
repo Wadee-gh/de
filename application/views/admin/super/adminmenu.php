@@ -19,7 +19,8 @@
 
 
         <a class="navbar-brand" href="<?php echo $this->createUrl("/admin/"); ?>">
-            <?php echo $sitename; ?>
+            <?php echo User::model()->getCompanyBranch(Yii::app()->session['loginID']); ?>
+            <?php //echo $sitename; ?>
         </a>
     </div>
 
