@@ -156,13 +156,13 @@ class Participant extends LSActiveRecord
                     'trash text-danger'
                 );
                 $buttons .= vsprintf($raw_button_template, $deleteData);
-                $infoData = array(
-                    'action_participant_shareParticipant invisible',
-                    '',
-                    gT("Share this participant"),
-                    'share'
-                );
-                $buttons .= vsprintf($raw_button_template, $infoData);
+                //$infoData = array(
+                    //'action_participant_shareParticipant invisible',
+                    //'',
+                    //gT("Share this participant"),
+                    //'share'
+                //);
+                //$buttons .= vsprintf($raw_button_template, $infoData);
             }
 
         }
@@ -202,22 +202,22 @@ class Participant extends LSActiveRecord
         $buttons .= vsprintf($raw_button_template, $infoData);
 
         // Add participant to survey
-        $infoData = array(
-            'action_participant_addToSurvey',
-            '',
-            gT("Add participant to survey"),
-            'user-plus'
-        );
-        $buttons .= vsprintf($raw_button_template, $infoData);
+        //$infoData = array(
+            //'action_participant_addToSurvey',
+            //'',
+            //gT("Add participant to survey"),
+            //'user-plus'
+        //);
+        //$buttons .= vsprintf($raw_button_template, $infoData);
 
         // Send Email Request
-        $infoData = array(
-            'action_participant_sendEmailRequest',
-            '',
-            gT("Send Email Request"),
-            'envelope'
-        );
-        $buttons .= vsprintf($raw_button_template, $infoData);
+        //$infoData = array(
+            //'action_participant_sendEmailRequest',
+            //'',
+            //gT("Send Email Request"),
+            //'envelope'
+        //);
+        //$buttons .= vsprintf($raw_button_template, $infoData);
 
         // On Site Request
         $infoData = array(
