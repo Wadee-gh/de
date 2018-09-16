@@ -49,7 +49,7 @@
                           </div>
                           <div class="form-group">
                             <label>ID</label>
-                            <input type="text" class="form-control" name="mrn_id" value="<?php echo $mrn_id;?>" required placeholder="">
+                            <input type="text" class="form-control" name="mrn_id" value="<?php echo $mrn_id;?>" placeholder="">
                             <div class="help-block with-errors"></div>
                           </div>
                           <div class="form-group">
@@ -79,7 +79,7 @@
                                 }
                               }
                             ?>
-                            <input type="email" class="form-control" name="email" value="<?php echo $email;?>" <?php if($disabled) echo "disabled";?> required placeholder="Email" data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$">
+                            <input type="email" class="form-control" name="email" value="<?php echo $email;?>" <?php if($disabled) echo "disabled";?> placeholder="Email" data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$">
                             <?php if($disabled) { ?>
                             <input type="hidden" name="email" value="<?php echo $email;?>" />
                             <?php } ?>
