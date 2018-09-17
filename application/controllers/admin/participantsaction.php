@@ -563,8 +563,20 @@ class participantsaction extends Survey_Common_Action
         $row2 = Participant::model()->getByID($mrn_id);
         $row = (empty($row1) ? $row2 : $row1);
         $exists = !empty($row);
+
+        if (isset($aData['dob'])){
+          $aData['dob'] = date("Y-m-d",strtotime($aData['dob']));
+        }
+        
+        // check name and dob before saving the data.
+        $row3 = Participant::model()->nameDobExists($aData);
+        if(empty($row) && !empty($row3)){
+          $row = $row3;
+          $exists = true;
+        }
+
         echo json_encode(compact('exists','row')); die();
-        ls\ajax\AjaxHelper::output(json_encode(compact('exists','row')));
+        //ls\ajax\AjaxHelper::output(json_encode(compact('exists','row')));
     }
 
     /**
