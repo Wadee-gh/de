@@ -2492,4 +2492,32 @@ class Participant extends LSActiveRecord
           return('');
         }
     }
+
+    public function nameDobExists($aData){
+        $firstname = $aData['firstname'];
+        $lastname = $aData['lastname'];
+        $dob = $aData['dob'];
+        $participant_id = $aData['participant_id'];
+
+        $where = "";
+        $where .= "firstname = '".$firstname."' ";
+        $where .= " AND lastname = '".$lastname."' ";
+        $where .= " AND dob = '".$dob."' ";
+        if($participant_id){
+          $where .= " AND participant_id <> '".$participant_id."' ";
+        }
+
+        //echo "where: ".$where."<br>";
+
+        $tbl = $this->tableName();
+        $row = array();
+        $row = Yii::app()->db->createCommand()
+            ->select('*')
+            ->where($where)
+            ->from($tbl)
+            ->queryRow();
+        if($row == '') $row = array();
+        //echo "<pre>".print_r($row,true)."</pre>"; die();
+        return($row);
+    }
 }
