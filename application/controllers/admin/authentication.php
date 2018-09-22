@@ -77,7 +77,9 @@ class Authentication extends Survey_Common_Action
     }
 
     public function customRedirect($token = null){
-        $this->logout2();
+        if(Yii::app()->session['complete_by'] != $token){
+            $this->logout2();
+        }
         //echo 'hello'; die();
         //echo "<pre>".print_r($_REQUEST,true)."</pre>"; die();
         // get cparticipation record.
