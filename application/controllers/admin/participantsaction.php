@@ -1541,6 +1541,9 @@ class participantsaction extends Survey_Common_Action
               $result = Participant::model()->createCustomParticipant($id,$vars);
             }
           }
+          if($_POST['complete_by'] == 1){
+              Yii::app()->session['complete_by'] = $_POST['token']; 
+          }
           $message = "Successfully saved custom participation.";
         } else {
           // error.

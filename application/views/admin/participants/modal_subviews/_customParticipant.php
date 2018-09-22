@@ -61,6 +61,18 @@
                 </p>
             </div>
             <label class='control-label col-sm-1'>&nbsp;</label>
+            <?php if($process == "sendOnSiteRequest"){ ?>
+            <div class="col-md-9 col-md-offset-3 text-right">
+                <label class="radio-inline">Who is completing the scale </label>
+                <label class="radio-inline">
+                    <input type="radio" checked name="complete_by" value="1" >Admin
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="complete_by" value="2">Patient
+                </label>
+                
+            </div>
+            <?php } ?>
             <div class='col-sm-11' id="required-groups-inner"></div>
         </div>
         <?php
