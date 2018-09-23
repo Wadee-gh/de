@@ -11,7 +11,8 @@ copy sample configuration
 ```sh
 cd application/config/
 cp config-sample-mysql.php config.php
-`````
+```
+
 configure with your local sql accesss
 
 change urlFormat to path at config.php:42
@@ -25,11 +26,5 @@ change urlFormat to path at config.php:42
             'showScriptName' => true,
         ),
 ```
-
-
-
-
-
-
 
 
