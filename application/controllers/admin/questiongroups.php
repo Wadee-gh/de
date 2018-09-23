@@ -538,7 +538,7 @@ class questiongroups extends Survey_Common_Action
         // get records from db.
         // groups will contain gid and group name from the lime_groups table.
         $groups = QuestionGroup::model()->getGroups($surveyid);
-        //echo "<pre>".print_r($groups,true)."</pre>"; die();
+        //echo "<pre>".print_r($groups,true)."</pre>"; //die();
         $freqUsedGroups = QuestionGroup::model()->getFreqUsedGroups($surveyid);
         //echo "<pre>".print_r($freqUsedGroups,true)."</pre>"; die();
 
