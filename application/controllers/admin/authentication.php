@@ -244,7 +244,7 @@ class Authentication extends Survey_Common_Action
 
                 $event = new PluginEvent('afterSuccessfulLogin');
                 App()->getPluginManager()->dispatchEvent($event);
-
+                LoginLogs::model()->loginSuccess();
                 return array('success');
             }else{
                 // Failed

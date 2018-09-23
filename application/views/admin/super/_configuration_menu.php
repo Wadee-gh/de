@@ -228,6 +228,11 @@
                         </a>
                     </li>
                     <?php endif;?>
+                    <?php if (Permission::model()->hasGlobalPermission('users','read')):?>
+                        <li class="dropdown-item">
+                            <a href="<?php echo $this->createUrl("/admin/loginlogs/sa/index"); ?>"><?php eT("Login Logs");?></a>
+                        </li>
+                    <?php endif; ?>
             </ul>
         </li>
 

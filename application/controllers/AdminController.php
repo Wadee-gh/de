@@ -236,7 +236,8 @@ class AdminController extends LSYii_Controller
         'translate'        => 'translate',
         'update'           => 'update',
         'pluginhelper'     => 'PluginHelper',
-        'notification'     => 'NotificationController'
+        'notification'     => 'NotificationController',
+        'loginlogs'        => 'LoginLogsController'
         );
     }
 
