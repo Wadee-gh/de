@@ -28,13 +28,13 @@
                 <?php eT('First name:'); ?>
             </label>
             <div class='col-sm-4'>
-                <input class='form-control' name='Participant[firstname]' value='<?php echo $model->firstname; ?>' />
+                <input class='form-control firstname' name='Participant[firstname]' value='<?php echo $model->firstname; ?>' />
             </div>
             <label class='control-label col-sm-2'>
                 <?php eT('Last name:'); ?>
             </label>
             <div class='col-sm-4'>
-                <input class='form-control' name='Participant[lastname]' value='<?php echo $model->lastname; ?>' />
+                <input class='form-control lastname' name='Participant[lastname]' value='<?php echo $model->lastname; ?>' />
             </div>
         </div>
         <div class='form-group'>
@@ -42,7 +42,7 @@
                 <?php eT('Date of Birth:'); ?>
             </label>
             <div class='col-sm-10'>
-                <input class='form-control form_date' name='Participant[dob]' value='<?php echo date("m/d/Y",strtotime($model->dob)); ?>' data-error="Please enter a valid date" pattern="^(((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))[-/]?[0-9]{4}|02[-/]?29[-/]?([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00))$" />
+                <input class='form-control form_date dob' name='Participant[dob]' value='<?php echo date("m/d/Y",strtotime($model->dob)); ?>' data-error="Please enter a valid date" pattern="^(((0[13-9]|1[012])[-/]?(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])[-/]?31|02[-/]?(0[1-9]|1[0-9]|2[0-8]))[-/]?[0-9]{4}|02[-/]?29[-/]?([0-9]{2}(([2468][048]|[02468][48])|[13579][26])|([13579][26]|[02468][048]|0[0-9]|1[0-6])00))$" />
                 <div class="help-block with-errors"></div>
             </div>
             <script type="text/javascript">
@@ -70,7 +70,7 @@
                 <?php eT('E-mail:'); ?>
             </label>
             <div class='col-sm-10'>
-                <input class='form-control' required name='Participant[email]' value='<?php echo $model->email; ?>' data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
+                <input class='form-control email' required name='Participant[email]' value='<?php echo $model->email; ?>' data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
                 <div class="help-block with-errors"></div>
             </div>
         </div>
@@ -161,6 +161,11 @@
 <script>
 
 </script>
+<style>
+    #editPartcipantActiveForm .error{
+        border: 1px solid #FF0000;
+    } 
+</style>
 
 <?php
 $this->endWidget();

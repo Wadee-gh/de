@@ -44,6 +44,9 @@ class LoginLogs extends CActiveRecord {
         $pageSize = Yii::app()->user->getState('pageSizeParticipantView', Yii::app()->params['defaultPageSize']);
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
+            'sort' => array(
+                'defaultOrder' => 't.id DESC',
+            ),
             'pagination' => array(
                 'pageSize' => $pageSize
             )

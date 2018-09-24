@@ -574,8 +574,22 @@ class participantsaction extends Survey_Common_Action
           $row = $row3;
           $exists = true;
         }
-
-        echo json_encode(compact('exists','row')); die();
+        $hasError = 0;
+        $errorMessage = false;
+        if($operation == 'add'){
+            $model = new Participant();
+            $model->scenario = "createparticipant";
+            $model->attributes = $aData;
+            $model->participant_id = 1;
+            $model->blacklisted = 1;
+            $model->validate();
+            if($model->hasErrors()){
+                $errorMessage = $model->getErrors();
+                $hasError = 1;
+            }
+        }
+        
+        echo json_encode(compact('exists','row','errorMessage','hasError')); die();
         //ls\ajax\AjaxHelper::output(json_encode(compact('exists','row')));
     }
 
