@@ -151,6 +151,7 @@ LS.CPDB = (function() {
         }
 
         function checkParticipantExists(action,formData,process){
+            $("#editPartcipantActiveForm .form-control").removeClass('error')
             $.ajax({
                 url: 'sa/participantExists',
                 data: formData,
@@ -158,19 +159,27 @@ LS.CPDB = (function() {
                 success: function(result) {
                     //alert(result);
                     var obj = jQuery.parseJSON(result);
-                    if(obj.exists){
-                      if(confirm("User already exists. Use existing profile?")){
-                        if(process == 'addParticipant'){
-                          // switch to Edit Participant instead of Add Participant.
-                          switchToEditParticipant(obj.row);
-                        } else
-                        if(process == 'sendEmailRequest'){
-                          switchToSendEmailRequest(obj.row);
+                    errorMessage = obj.errorMessage;
+                    if(obj.hasError == 1){
+                        $.each(errorMessage, function( index, value ) {
+                            $("#editPartcipantActiveForm ."+index).addClass('error')
+                        });
+                        return;
+                    }else{
+                        if(obj.exists){
+                          if(confirm("User already exists. Use existing profile?")){
+                            if(process == 'addParticipant'){
+                              // switch to Edit Participant instead of Add Participant.
+                              switchToEditParticipant(obj.row);
+                            } else
+                            if(process == 'sendEmailRequest'){
+                              switchToSendEmailRequest(obj.row);
+                            }
+                          }
+                        } else {
+                          // close the dialog and do nothing.
+                          postSecond(action,formData);
                         }
-                      }
-                    } else {
-                      // close the dialog and do nothing.
-                      postSecond(action,formData);
                     }
                 },
                 error : function() {
