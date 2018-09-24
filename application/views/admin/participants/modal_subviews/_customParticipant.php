@@ -15,13 +15,16 @@
     }
 
 ?>
-
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="participant_edit_modal"><?php echo gT($title); ?></h4>
     </div>
-
+    
     <div class="modal-body form-horizontal">
+        <div class="col-md-9 col-md-offset-3 text-right">
+            <button type="button" class="btn btn-default" data-dismiss="modal"><?php eT('Close') ?></button>
+            <input type="submit" class="btn btn-primary action_save_modal_customParticipant" value='<?php eT('Next')?>' />
+        </div>
         <!-- Comma separated list -->
         <input type='hidden' name='participant_id' value='<?php echo $participant_id; ?>'/>
         <input type='hidden' name='process' value='<?php echo $process; ?>'/>

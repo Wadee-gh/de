@@ -67,6 +67,8 @@ class Participant extends LSActiveRecord
         // will receive user inputs.
         return array(
             array('participant_id, blacklisted, owner_uid', 'required'),
+            array('firstname, lastname, dob', 'required','on'=>'createparticipant'),
+            array('email', 'email','on'=>'createparticipant'),
             array('owner_uid', 'numerical', 'integerOnly' => true),
             array('participant_id', 'length', 'max' => 50),
             array('firstname, lastname', 'length', 'max' => 150),
