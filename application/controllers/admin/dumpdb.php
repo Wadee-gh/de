@@ -1,10 +1,10 @@
 <?php
 /*
- * LimeSurvey
- * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+ * QstConn
+ * Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
  * All rights reserved.
  * License: GNU/GPL License v2 or later, see LICENSE.php
- * LimeSurvey is free software. This version may have been modified pursuant
+ * QstConn is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
@@ -14,7 +14,7 @@
 /**
  * Dump Database
  *
- * @package LimeSurvey
+ * @package QstConn
  * @copyright 2011
   * @access public
  */
@@ -45,7 +45,7 @@ class Dumpdb extends Survey_Common_Action {
     {
         Yii::app()->loadHelper("admin/backupdb");
         $sDbName=_getDbName();
-        $sFileName = 'LimeSurvey_'.$sDbName.'_dump_'.dateShift(date('Y-m-d H:i:s'), 'Y-m-d', Yii::app()->getConfig('timeadjust')).'.sql';
+        $sFileName = 'QstConn_'.$sDbName.'_dump_'.dateShift(date('Y-m-d H:i:s'), 'Y-m-d', Yii::app()->getConfig('timeadjust')).'.sql';
         $this->_outputHeaders($sFileName);
         outputDatabase();
         exit;

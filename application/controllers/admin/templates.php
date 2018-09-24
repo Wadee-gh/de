@@ -3,11 +3,11 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 /*
-* LimeSurvey
-* Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -17,7 +17,7 @@ if (!defined('BASEPATH'))
 /**
 * templates
 *
-* @package LimeSurvey
+* @package QstConn
 * @author
 * @copyright 2011
 */
@@ -898,7 +898,7 @@ class templates extends Survey_Common_Action
     */
     protected function _initialise($templatename, $screenname, $editfile, $showsummary = true)
     {
-        // LimeSurvey style
+        // QstConn style
         $oEditedTemplate = Template::model()->getTemplateConfiguration($templatename);
 
         // In survey mode, bootstrap is loaded via the app init.
@@ -998,7 +998,7 @@ class templates extends Survey_Common_Action
             'print_group.pstpl',
             'print_question.pstpl'
         );
-        $file_version = "LimeSurvey template editor " . Yii::app()->getConfig('versionnumber');
+        $file_version = "QstConn template editor " . Yii::app()->getConfig('versionnumber');
         Yii::app()->session['s_lang'] = Yii::app()->session['adminlang'];
         $templatename = sanitize_dirname($templatename);
         // Checks if screen name is in the list of allowed screen names

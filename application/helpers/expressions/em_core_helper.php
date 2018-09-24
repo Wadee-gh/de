@@ -1,10 +1,10 @@
 <?php
 /**
- * LimeSurvey
- * Copyright (C) 2007-2013 The LimeSurvey Project Team / Carsten Schmitz
+ * QstConn
+ * Copyright (C) 2007-2013 The QstConn Project Team / Carsten Schmitz
  * All rights reserved.
  * License: GNU/GPL License v2 or later, see LICENSE.php
- * LimeSurvey is free software. This version may have been modified pursuant
+ * QstConn is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
@@ -15,7 +15,7 @@
  * Description of ExpressionManager
  * (1) Does safe evaluation of PHP expressions.  Only registered Functions, and known Variables are allowed.
  *   (a) Functions include any math, string processing, conditional, formatting, etc. functions
- * (2) This class replaces LimeSurvey's <= 1.91+  process of resolving strings that contain LimeReplacementFields
+ * (2) This class replaces QstConn's <= 1.91+  process of resolving strings that contain LimeReplacementFields
  *   (a) String is split by expressions (by curly braces, but safely supporting strings and escaped curly braces)
  *   (b) Expressions (things surrounded by curly braces) are evaluated - thereby doing LimeReplacementField substitution and/or more complex calculations
  *   (c) Non-expressions are left intact
@@ -23,7 +23,7 @@
  * (3) The core of Expression Manager is a Recursive Descent Parser (RDP), based off of one build via JavaCC by TMSWhite in 1999.
  *   (a) Functions that start with RDP_ should not be touched unless you really understand compiler design.
  *
- * @author LimeSurvey Team (limesurvey.org)
+ * @author QstConn Team (limesurvey.org)
  * @author Thomas M. White (TMSWhite)
  */
 
@@ -2755,7 +2755,7 @@ function exprmgr_if($test,$ok,$error)
 }
 
 /**
- * Return true if the variable is an integer for LimeSurvey
+ * Return true if the variable is an integer for QstConn
  * Can not really use is_int due to SQL DECIMAL system. This function can surely be improved
  * @param string $arg
  * @return integer

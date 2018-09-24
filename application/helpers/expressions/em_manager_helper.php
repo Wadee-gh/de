@@ -1,10 +1,10 @@
 <?php
     /**
-    * LimeSurvey
-    * Copyright (C) 2007-2015 The LimeSurvey Project Team / Carsten Schmitz
+    * QstConn
+    * Copyright (C) 2007-2015 The QstConn Project Team / Carsten Schmitz
     * All rights reserved.
     * License: GNU/GPL License v2 or later, see LICENSE.php
-    * LimeSurvey is free software. This version may have been modified pursuant
+    * QstConn is free software. This version may have been modified pursuant
     * to the GNU General Public License, and as distributed it includes or
     * is derivative of works licensed under the GNU General Public License or
     * other free or open source software licenses.
@@ -14,9 +14,9 @@
     /**
     * LimeExpressionManager
     * This is a wrapper class around ExpressionManager that implements a Singleton and eases
-    * passing of LimeSurvey variable values into ExpressionManager
+    * passing of QstConn variable values into ExpressionManager
     *
-    * @author LimeSurvey Team (limesurvey.org)
+    * @author QstConn Team (limesurvey.org)
     * @author Thomas M. White (TMSWhite)
     * @author Denis Chenu <http://sondages.pro>
     */
@@ -159,7 +159,7 @@
         */
         private $surveyMode='group';
         /**
-        * a set of global survey options passed from LimeSurvey
+        * a set of global survey options passed from QstConn
         *
         * For example, array(
         * 'rooturl' => // URL prefix needed to be able to click on a syntax-highlighted variable name and have it open the needed editting window
@@ -3587,7 +3587,7 @@
         }
 
         /**
-        * Create the arrays needed by ExpressionManager to process LimeSurvey strings.
+        * Create the arrays needed by ExpressionManager to process QstConn strings.
         * The long part of this function should only be called once per page display (e.g. only if $fieldMap changes)
         *
         * @param integer $surveyid
@@ -7997,7 +7997,7 @@ This example shows escaping of the curly braces: \{\{test\}\} {if(1==1,'{{test}}
 <b>Values:</b><br />name={name}; surname={surname}<br />gender={gender}; age={age}; numPets={numPets}<br />numKids=INSERTANS:61764X1X3={numKids}={INSERTANS:61764X1X3}<br />TOKEN:ATTRIBUTE_1={TOKEN:ATTRIBUTE_1}
 <b>Question attributes:</b><br />numKids.question={numKids.question}; Question#={numKids.qid}; .relevance={numKids.relevance}
 <b>Math:</b><br/>5+7={5+7}; 2*pi={2*pi()}; sin(pi/2)={sin(pi()/2)}; max(age,numKids,numPets)={max(age,numKids,numPets)}
-<b>Text Processing:</b><br />{str_replace('like','love','I like LimeSurvey')}<br />{ucwords('hi there')}, {name}<br />{implode('--',name,'this is','a convenient way','way to','concatenate strings')}
+<b>Text Processing:</b><br />{str_replace('like','love','I like QstConn')}<br />{ucwords('hi there')}, {name}<br />{implode('--',name,'this is','a convenient way','way to','concatenate strings')}
 <b>Dates:</b><br />{name}, the current date/time is: {date('F j, Y, g:i a',time())}
 <b>Conditional:</b><br />Hello, {if(gender=='M','Mr.','Mrs.')} {surname}, may I call you {name}?
 <b>Tailored Paragraph:</b><br />{name}, you said that you are {age} years old, and that you have {numKids} {if((numKids==1),'child','children')} and {numPets} {if((numPets==1),'pet','pets')} running around the house. So, you have {numKids + numPets} wild {if((numKids + numPets ==1),'beast','beasts')} to chase around every day.<p>Since you have more {if((numKids > numPets),'children','pets')} than you do {if((numKids > numPets),'pets','children')}, do you feel that the {if((numKids > numPets),'pets','children')} are at a disadvantage?</p>
@@ -8226,7 +8226,7 @@ EOD;
                 print "<input type='hidden' id='display" . $arg['num'] . "' name='" . $arg['num'] .  "' value='" . (($rel) ? 'on' : '') . "'/>\n";
                 if ($arg['type'] == 'expr')
                 {
-                    // Hack for testing purposes - rather than using LimeSurvey internals to store the results of equations, process them via a hidden <div>
+                    // Hack for testing purposes - rather than using QstConn internals to store the results of equations, process them via a hidden <div>
                     print "<div style='display: none' id='hack_" . $arg['name'] . "'>" . $arg['question'];
                     print "<input type='hidden' id='" . $arg['name'] . "' name='" . $arg['name'] . "' value=''/></div>\n";
                 }

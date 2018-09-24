@@ -5,7 +5,7 @@ class Authdb extends AuthPluginBase
     protected $_onepass = null;
 
     static protected $description = 'Core: Database authentication + exports';
-    static protected $name = 'LimeSurvey internal database';
+    static protected $name = 'QstConn internal database';
 
     public function init()
     {

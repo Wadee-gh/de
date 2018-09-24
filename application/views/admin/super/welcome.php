@@ -18,7 +18,7 @@
     gT('Label sets');
     gT('Edit label sets');
     gT('Template editor');
-    gT('Edit LimeSurvey templates');
+    gT('Edit QstConn templates');
 ?>
 
 <!-- Welcome view -->
@@ -47,7 +47,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                      <h4 class="modal-title"><?php echo sprintf(gT("Welcome to %s!"), 'LimeSurvey'); ?></h4>
+                      <h4 class="modal-title"><?php echo sprintf(gT("Welcome to %s!"), 'QstConn'); ?></h4>
                     </div>
                     <div class="modal-body">
                         <p><?php eT("Some piece-of-cake steps to create your very own first survey:"); ?></p>
@@ -119,7 +119,7 @@
 
     <!-- Boxes for smartphones -->
     <div class="row  hidden-sm  hidden-md hidden-lg ">
-        <div class="panel panel-primary panel-clickable" id="panel-7" data-url="/limesurvey/LimeSurveyNext/index.php/admin/survey/sa/listsurveys" style="opacity: 1; top: 0px;">
+        <div class="panel panel-primary panel-clickable" id="panel-7" data-url="/limesurvey/QstConnNext/index.php/admin/survey/sa/listsurveys" style="opacity: 1; top: 0px;">
             <div class="panel-heading">
                 <h3 class="panel-title"><?php eT('List surveys');?></h3>
             </div>
@@ -131,7 +131,7 @@
             </div>
         </div>
 
-        <div class="panel panel-primary panel-clickable" id="panel-8" data-url="/limesurvey/LimeSurveyNext/index.php/admin/globalsettings" style="opacity: 1; top: 0px;">
+        <div class="panel panel-primary panel-clickable" id="panel-8" data-url="/limesurvey/QstConnNext/index.php/admin/globalsettings" style="opacity: 1; top: 0px;">
             <div class="panel-heading">
                 <h3 class="panel-title"><?php eT('Edit global settings');?></h3>
             </div>

@@ -24,7 +24,7 @@
         case 'no_server_answer':
             $sTile = gT('Error!');
             $sHeader = gT('No server answer');
-            $sMessage = gT("It seems that the ComfortUpdate server is not responding. Please try again in few minutes or contact the LimeSurvey team.");
+            $sMessage = gT("It seems that the ComfortUpdate server is not responding. Please try again in few minutes or contact the QstConn team.");
             break;
 
         case 'no_update_available_for_your_version':
@@ -43,13 +43,13 @@
         case 'update_disable':
             $sTile = gT('Error!');
             $sHeader = gT('Not updatable!');
-            $sMessage = gT('comfortUpdate is disabled in your LimeSurvey configuration. Please contact your administrator for more informations.');
+            $sMessage = gT('comfortUpdate is disabled in your QstConn configuration. Please contact your administrator for more informations.');
             break;
 
         case 'no_build':
             $sTile = gT('Error!');
             $sHeader = gT('No build version found!');
-            $sMessage = gT("It seems you're using a version coming from the LimeSurvey GitHub repository. You can't use ComfortUpdate.");
+            $sMessage = gT("It seems you're using a version coming from the QstConn GitHub repository. You can't use ComfortUpdate.");
             break;
 
         case 'not_updatable':
@@ -67,7 +67,7 @@
         default :
             $sTile = gT('Error!');
             $sHeader = gT('Unknown error!');
-            $sMessage = gT('An unknown error occured.').' '.gT('Please contact the LimeSurvey team.');
+            $sMessage = gT('An unknown error occured.').' '.gT('Please contact the QstConn team.');
             $sErrorCode = gT('Error code:').' '.$serverAnswer->error;
             break;
     }

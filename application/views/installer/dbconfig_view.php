@@ -38,7 +38,7 @@
                 $rows[] = array(
                     'label' => CHtml::activeLabelEx($model, 'dbname', array('class' => 'control-label col-sm-2', 'label' => gT("Database name"))),
                     'control' => CHtml::activeTextField($model, 'dbname', array('required' => 'required','autocomplete'=>'off', 'class' => 'form-control')),
-                    'description' => gT("If the database does not yet exist it will be created (make sure your database user has the necessary permissions). In contrast, if there are existing LimeSurvey tables in that database they will be upgraded automatically after installation.")
+                    'description' => gT("If the database does not yet exist it will be created (make sure your database user has the necessary permissions). In contrast, if there are existing QstConn tables in that database they will be upgraded automatically after installation.")
                 );
 
                 $rows[] = array(

@@ -15,7 +15,7 @@
      * To add a new massive action, just create a new entry in the aActions array, and write its related method in questions controller.
      * If the action need a form inside the modal so the user can set some values, please, use a subview (e.g: _set_question_group_position.php)
      *
-     * @see documentation: https://github.com/LimeSurvey/LimeSurvey/tree/master/application/extensions/admin/grid/MassiveActionsWidget/README.md
+     * @see documentation: https://github.com/QstConn/QstConn/tree/master/application/extensions/admin/grid/MassiveActionsWidget/README.md
      */
 
     $this->widget('ext.admin.grid.MassiveActionsWidget.MassiveActionsWidget', array(

@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
-* LimeSurvey
-* Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -103,7 +103,7 @@ function quoteText($sText, $sEscapeMode = 'html')
 }
 
 /**
-* getQuestionTypeList() Returns list of question types available in LimeSurvey. Edit this if you are adding a new
+* getQuestionTypeList() Returns list of question types available in QstConn. Edit this if you are adding a new
 *    question type
 *
 * @param string $SelectedCode Value of the Question Type (defaults to "T")
@@ -703,7 +703,7 @@ function getQuestionClass($input)
 *
 * Because I haven't been able to decide which option is the least
 * bad, I have handed over that responsibility to the admin who sets
-* LimeSurvey up on their server.
+* QstConn up on their server.
 *
 * There are four options:
 *    'css'   using one of the various CSS only methods for
@@ -1414,7 +1414,7 @@ function sendCacheHeaders()
         {
             header('X-Frame-Options: SAMEORIGIN');
         }
-        header('P3P:CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"');  // this line lets IE7 run LimeSurvey in an iframe
+        header('P3P:CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"');  // this line lets IE7 run QstConn in an iframe
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");    // Date in the past
         header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");  // always modified
         header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
@@ -2774,7 +2774,7 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
             $mail->AddCustomHeader($val);
         }
     }
-    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer (LimeSurvey.org)");
+    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer (QstConn.org)");
     if (get_magic_quotes_gpc() != "0")    {$body = stripcslashes($body);}
     if ($ishtml)
     {
@@ -3938,7 +3938,7 @@ function removeBOM($str=""){
 }
 
 /**
-* This function requests the latest update information from the LimeSurvey.org website
+* This function requests the latest update information from the QstConn.org website
 *
 * @returns array Contains update information or false if the request failed for some reason
 */
@@ -3964,7 +3964,7 @@ function getUpdateInfo()
     $opts = array(
         'http' => array(
             'method' => 'GET',
-            'user_agent' => "LimeSurvey ".Yii::app()->getConfig("versionnumber")." build ".Yii::app()->getConfig("buildnumber"),
+            'user_agent' => "QstConn ".Yii::app()->getConfig("versionnumber")." build ".Yii::app()->getConfig("buildnumber"),
             'timeout' => 10,
             'ignore_errors' => true
         )
@@ -4779,12 +4779,12 @@ function accessDenied($action,$sid='')
             if (isset($sid)) {
                 $sURLID="?sid={$sid}";
             }
-            $accesssummary .= "<p><span color='errortitle'>".gT("Security alert")."</span>: ".gT("Someone may be trying to use your LimeSurvey session (CSRF attack suspected). If you just clicked on a malicious link, please report this to your system administrator.").'<br>'.gT('Also this problem can occur when you are working/editing in LimeSurvey in several browser windows/tabs at the same time.')."</p>";
+            $accesssummary .= "<p><span color='errortitle'>".gT("Security alert")."</span>: ".gT("Someone may be trying to use your QstConn session (CSRF attack suspected). If you just clicked on a malicious link, please report this to your system administrator.").'<br>'.gT('Also this problem can occur when you are working/editing in QstConn in several browser windows/tabs at the same time.')."</p>";
             $accesssummary .= "<a href='{$scriptname}{$sURLID}'>".gT("Continue")."</a><br />&nbsp;\n";
         }
         elseif($action == "FakeGET")
         {
-            $accesssummary .= "<p><span class='errortitle'>".gT("Security alert")."</span>: ".gT("Someone may be trying to use your LimeSurvey session (CSRF attack suspected). If you just clicked on a malicious link, please report this to your system administrator.").'<br>'.gT('Also this problem can occur when you are working/editing in LimeSurvey in several browser windows/tabs at the same time.')."</p>";
+            $accesssummary .= "<p><span class='errortitle'>".gT("Security alert")."</span>: ".gT("Someone may be trying to use your QstConn session (CSRF attack suspected). If you just clicked on a malicious link, please report this to your system administrator.").'<br>'.gT('Also this problem can occur when you are working/editing in QstConn in several browser windows/tabs at the same time.')."</p>";
             $accesssummary .= "<a href='$scriptname?sid={$sid}'>".gT("Continue")."</a><br />&nbsp;\n";
         }
         else

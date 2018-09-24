@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
-* LimeSurvey
-* Copyright (C) 2007-2012 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2012 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -866,7 +866,7 @@ function submitfailed($errormsg = '', $query = null)
         . ($query ? $query : '') . "\n\n"  // In case we have no global subquery, but an argument to the function
         . gT("ERROR MESSAGE","unescaped").":\n"
         . $errormsg."\n\n";
-        SendEmailMessage($email, gT("Error saving results","unescaped"), $thissurvey['adminemail'], $thissurvey['adminemail'], "LimeSurvey", false, getBounceEmail($surveyid));
+        SendEmailMessage($email, gT("Error saving results","unescaped"), $thissurvey['adminemail'], $thissurvey['adminemail'], "QstConn", false, getBounceEmail($surveyid));
     }
     else
     {

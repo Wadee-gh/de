@@ -28,7 +28,7 @@
 
 
 <div>
-    <strong><?php echo gT('The following LimeSurvey updates are available:');?></strong>
+    <strong><?php echo gT('The following QstConn updates are available:');?></strong>
 </div>
 <br/>
 <br/>
@@ -39,7 +39,7 @@
     <thead>
         <tr>
             <th>
-                <?php eT('LimeSurvey version'); ?>
+                <?php eT('QstConn version'); ?>
             </th>
             <th>
                 <?php eT('Branch'); ?>

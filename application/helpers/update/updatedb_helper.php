@@ -1,10 +1,10 @@
 <?PHP
 /*
-* LimeSurvey
-* Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -24,7 +24,7 @@ function db_upgrade_all($iOldDBVersion, $bSilent=false) {
 
     /**
     * If you add a new database version add any critical database version numbers to this array. See link
-    * @link https://manual.limesurvey.org/Database_versioning for explanations
+    * @link https://qc.md/Database_versioning for explanations
     * @var array $aCriticalDBVersions An array of cricital database version.
     */
     $aCriticalDBVersions=array();
@@ -1703,7 +1703,7 @@ function upgradeSurveyTables255()
         'url'      =>  'admin/templates/sa/view',
         'title'    =>  'Template editor',
         'ico'      =>  'templates',
-        'desc'     =>  'Edit LimeSurvey templates',
+        'desc'     =>  'Edit QstConn templates',
         'page'     =>  'welcome',
         'usergroup' => '-2',
     ));
@@ -1818,7 +1818,7 @@ function createBoxes250()
         'url'      =>  'admin/templates/sa/view',
         'title'    =>  'Template editor',
         'img'      =>  'templates.png',
-        'desc'     =>  'Edit LimeSurvey templates',
+        'desc'     =>  'Edit QstConn templates',
         'page'     =>  'welcome',
     ));
 }

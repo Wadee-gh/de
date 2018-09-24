@@ -1,10 +1,10 @@
 <?php
 /*
- * LimeSurvey
- * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+ * QstConn
+ * Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
  * All rights reserved.
  * License: GNU/GPL License v2 or later, see LICENSE.php
- * LimeSurvey is free software. This version may have been modified pursuant
+ * QstConn is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
@@ -631,7 +631,7 @@ class pdf extends TCPDF {
    * Create Answer PDF document, set metadata and set title
    * @param $aSurveyInfo - Survey Information (preventing from passing to methods every time)
    * @param $aPdfLanguageSettings - Pdf language settings
-   * @param $sSiteName - LimeSurvey site name (header and metadata)
+   * @param $sSiteName - QstConn site name (header and metadata)
    * @param $sSurveyName - Survey name (header, metadata and title),
    * @param $sDefaultHeaderString - TCPDF header string
    * @return unknown_type
@@ -691,7 +691,7 @@ class pdf extends TCPDF {
    *
    * Add header to pdf
    * @param $aPdfLanguageSettings - Pdf language settings
-   * @param $sSiteName - LimeSurvey site name (header and metadata)
+   * @param $sSiteName - QstConn site name (header and metadata)
    * @param $sDefaultHeaderString - TCPDF header string
    * @return unknown_type
    */
@@ -759,7 +759,7 @@ class pdf extends TCPDF {
    *
    * @param $sQuestion - Question field text array
    * @param $sResponse - Answer field text array
-   * @param $bReplaceExpressions - Try to replace LimeSurvey Expressions. This is false when exporting answers PDF from admin GUI
+   * @param $bReplaceExpressions - Try to replace QstConn Expressions. This is false when exporting answers PDF from admin GUI
    *                               because we can not interpret expressions so just purify.
    *                               TODO: Find a universal valid method to interpret expressions
    * @param $bAllowBreakPage - Allow break cell in two pages

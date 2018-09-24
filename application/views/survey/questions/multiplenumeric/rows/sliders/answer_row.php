@@ -155,7 +155,7 @@ else if($slider_middlestart==1) //
     <script type='text/javascript'>
             // Most of this javascript is here to handle the fact that bootstrapSlider need numerical value in the input
             // It can't accept "NULL" nor anyother thousand separator than "." (else it become a string)
-            // See : https://github.com/LimeSurvey/LimeSurvey/blob/master/scripts/bootstrap-slider.js#l1453-l1461
+            // See : https://github.com/QstConn/QstConn/blob/master/scripts/bootstrap-slider.js#l1453-l1461
             // If the bootstrapSlider were updated, most of this javascript would not be necessary.
             $(document).ready(function(){
                 // Set of the needed informations for the slider

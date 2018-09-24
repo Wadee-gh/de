@@ -107,7 +107,7 @@ use Plugin;
 
         /**
          * This function returns an API object, exposing an API to each plugin.
-         * In the current case this is the LimeSurvey API.
+         * In the current case this is the QstConn API.
          * @return LimesurveyApi
          */
         public function getAPI()

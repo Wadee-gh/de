@@ -28,12 +28,12 @@
                                     <li><?php eT("No participant information lost.");?></li>
                                     <li><?php eT("Ability to change of questions, groups and parameters is still limited.");?></li>
                                     <li><?php eT("An expired survey is not accessible to participants (they only see a message that the survey has expired).");?></li>
-                                    <li><?php eT("It's still possible to perform statistics on responses using LimeSurvey.");?></li>
+                                    <li><?php eT("It's still possible to perform statistics on responses using QstConn.");?></li>
                                 </ul>
                             </td>
                             <td>
                                 <ul>
-                                    <li><?php eT("All responses are not accessible anymore with LimeSurvey.");?> <?php echo gT("Your response table will be renamed to:")." {$dbprefix}old_".$surveyid."_{$date}"; ?></li>
+                                    <li><?php eT("All responses are not accessible anymore with QstConn.");?> <?php echo gT("Your response table will be renamed to:")." {$dbprefix}old_".$surveyid."_{$date}"; ?></li>
                                     <li><?php eT("All participant information is lost.");?></li>
                                     <li><?php eT("A deactivated survey is not accessible to participants (only a message appears that they are not permitted to see this survey).");?></li>
                                     <li><?php eT("All questions, groups and parameters are editable again.");?></li>
@@ -83,7 +83,7 @@
                     </strong>
                 </p>
                 <p class="text-warning">
-                    <?php eT("The responses to this survey are no longer available using LimeSurvey."); ?>
+                    <?php eT("The responses to this survey are no longer available using QstConn."); ?>
                 </p>
                 <p>
                     <?php echo gT("The responses table has been renamed to: ")." <b>".$sNewSurveyTableName; ?></b>
@@ -99,7 +99,7 @@
             </p>
             <p>
             <?php eT("You should note the name(s) of the table(s) in case you need to access this information later."); ?><br>
-            <p><?php eT("Note: If you deactivated this survey in error, it is possible to restore this data easily if you do not make any changes to the survey structure. See the LimeSurvey documentation for further details"); ?>
+            <p><?php eT("Note: If you deactivated this survey in error, it is possible to restore this data easily if you do not make any changes to the survey structure. See the QstConn documentation for further details"); ?>
             </p>
             <p>
                 <a href="<?php echo Yii::app()->createUrl('admin/survey/sa/view/surveyid/'.$surveyid);?>" class="btn btn-default btn-lg">

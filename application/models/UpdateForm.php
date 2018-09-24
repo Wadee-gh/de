@@ -1,11 +1,11 @@
 <?php
 if (! defined('BASEPATH')) exit('No direct script access allowed');
 /*
-* LimeSurvey
-* Copyright (C) 2007-2015 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2015 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -17,7 +17,7 @@ if (! defined('BASEPATH')) exit('No direct script access allowed');
 *
 * This model retrieves all the data Comfort Updates needs. Most of them come from request to the Update Server.
 *
-* @package        LimeSurvey
+* @package        QstConn
 * @subpackage    Backend
 */
 class UpdateForm extends CFormModel
@@ -273,7 +273,7 @@ class UpdateForm extends CFormModel
     {
         if (file_exists($this->tempdir.DIRECTORY_SEPARATOR.$file_to_unzip))
         {
-            // To debug pcl_zip, uncomment the following line :    require_once('/var/www/limesurvey/LimeSurvey/application/libraries/admin/pclzip/pcltrace.lib.php'); require_once('/var/www/limesurvey/LimeSurvey/application/libraries/admin/pclzip/pclzip-trace.lib.php'); PclTraceOn(2);
+            // To debug pcl_zip, uncomment the following line :    require_once('/var/www/limesurvey/QstConn/application/libraries/admin/pclzip/pcltrace.lib.php'); require_once('/var/www/limesurvey/QstConn/application/libraries/admin/pclzip/pclzip-trace.lib.php'); PclTraceOn(2);
             // To debug pcl_zip, comment the following line:
             Yii::app()->loadLibrary("admin/pclzip");
 
@@ -499,7 +499,7 @@ class UpdateForm extends CFormModel
 
         Yii::app()->loadLibrary("admin/pclzip");
         $basefilename = dateShift(date("Y-m-d H:i:s"), "Y-m-d", Yii::app()->getConfig('timeadjust')).'_'.md5(uniqid(rand(), true));
-        $archive = new PclZip($this->tempdir.DIRECTORY_SEPARATOR.'LimeSurvey_files_backup_'.$basefilename.'.zip');
+        $archive = new PclZip($this->tempdir.DIRECTORY_SEPARATOR.'QstConn_files_backup_'.$basefilename.'.zip');
         $v_list = $archive->add($filestozip, PCLZIP_OPT_REMOVE_PATH, $this->publicdir);
         $backup = new stdClass();
 
@@ -722,7 +722,7 @@ class UpdateForm extends CFormModel
         $backupDb = new stdClass();
         $basefilename = dateShift(date("Y-m-d H:i:s"), "Y-m-d", Yii::app()->getConfig('timeadjust')).'_'.md5(uniqid(rand(), true));
         $sfilename = $this->tempdir.DIRECTORY_SEPARATOR."backup_db_".randomChars(20)."_".dateShift(date("Y-m-d H:i:s"), "Y-m-d", Yii::app()->getConfig('timeadjust')).".sql";
-        $dfilename = $this->tempdir.DIRECTORY_SEPARATOR."LimeSurvey_database_backup_".$basefilename.".zip";
+        $dfilename = $this->tempdir.DIRECTORY_SEPARATOR."QstConn_database_backup_".$basefilename.".zip";
         outputDatabase('',false,$sfilename);
 
         if ( is_file($sfilename) && filesize($sfilename))
@@ -739,7 +739,7 @@ class UpdateForm extends CFormModel
             {
                 $backupDb->result = TRUE;
                 $backupDb->message = htmlspecialchars($dfilename);
-                $backupDb->fileurl = Yii::app()->getBaseUrl(true) . '/tmp/LimeSurvey_database_backup_' . $basefilename . '.zip';
+                $backupDb->fileurl = Yii::app()->getBaseUrl(true) . '/tmp/QstConn_database_backup_' . $basefilename . '.zip';
             }
         }
         else

@@ -1,10 +1,10 @@
 <?php
 /*
-* LimeSurvey
-* Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -12,7 +12,7 @@
 */
 
 /**
-* This function imports a LimeSurvey .lsg question group XML file
+* This function imports a QstConn .lsg question group XML file
 *
 * @param string $sFullFilePath  The full filepath of the uploaded file
 * @param integer $iNewSID The new survey id - the group will always be added after the last group in the survey
@@ -30,7 +30,7 @@ function XMLImportGroup($sFullFilePath, $iNewSID)
     $xml                   = simplexml_load_string($sXMLdata,'SimpleXMLElement',LIBXML_NONET);
 
 
-    if ($xml==false || $xml->LimeSurveyDocType!='Group') safeDie('This is not a valid LimeSurvey group structure XML file.');
+    if ($xml==false || $xml->QstConnDocType!='Group') safeDie('This is not a valid QstConn group structure XML file.');
 
     $iDBVersion = (int) $xml->DBVersion;
     $aQIDReplacements=array();
@@ -341,7 +341,7 @@ function XMLImportGroup($sFullFilePath, $iNewSID)
 }
 
 /**
-* This function imports a LimeSurvey .lsq question XML file
+* This function imports a QstConn .lsq question XML file
 *
 * @param string $sFullFilePath  The full filepath of the uploaded file
 * @param mixed $iNewSID The new survey id
@@ -355,7 +355,7 @@ function XMLImportQuestion($sFullFilePath, $iNewSID, $newgid, $options=array('au
     $aLanguagesSupported=array_merge($aLanguagesSupported,Survey::model()->findByPk($iNewSID)->additionalLanguages);
     $sXMLdata = file_get_contents($sFullFilePath);
     $xml = simplexml_load_string($sXMLdata,'SimpleXMLElement',LIBXML_NONET);
-    if ($xml->LimeSurveyDocType!='Question') safeDie('This is not a valid LimeSurvey question structure XML file.');
+    if ($xml->QstConnDocType!='Question') safeDie('This is not a valid QstConn question structure XML file.');
     $iDBVersion = (int) $xml->DBVersion;
     $aQIDReplacements=array();
     $aSQIDReplacements=array(0=>0);
@@ -612,7 +612,7 @@ function XMLImportLabelsets($sFullFilePath, $options)
 
     $sXMLdata = file_get_contents($sFullFilePath);
     $xml = simplexml_load_string($sXMLdata,'SimpleXMLElement',LIBXML_NONET);
-    if ($xml->LimeSurveyDocType!='Label set') safeDie('This is not a valid LimeSurvey label set structure XML file.');
+    if ($xml->QstConnDocType!='Label set') safeDie('This is not a valid QstConn label set structure XML file.');
     $iDBVersion = (int) $xml->DBVersion;
     $csarray=buildLabelSetCheckSumArray();
     $aLSIDReplacements=array();
@@ -820,7 +820,7 @@ function importSurveyFile($sFullFilePath, $bTranslateLinksFields, $sNewSurveyNam
 }
 
 /**
-* This function imports a LimeSurvey .lss survey XML file
+* This function imports a QstConn .lss survey XML file
 *
 * @param string $sFullFilePath  The full filepath of the uploaded file
 * @param string $sXMLdata
@@ -837,9 +837,9 @@ function XMLImportSurvey($sFullFilePath,$sXMLdata=NULL,$sNewSurveyName=NULL,$iDe
     }
     $xml = @simplexml_load_string($sXMLdata,'SimpleXMLElement',LIBXML_NONET);
 
-    if (!$xml || $xml->LimeSurveyDocType!='Survey')
+    if (!$xml || $xml->QstConnDocType!='Survey')
     {
-        $results['error'] = gT("This is not a valid LimeSurvey survey structure XML file.");
+        $results['error'] = gT("This is not a valid QstConn survey structure XML file.");
         return $results;
     }
 
@@ -1593,7 +1593,7 @@ function XMLImportTokens($sFullFilePath,$iSurveyID,$sCreateMissingAttributeField
     $sXMLdata = file_get_contents($sFullFilePath);
     $xml = simplexml_load_string($sXMLdata,'SimpleXMLElement',LIBXML_NONET);
     $results['warnings']=array();
-    if ($xml->LimeSurveyDocType!='Tokens')
+    if ($xml->QstConnDocType!='Tokens')
     {
         $results['error'] = gT("This is not a valid token data XML file.");
         return $results;
@@ -1672,7 +1672,7 @@ function XMLImportResponses($sFullFilePath,$iSurveyID,$aFieldReMap=array())
     $oXMLReader->open($sFullFilePath);
     $DestinationFields = Yii::app()->db->schema->getTable('{{survey_'.$iSurveyID.'}}')->getColumnNames();
     while ($oXMLReader->read()) {
-        if ($oXMLReader->name === 'LimeSurveyDocType' && $oXMLReader->nodeType == XMLReader::ELEMENT)
+        if ($oXMLReader->name === 'QstConnDocType' && $oXMLReader->nodeType == XMLReader::ELEMENT)
         {
             $oXMLReader->read();
             if ($oXMLReader->value!='Responses')
@@ -2022,7 +2022,7 @@ function XMLImportTimings($sFullFilePath,$iSurveyID,$aFieldReMap=array())
 
     $sXMLdata = file_get_contents($sFullFilePath);
     $xml = simplexml_load_string($sXMLdata,'SimpleXMLElement',LIBXML_NONET);
-    if ($xml->LimeSurveyDocType!='Timings')
+    if ($xml->QstConnDocType!='Timings')
     {
         $results['error'] = gT("This is not a valid timings data XML file.");
         return $results;

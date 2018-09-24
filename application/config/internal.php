@@ -35,7 +35,7 @@ else {
 $internalConfig = array(
     'basePath' => dirname(dirname(__FILE__)),
 
-    'name' => 'LimeSurvey',
+    'name' => 'QstConn',
     'localeClass' =>  'LSYii_Locale',
     'defaultController' => 'surveys',
 

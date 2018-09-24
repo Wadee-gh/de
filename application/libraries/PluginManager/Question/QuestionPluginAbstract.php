@@ -10,7 +10,7 @@ abstract class QuestionPluginAbstract extends PluginBase implements iQuestionPlu
     /**
      * Should add it's name to the questionPlugins array in the event
      * 
-     * By reading this array, LimeSurvey knows which question plugins are 
+     * By reading this array, QstConn knows which question plugins are 
      * available
      * 
      * @param PluginEvent $event

@@ -52,7 +52,7 @@ switch ($serverAnswer->error)
 
     default:
         $title = $serverAnswer->error;
-        $message = "Unknown error. Please, contact LimeSurvey team.";
+        $message = "Unknown error. Please, contact QstConn team.";
         break;
 }
 ?>

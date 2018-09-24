@@ -23,7 +23,7 @@ class Notification extends LSActiveRecord
     const HIGH_IMPORTANCE = 3;  // Popup on page load
 
     /**
-     * See example usage at manual page: https://manual.limesurvey.org/Notifications#Examples
+     * See example usage at manual page: https://qc.md/Notifications#Examples
      * @param array<string, mixed>|string|null $options If string then scenario
      */
     public function __construct($options = null)
@@ -391,7 +391,7 @@ class Notification extends LSActiveRecord
 
     /**
      * Broadcast a message to all users
-     * See example usage at manual page: https://manual.limesurvey.org/Notifications#Examples
+     * See example usage at manual page: https://qc.md/Notifications#Examples
      * @param array $options
      * @param array $users
      */

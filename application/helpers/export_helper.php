@@ -1,10 +1,10 @@
 <?php
 /*
-* LimeSurvey
-* Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -756,7 +756,7 @@ function surveyGetXMLData($iSurveyID, $exclude = array())
     $xml->setIndent(true);
     $xml->startDocument('1.0', 'UTF-8');
     $xml->startElement('document');
-    $xml->writeElement('LimeSurveyDocType','Survey');
+    $xml->writeElement('QstConnDocType','Survey');
     $xml->writeElement('DBVersion',getGlobalSetting("DBVersion"));
     $xml->startElement('languages');
     $surveylanguages=Survey::model()->findByPk($iSurveyID)->additionalLanguages;
@@ -795,7 +795,7 @@ function getXMLDataSingleTable($iSurveyID, $sTableName, $sDocType, $sXMLTableTag
     $xml->setIndent($bSetIndent);
     $xml->startDocument('1.0', 'UTF-8');
     $xml->startElement('document');
-    $xml->writeElement('LimeSurveyDocType',$sDocType);
+    $xml->writeElement('QstConnDocType',$sDocType);
     $xml->writeElement('DBVersion',getGlobalSetting("DBVersion"));
     $xml->startElement('languages');
     $aSurveyLanguages=Survey::model()->findByPk($iSurveyID)->additionalLanguages;
@@ -1522,7 +1522,7 @@ function group_export($action, $iSurveyID, $gid)
     $xml->setIndent(true);
     $xml->startDocument('1.0', 'UTF-8');
     $xml->startElement('document');
-    $xml->writeElement('LimeSurveyDocType','Group');
+    $xml->writeElement('QstConnDocType','Group');
     $xml->writeElement('DBVersion', getGlobalSetting("DBVersion"));
     $xml->startElement('languages');
 
@@ -1631,7 +1631,7 @@ function questionExport($action, $iSurveyID, $gid, $qid)
     $xml->setIndent(true);
     $xml->startDocument('1.0', 'UTF-8');
     $xml->startElement('document');
-    $xml->writeElement('LimeSurveyDocType','Question');
+    $xml->writeElement('QstConnDocType','Question');
     $xml->writeElement('DBVersion', getGlobalSetting('DBVersion'));
     $xml->startElement('languages');
     $aLanguages=Survey::model()->findByPk($iSurveyID)->additionalLanguages;
