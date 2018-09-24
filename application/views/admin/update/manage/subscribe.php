@@ -10,7 +10,7 @@
 <div class="" style="width: 75%; margin: auto;">
     <br/>
     <p>
-    <?php eT('The LimeSurvey ComfortUpdate is a great feature to easily update to the latest version of LimeSurvey. To use it you will need an update key.');?></p><p>
+    <?php eT('The QstConn ComfortUpdate is a great feature to easily update to the latest version of QstConn. To use it you will need an update key.');?></p><p>
     <?php
         $aopen  = '<a href="https://www.limesurvey.org/en/your-account/your-details" target="_blank">';
         $aclose = '</a>';

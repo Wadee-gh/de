@@ -1,11 +1,11 @@
 <?php
 
 /*
-* LimeSurvey
-* Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -18,7 +18,7 @@
 *
 * This controller contains common functions for survey related views.
 *
-* @package        LimeSurvey
+* @package        QstConn
 * @subpackage    Backend
 * @author        Shitiz Garg
 */
@@ -367,7 +367,7 @@ class Survey_Common_Action extends CAction
         if( !Yii::app()->user->isGuest )
         {
             if(!isset($aData['display']['footer']) || $aData['display']['footer'] !== false)
-                Yii::app()->getController()->_getAdminFooter('http://manual.limesurvey.org', gT('LimeSurvey online manual'));
+                Yii::app()->getController()->_getAdminFooter('http://qc.md', gT('QstConn online manual'));
         }
         else{
             echo '</body></html>';

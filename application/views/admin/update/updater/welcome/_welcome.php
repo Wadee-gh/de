@@ -8,7 +8,7 @@
 ?>
 
 <?php $urlNew = Yii::app()->createUrl("admin/update", array("update"=>'newKey', 'destinationBuild' => $serverAnswer->destinationBuild)); ?>
-<h3 class="maintitle"><?php eT('Welcome to the LimeSurvey ComfortUpdate!');?></h3>
+<h3 class="maintitle"><?php eT('Welcome to the QstConn ComfortUpdate!');?></h3>
 
 <?php
     if( isset($serverAnswer->html) )
@@ -25,9 +25,9 @@
 <div class="row">
     <div id="welcomeMessage" class="col-sm-12 col-lg-6">
         <?php
-            echo gT('The LimeSurvey ComfortUpdate is an easy procedure to quickly update to the latest version of LimeSurvey.').'<br /><br />';
+            echo gT('The QstConn ComfortUpdate is an easy procedure to quickly update to the latest version of QstConn.').'<br /><br />';
             echo '<ul><li>'.gT('The following steps will be done by this update:').'</li>';
-            echo '<li>'.gT('Your LimeSurvey installation is checked if the update can be run successfully.').'</li>';
+            echo '<li>'.gT('Your QstConn installation is checked if the update can be run successfully.').'</li>';
             echo '<li>'.gT('New files will be downloaded and installed.').'</li>';
             echo '<li>'.gT('If necessary the database will be updated.').'</li></ul>';
         ?>

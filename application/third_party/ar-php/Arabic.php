@@ -53,7 +53,7 @@
  * @copyright 2006-2013 Khaled Al-Shamaa
  *    
  * @license   LGPL <http://www.gnu.org/licenses/lgpl.txt>
- * @version   3.6.0 released in Jan 20, 2013 with {@link http://bugs.limesurvey.org/view.php?id=7159 LimeSurvey fix}
+ * @version   3.6.0 released in Jan 20, 2013 with {@link http://bugs.limesurvey.org/view.php?id=7159 QstConn fix}
  * @link      http://www.ar-php.org
  */
 

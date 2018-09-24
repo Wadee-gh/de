@@ -54,7 +54,7 @@
 //				'12X34X56' => array('sgqa'=>'12X34X56', 'code'=>5, 'jsName'=>'', 'readWrite'=>'N', 'gseq'=>1,'qseq'=>1),
 //				'12X3X5lab1_ber' => array('sgqa'=>'12X3X5lab1_ber', 'code'=>10, 'jsName'=>'', 'readWrite'=>'N', 'gseq'=>1,'qseq'=>1),
 //				'q5pointChoice' => array('sgqa'=>'q5pointChoice', 'code'=> 3, 'jsName'=>'java_q5pointChoice', 'readWrite'=>'N','shown'=>'Father', 'relevance'=>1, 'type'=>'5', 'question'=>'(question for q5pointChoice)', 'qid'=>14,'gseq'=>2,'qseq'=>14),
-//				'qArrayNumbers_ls1_min' => array('sgqa'=>'qArrayNumbers_ls1_min', 'code'=> 7, 'jsName'=>'java_qArrayNumbers_ls1_min', 'readWrite'=>'N','shown'=> 'I love LimeSurvey', 'relevance'=>1, 'type'=>'A', 'question'=>'(question for qArrayNumbers)', 'qid'=>6,'gseq'=>2,'qseq'=>6),
+//				'qArrayNumbers_ls1_min' => array('sgqa'=>'qArrayNumbers_ls1_min', 'code'=> 7, 'jsName'=>'java_qArrayNumbers_ls1_min', 'readWrite'=>'N','shown'=> 'I love QstConn', 'relevance'=>1, 'type'=>'A', 'question'=>'(question for qArrayNumbers)', 'qid'=>6,'gseq'=>2,'qseq'=>6),
 //				'12X3X5lab1_ber#1' => array('sgqa'=>'12X3X5lab1_ber#1', 'code'=> 15, 'jsName'=>'', 'readWrite'=>'N', 'gseq'=>1,'qseq'=>1),
 //				'zero' => array('sgqa'=>'zero', 'code'=>0, 'jsName'=>'java_zero', 'gseq'=>0,'qseq'=>0),
 //				'empty' => array('sgqa'=>'empty', 'code'=>'', 'jsName'=>'java_empty', 'gseq'=>0,'qseq'=>0),
@@ -413,7 +413,7 @@ hello     ~str_pad('hello',10)
 hello~str_pad('hello',3)
 testtesttest~str_repeat('test',3)
 I am awesome~str_replace('You are','I am','You are awesome')
-I love LimeSurvey~str_replace('like','love','I like LimeSurvey')
+I love QstConn~str_replace('like','love','I like QstConn')
 1~0==strcasecmp('Hello','hello')
 0~0==strcasecmp('Hello','hi')
 1~0==strcmp('Hello','Hello')
@@ -427,7 +427,7 @@ FGHI~stristr('ABCDEFGHI','fg')
 5~strlen(hi)
 0~strpos('ABCDEFGHI','f')
 5~strpos('ABCDEFGHI','F')
-2~strpos('I like LimeSurvey','like')
+2~strpos('I like QstConn','like')
 54321~strrev('12345')
 0~strstr('ABCDEFGHI','fg')
 FGHI~strstr('ABCDEFGHI','FG')

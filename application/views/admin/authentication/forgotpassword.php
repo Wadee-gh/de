@@ -3,7 +3,7 @@
  * Forgot your password
  */
 ?>
-<noscript>If you see this you have probably JavaScript deactivated. LimeSurvey does not work without Javascript being activated in the browser!</noscript>
+<noscript>If you see this you have probably JavaScript deactivated. QstConn does not work without Javascript being activated in the browser!</noscript>
 <div class="container-fluid welcome">
     <div class="row text-center">
         <div id="login-panel">

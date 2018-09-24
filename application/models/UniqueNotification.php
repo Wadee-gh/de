@@ -80,7 +80,7 @@ class UniqueNotification extends Notification
     }
     /**
      * Broadcast a unique message to all users
-     * See example usage at manual page: https://manual.limesurvey.org/Notifications#Examples
+     * See example usage at manual page: https://qc.md/Notifications#Examples
      * @param array $options
      * @param array $users
      */

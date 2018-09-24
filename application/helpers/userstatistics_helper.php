@@ -1,10 +1,10 @@
 <?php
 /*
-* LimeSurvey
-* Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -2919,10 +2919,10 @@ class userstatistics_helper {
 
             // set document information
             $this->pdf->SetCreator(PDF_CREATOR);
-            $this->pdf->SetAuthor('LimeSurvey');
+            $this->pdf->SetAuthor('QstConn');
             $this->pdf->SetTitle(sprintf(gT("Statistics survey %s"),$surveyid));
             $this->pdf->SetSubject($surveyInfo['surveyls_title']);
-            $this->pdf->SetKeywords('LimeSurvey,'.gT("Statistics").', '.sprintf(gT("Survey %s"),$surveyid));
+            $this->pdf->SetKeywords('QstConn,'.gT("Statistics").', '.sprintf(gT("Survey %s"),$surveyid));
             $this->pdf->SetDisplayMode('fullpage', 'two');
             $this->pdf->setLanguageArray($aPdfLanguageSettings['lg']);
 

@@ -3,7 +3,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
 * Offer some way to validate Expression in survey
 *
-* @copyright 2014 The LimeSurvey Project Team
+* @copyright 2014 The QstConn Project Team
 * @license http://www.gnu.org/licenses/gpl-3.0.txt
 * @todo : Add any expression
 * @version : 1.1

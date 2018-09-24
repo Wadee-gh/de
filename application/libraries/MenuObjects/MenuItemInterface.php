@@ -3,7 +3,7 @@
 namespace ls\menu;
 
 /**
- * Interface descriptions here: https://manual.limesurvey.org/Extra_menus_event
+ * Interface descriptions here: https://qc.md/Extra_menus_event
  */
 interface MenuItemInterface
 {

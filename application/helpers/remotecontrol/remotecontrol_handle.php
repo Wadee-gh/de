@@ -961,7 +961,7 @@ class remotecontrol_handle
                     {
                         unlink($sFullFilePath);
                         libxml_disable_entity_loader($bOldEntityLoaderState);                   // Put back entity loader to its original state, to avoid contagion to other applications on the server
-                        return array('status' => 'Error: Invalid LimeSurvey group structure XML ');
+                        return array('status' => 'Error: Invalid QstConn group structure XML ');
                     }
                     $aImportResults = XMLImportGroup($sFullFilePath, $iSurveyID);
                 }
@@ -1260,7 +1260,7 @@ class remotecontrol_handle
                     {
                         unlink($sFullFilePath);
                         libxml_disable_entity_loader($bOldEntityLoaderState);                   // Put back entity loader to its original state, to avoid contagion to other applications on the server
-                        return array('status' => 'Error: Invalid LimeSurvey question structure XML ');
+                        return array('status' => 'Error: Invalid QstConn question structure XML ');
                     }
                     $aImportResults =  XMLImportQuestion($sFullFilePath, $iSurveyID, $iGroupID);
                 }
@@ -2604,7 +2604,7 @@ class remotecontrol_handle
 
 
     /**
-     * This function imports a participant into the LimeSurvey cpd. It stores attributes as well, if they are registered before within ui
+     * This function imports a participant into the QstConn cpd. It stores attributes as well, if they are registered before within ui
      *
      * Call the function with $response = $myJSONRPCClient->cpd_importParticipants( $sessionKey, $aParticipants);
      *

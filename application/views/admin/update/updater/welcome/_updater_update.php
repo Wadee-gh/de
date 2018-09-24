@@ -11,9 +11,9 @@
 ?>
 
 <div class="updater-background">
-    <?php eT("Before you proceed to the LimeSurvey update, we must first update ComfortUpdate itself.");?>
+    <?php eT("Before you proceed to the QstConn update, we must first update ComfortUpdate itself.");?>
     <br/>
-    <?php eT("At the end of the process we'll proceed to the LimeSurvey update.");?>
+    <?php eT("At the end of the process we'll proceed to the QstConn update.");?>
 </div>
 
 

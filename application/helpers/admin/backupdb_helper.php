@@ -1,10 +1,10 @@
 <?php
     /*
-    * LimeSurvey
-    * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+    * QstConn
+    * Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
     * All rights reserved.
     * License: GNU/GPL License v2 or later, see LICENSE.php
-    * LimeSurvey is free software. This version may have been modified pursuant
+    * QstConn is free software. This version may have been modified pursuant
     * to the GNU General Public License, and as distributed it includes or
     * is derivative of works licensed under the GNU General Public License or
     * other free or open source software licenses.
@@ -14,7 +14,7 @@
 
 
     /**
-    * Outputs a full dump of the current LimeSurvey database
+    * Outputs a full dump of the current QstConn database
     * @param string $sDbName Database Name
     */
     function outputDatabase($sDbName='', $bEchoOutput=true, $sFileName=null)
@@ -51,7 +51,7 @@
     function _outputDBDescription($sDbName, $bAllowExportAllDb)
     {
         $sOutput= '--' . "\n";
-        $sOutput.= '-- LimeSurvey Database Dump of `' . $sDbName . '`' . "\n";
+        $sOutput.= '-- QstConn Database Dump of `' . $sDbName . '`' . "\n";
         if (!$bAllowExportAllDb) {
             $sOutput= '-- Only prefixed tables with: ' . Yii::app()->db->tablePrefix . "\n";
         }

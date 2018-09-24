@@ -57,7 +57,7 @@
         <div class="jumbotron message-box ">
             <h2 class="text-success">Pwet</h2>
             <p class="lead">
-            <?php eT('The LimeSurvey ComfortUpdate is a great feature to easily update to the latest version of LimeSurvey. To use it you will need an update key.');?>
+            <?php eT('The QstConn ComfortUpdate is a great feature to easily update to the latest version of QstConn. To use it you will need an update key.');?>
             </p>
             <p>
                 <?php

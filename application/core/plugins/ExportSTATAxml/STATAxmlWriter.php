@@ -7,7 +7,7 @@
  * Limitations:
  *  STATA versions 8 through 12? only support strings up to 244 bytes, version 13 up to 2045 bytes.....longer answers (ie. text fields) will be cut.
  *  STATA only supports attaching value labels to numerical values. So to achieve short answers (usually one or two digits) and
- *  have these properly labelled, one should use numerical answer-codes in LimeSurvey (1=Totally agree).
+ *  have these properly labelled, one should use numerical answer-codes in QstConn (1=Totally agree).
  *  If non-numerical answer codes are used (A=Totally agree), then the complete answer text will be used as answer (eg.: 'Totally agree').
  */
 

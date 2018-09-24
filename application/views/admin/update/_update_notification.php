@@ -1,6 +1,6 @@
 <?php
 /**
- * This view render the Update Notfication displayed on top of the LimeSurvey admin interface.
+ * This view render the Update Notfication displayed on top of the QstConn admin interface.
  * It is called from Survey_Common action which launch AdminController::_getUpdateNotification();
  *
  * @var $security_update_available

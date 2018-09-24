@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
-* LimeSurvey
-* Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -521,7 +521,7 @@ class SurveyRuntimeHelper {
                     $LEMskipReprocessing=true;
                     $move = "movenext"; // so will re-display the survey
                     $invalidLastPage=true;
-                    $backpopup=gT("Please use the LimeSurvey navigation buttons or index.  It appears you attempted to use the browser back button to re-submit a page.");
+                    $backpopup=gT("Please use the QstConn navigation buttons or index.  It appears you attempted to use the browser back button to re-submit a page.");
                 }
             }
             //echo $move."<br>"; die();

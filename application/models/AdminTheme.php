@@ -1,11 +1,11 @@
 <?php
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
-* LimeSurvey
-* Copyright (C) 2007-2015 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn
+* Copyright (C) 2007-2015 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -16,7 +16,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 * Admin Theme Model
 *
 *
-* @package       LimeSurvey
+* @package       QstConn
 * @subpackage    Backend
 */
 class AdminTheme extends CFormModel
@@ -128,15 +128,15 @@ class AdminTheme extends CFormModel
         // Bootstrap Registration
         // We don't want to use bootstrap extension's register functionality, to be able to set dependencies between packages
         // ie: to control load order setting 'depends' in our package
-        // So, we take the usual Bootstrap extensions TbApi::register (called normally with  App()->bootstrap->register()) see: https://github.com/LimeSurvey/LimeSurvey/blob/master/application/extensions/bootstrap/components/TbApi.php#l162-l169
+        // So, we take the usual Bootstrap extensions TbApi::register (called normally with  App()->bootstrap->register()) see: https://github.com/QstConn/QstConn/blob/master/application/extensions/bootstrap/components/TbApi.php#l162-l169
         // keep here the necessary  (registerMetaTag and registerAllScripts),
         // and move the rest to the bootstrap package.
         // NB: registerAllScripts could be replaced by js definition in package. If needed: not a problem to do it
 
         if (!Yii::app()->request->getQuery('isAjax', false))
         {
-            Yii::app()->getClientScript()->registerMetaTag('width=device-width, initial-scale=1.0', 'viewport'); // See: https://github.com/LimeSurvey/LimeSurvey/blob/master/application/extensions/bootstrap/components/TbApi.php#l108-l115
-            App()->bootstrap->registerAllScripts();                                                               // See : https://github.com/LimeSurvey/LimeSurvey/blob/master/application/extensions/bootstrap/components/TbApi.php#l153-l160
+            Yii::app()->getClientScript()->registerMetaTag('width=device-width, initial-scale=1.0', 'viewport'); // See: https://github.com/QstConn/QstConn/blob/master/application/extensions/bootstrap/components/TbApi.php#l108-l115
+            App()->bootstrap->registerAllScripts();                                                               // See : https://github.com/QstConn/QstConn/blob/master/application/extensions/bootstrap/components/TbApi.php#l153-l160
 
             App()->getClientScript()->registerPackage('jqueryui');          // jqueryui
             App()->getClientScript()->registerPackage('jquery-cookie');     // jquery-cookie
@@ -444,7 +444,7 @@ class AdminTheme extends CFormModel
         }
         else
         {
-            define('PRESENTATION', gT('This is the LimeSurvey admin interface. Start to build your survey from here.'));
+            define('PRESENTATION', gT('This is the QstConn admin interface. Start to build your survey from here.'));
         }
     }
 

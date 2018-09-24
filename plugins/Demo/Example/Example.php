@@ -50,7 +50,7 @@ class Example extends PluginBase {
         $menu = $event->get('menu', array());
         $menu['left'][]=array(
                 'href' => "http://docs.limesurvey.org",
-                'alt' => gT('LimeSurvey online manual'),
+                'alt' => gT('QstConn online manual'),
                 'image' => 'showhelp.png'
             );
         

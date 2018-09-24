@@ -30,19 +30,19 @@
         App()->getClientScript()->registerScript('installer', $script);
     ?>
     <link rel="icon" href="<?php echo Yii::app()->baseUrl; ?>/images/favicon.ico" />
-    <title><?php eT("LimeSurvey installer"); ?></title>
+    <title><?php eT("QstConn installer"); ?></title>
 </head>
 
 <body>
     <div class="container">
         <div class="row"><div class="span12">
-            <h1><?php eT("LimeSurvey installer"); ?></h1>
+            <h1><?php eT("QstConn installer"); ?></h1>
         </div></div>
         <?php echo $content; ?>
 
         <div class="row" style="margin-top: 30px;">
             <div class="span12" style="text-align: center;">
-                <img src="<?php echo Yii::app()->baseUrl; ?>/installer/images/poweredby.png" alt="Powered by LimeSurvey"/>
+                <img src="<?php echo Yii::app()->baseUrl; ?>/installer/images/poweredby.png" alt="Powered by QstConn"/>
             </div>
         </div>
     </div>

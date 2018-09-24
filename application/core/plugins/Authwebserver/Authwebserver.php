@@ -18,7 +18,7 @@ class Authwebserver extends ls\pluginmanager\AuthPluginBase
         ),
         'is_default' => array(
                 'type' => 'checkbox',
-                'label' => 'Check to make default authentication method (This disable Default LimeSurvey authentification by database)',
+                'label' => 'Check to make default authentication method (This disable Default QstConn authentification by database)',
                 'default' => true,
                 )
     );
@@ -64,7 +64,7 @@ class Authwebserver extends ls\pluginmanager\AuthPluginBase
             }
             elseif($this->get('is_default',null,null,$this->settings['is_default']['default']))
             {
-                throw new CHttpException(401,'Wrong credentials for LimeSurvey administration.');
+                throw new CHttpException(401,'Wrong credentials for QstConn administration.');
             }
         }
     }

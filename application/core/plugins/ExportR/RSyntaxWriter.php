@@ -112,7 +112,7 @@ class RSyntaxWriter extends Writer
                     break;
             }
 
-                $this->out("# LimeSurvey Field type: {$field['SPSStype']}");
+                $this->out("# QstConn Field type: {$field['SPSStype']}");
                 $this->out("data[, " . $i . "] <- "
                 . "as.$type(data[, " . $i . "])");
                 $this->out('attributes(data)$variable.labels[' . $i . '] <- "'

@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
-* LimeSurvey (tm)
-* Copyright (C) 2011 The LimeSurvey Project Team / Carsten Schmitz
+* QstConn (tm)
+* Copyright (C) 2011 The QstConn Project Team / Carsten Schmitz
 * All rights reserved.
 * License: GNU/GPL License v2 or later, see LICENSE.php
-* LimeSurvey is free software. This version may have been modified pursuant
+* QstConn is free software. This version may have been modified pursuant
 * to the GNU General Public License, and as distributed it includes or
 * is derivative of works licensed under the GNU General Public License or
 * other free or open source software licenses.
@@ -18,7 +18,7 @@
 *
 * @todo Output code belongs into view
 *
-* @package LimeSurvey
+* @package QstConn
 * @author Shubham Sachdeva
 * @copyright 2011
 * @access public
@@ -135,7 +135,7 @@ class InstallerController extends CController {
         Yii::app()->session->remove('configFileWritten');
 
         $aData['title'] = gT('Welcome');
-        $aData['descp'] = gT('Welcome to the LimeSurvey installation wizard. This wizard will guide you through the installation, database setup and initial configuration of LimeSurvey.');
+        $aData['descp'] = gT('Welcome to the QstConn installation wizard. This wizard will guide you through the installation, database setup and initial configuration of QstConn.');
         $aData['classesForStep'] = array('on','off','off','off','off','off');
         $aData['progressValue'] = 10;
 
@@ -195,7 +195,7 @@ class InstallerController extends CController {
         $oModel = new InstallerConfigForm();
         //usual data required by view
         $aData['title'] = gT('Pre-installation check');
-        $aData['descp'] = gT('Pre-installation check for LimeSurvey ').Yii::app()->getConfig('versionnumber');
+        $aData['descp'] = gT('Pre-installation check for QstConn ').Yii::app()->getConfig('versionnumber');
         $aData['classesForStep'] = array('off','off','on','off','off','off');
         $aData['progressValue'] = 20;
         $aData['phpVersion'] = phpversion();
@@ -229,7 +229,7 @@ class InstallerController extends CController {
 
         // usual data required by view
         $aData['title'] = gT('Database configuration');
-        $aData['descp'] = gT('Please enter the database settings you want to use for LimeSurvey:');
+        $aData['descp'] = gT('Please enter the database settings you want to use for QstConn:');
         $aData['classesForStep'] = array('off','off','off','on','off','off');
         $aData['progressValue'] = 40;
         $aData['model'] = $oModel = new InstallerConfigForm;
@@ -317,7 +317,7 @@ class InstallerController extends CController {
                         $this->_writeConfigFile();
 
                         header("refresh:5;url=".$this->createUrl("/admin"));
-                        $aData['noticeMessage'] = gT('The database exists and contains LimeSurvey tables.');
+                        $aData['noticeMessage'] = gT('The database exists and contains QstConn tables.');
                         $aData['text'] = sprintf( gT("You'll be redirected to the database update or (if your database is already up to date) to the administration login in 5 seconds. If not, please click %shere%s."), "<a href='".$this->createUrl("/admin")."'>","</a>");
                         $this->render('/installer/redirectmessage_view',$aData);
                         exit();
@@ -331,7 +331,7 @@ class InstallerController extends CController {
                         $sMySQLVersion = $this->connection->getServerVersion();
                         if (version_compare($sMySQLVersion,'4.1','<'))
                         {
-                            die("<br />Error: You need at least MySQL version 4.1 to run LimeSurvey. Your version:".$sMySQLVersion);
+                            die("<br />Error: You need at least MySQL version 4.1 to run QstConn. Your version:".$sMySQLVersion);
                         }
                         @$this->connection->createCommand("SET CHARACTER SET 'utf8mb4'")->execute();  //Checked
                         @$this->connection->createCommand("SET NAMES 'utf8mb4'")->execute();  //Checked
@@ -392,7 +392,7 @@ class InstallerController extends CController {
                         //$this->connection->createCommand("USE DATABASE `$databasename`")->execute();
                         /* @todo Implement Upgrade */
                         //$output=CheckForDBUpgrades();
-                        if ($output== '') {$aValues['adminoutput'].='<br />'.gT('LimeSurvey database is up to date. No action needed');}
+                        if ($output== '') {$aValues['adminoutput'].='<br />'.gT('QstConn database is up to date. No action needed');}
                         else {$aValues['adminoutput'].=$output;}
                         $aValues['adminoutput'].= "<br />" . sprintf(gT('Please <a href="%s">log in</a>.', 'unescaped'), $this->createUrl("/admin"));
                     }
@@ -423,7 +423,7 @@ class InstallerController extends CController {
 
         $aData['model'] = $model = new InstallerConfigForm;
         $aData['title'] = gT("Database configuration");
-        $aData['descp'] = gT("Please enter the database settings you want to use for LimeSurvey:");
+        $aData['descp'] = gT("Please enter the database settings you want to use for QstConn:");
         $aData['classesForStep'] = array('off','off','off','on','off','off');
         $aData['progressValue'] = 40;
 
@@ -515,7 +515,7 @@ class InstallerController extends CController {
             $oModel->addError('dbname', gT('Try again! Creation of database failed.'));
 
             $aData['title'] = gT('Database configuration');
-            $aData['descp'] = gT('Please enter the database settings you want to use for LimeSurvey:');
+            $aData['descp'] = gT('Please enter the database settings you want to use for QstConn:');
             $aData['classesForStep'] = array('off','off','off','on','off','off');
             $aData['progressValue'] = 40;
             $aData['model'] = $oModel;
@@ -545,7 +545,7 @@ class InstallerController extends CController {
 
         $aData['model'] = $model = new InstallerConfigForm;
         $aData['title'] = gT("Database configuration");
-        $aData['descp'] = gT("Please enter the database settings you want to use for LimeSurvey:");
+        $aData['descp'] = gT("Please enter the database settings you want to use for QstConn:");
         $aData['classesForStep'] = array('off','off','off','on','off','off');
         $aData['progressValue'] = 40;
 
@@ -642,7 +642,7 @@ class InstallerController extends CController {
                 $sAdminEmail = $model->adminEmail;
 
                 $aData['title'] = gT("Database configuration");
-                $aData['descp'] = gT("Please enter the database settings you want to use for LimeSurvey:");
+                $aData['descp'] = gT("Please enter the database settings you want to use for QstConn:");
                 $aData['classesForStep'] = array('off','off','off','on','off','off');
                 $aData['progressValue'] = 40;
 
@@ -695,7 +695,7 @@ class InstallerController extends CController {
                     Yii::app()->session['deletedirectories'] = true;
 
                     $aData['title'] = gT("Success!");
-                    $aData['descp'] = gT("LimeSurvey has been installed successfully.");
+                    $aData['descp'] = gT("QstConn has been installed successfully.");
                     $aData['classesForStep'] = array('off','off','off','off','off','off');
                     $aData['progressValue'] = 100;
                     $aData['user'] = $sAdminUserName;
@@ -1071,7 +1071,7 @@ class InstallerController extends CController {
             /*
             ."\t"     . "'basePath' => dirname(dirname(__FILE__))," . "\n"
             ."\t"     . "'runtimePath' => dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'runtime'," . "\n"
-            ."\t"     . "'name' => 'LimeSurvey',"                   . "\n"
+            ."\t"     . "'name' => 'QstConn',"                   . "\n"
             ."\t"     . "'defaultController' => 'survey',"          . "\n"
             ."\t"     . ""                                          . "\n"
 
@@ -1137,10 +1137,10 @@ class InstallerController extends CController {
             ."\t"     . "// debug: Set this to 1 if you are looking for errors. If you still get no errors after enabling this". "\n"
             ."\t"     . "// then please check your error-logs - either in your hosting provider admin panel or in some /logs directory". "\n"
             ."\t"     . "// on your webspace.". "\n"
-            ."\t"     . "// LimeSurvey developers: Set this to 2 to additionally display STRICT PHP error messages and get full access to standard templates". "\n"
+            ."\t"     . "// QstConn developers: Set this to 2 to additionally display STRICT PHP error messages and get full access to standard templates". "\n"
             ."\t\t"   . "'debug'=>0,"                               . "\n"
             ."\t\t"   . "'debugsql'=>0, // Set this to 1 to enanble sql logging, only active when debug = 2" . "\n"
-            ."\t\t"   . "// Update default LimeSurvey config here"  . "\n"
+            ."\t\t"   . "// Update default QstConn config here"  . "\n"
             ."\t"     . ")"                                         . "\n"
             . ");"                                        . "\n"
             . "/* End of file config.php */"              . "\n"
@@ -1364,7 +1364,7 @@ class InstallerController extends CController {
         if ($sDatabaseType=='mysql' && version_compare($testPdo->getAttribute(constant("PDO::ATTR_SERVER_VERSION")),$sMinimumMySQLVersion)==-1)
         {
             if (!empty($aData['model'])) {
-                $aData['model']->addError('dblocation', sprintf(gT('The database does not meet the minimum MySQL/MariaDB server version requirement for LimeSurvey (%s).'),$sMinimumMySQLVersion));
+                $aData['model']->addError('dblocation', sprintf(gT('The database does not meet the minimum MySQL/MariaDB server version requirement for QstConn (%s).'),$sMinimumMySQLVersion));
                 $this->render('/installer/dbconfig_view', $aData);
                 Yii::app()->end();
             }

@@ -112,7 +112,7 @@
                     <!-- buttons -->
                     <div class="buttons control-group  hidden">
                         <button name="save" value="save" class="btn" type="submit">Save bounce settings</button>
-                        <a class="btn btn-link button" href="/LimeSurveyNext/index.php/admin/tokens?sa=index&amp;surveyid=274928">
+                        <a class="btn btn-link button" href="/QstConnNext/index.php/admin/tokens?sa=index&amp;surveyid=274928">
                             Cancel
                         </a>
                     </div>
