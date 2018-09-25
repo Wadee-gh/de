@@ -110,6 +110,7 @@
             <?php endif;?>
 
             <!-- active surveys -->
+            <?php if (Permission::model()->hasGlobalPermission('superadmin')):?>
             <?php if ($activesurveyscount > 0): ?>
                 <li>
                     <a href="<?php echo $this->createUrl('admin/survey/sa/listsurveys/active/Y');?>">
@@ -117,7 +118,7 @@
                     </a>
                 </li>
             <?php endif;?>
-
+            <?php endif;?>
             <!-- Extra menus from plugins -->
             <?php // TODO: This views should be in same module as ExtraMenu and ExtraMenuItem classes (not plugin) ?>
             <?php foreach ($extraMenus as $menu): ?>
