@@ -66,6 +66,8 @@ class User extends LSActiveRecord
         return array(
         array('users_name, password, email', 'required'),
         array('email', 'email'),
+        array('users_name', 'unique','on'=>"register"),  
+        array('full_name', 'required','on'=>"register"),  
         );
     }
 
@@ -207,7 +209,7 @@ class User extends LSActiveRecord
          // Postgres delivers bytea fields as streams :-o - if this is not done it looks like Postgres saves something unexpected
         if (gettype($this->password)=='resource')
         {
-            $this->password=stream_get_contents($this->password,-1,0);
+          //  $this->password=stream_get_contents($this->password,-1,0);
         }
         return parent::beforeSave();
     }
