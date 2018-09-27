@@ -4,7 +4,7 @@ class LoginLogsController extends Survey_Common_Action {
 
     public function Index() {
         $request = Yii::app()->request;
-        $model = new LoginLogs();
+        $model = new LoginLogs('search');
         $model->attributes = $request->getPost('LoginLogs');
         Yii::app()->clientScript->registerPackage('bootstrap-switch');
 
