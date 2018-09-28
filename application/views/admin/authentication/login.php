@@ -108,8 +108,8 @@
                                     if (Yii::app()->getConfig("display_user_password_in_email") === true)
                                     {
                                         ?>
-                                        <a href='<?php echo $this->createUrl("admin/authentication/sa/forgotpassword"); ?>'><?php eT("Forgot your password?"); ?></a><br />
-Request Demo : mike.arbach@gmail.com
+                      <!--                  <a href='<?php echo $this->createUrl("admin/authentication/sa/forgotpassword"); ?>'><?php eT("Forgot your password?"); ?></a><br />-->
+Request Demo : info@qc.md
 
                                         <?php
                                     }
