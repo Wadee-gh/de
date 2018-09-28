@@ -66,6 +66,8 @@ class User extends LSActiveRecord
         return array(
         array('users_name, password, email', 'required'),
         array('email', 'email'),
+        array('users_name', 'unique','on'=>"register"),  
+        array('full_name', 'required','on'=>"register"),  
         );
     }
 

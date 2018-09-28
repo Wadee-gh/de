@@ -1,7 +1,8 @@
 <?php
 
 class LoginLogs extends CActiveRecord {
-
+    
+    public $users_name;
     public function tableName() {
         return '{{login_logs}}';
     }
@@ -13,7 +14,7 @@ class LoginLogs extends CActiveRecord {
             array('ip', 'length', 'max' => 255),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, user_id, ip, login_time', 'safe', 'on' => 'search'),
+            array('id, user_id, ip, login_time, users_name', 'safe', 'on' => 'search'),
         );
     }
 
@@ -74,8 +75,15 @@ class LoginLogs extends CActiveRecord {
             ),
             array(
                 'name' => 'user_id',
+                'header'=>'Full Name',
                 'value' => '$data->user->full_name',
                 "filter" => LoginLogs::model()->allUsers()
+            ),
+            array(
+                'name' => 'users_name',
+                'value' => '$data->user->users_name',
+                'filter'=>false
+                //"filter" => LoginLogs::model()->allUsers()
             ),
             array(
                 'header' => 'Company',
