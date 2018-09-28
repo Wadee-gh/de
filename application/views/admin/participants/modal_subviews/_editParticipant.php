@@ -23,7 +23,9 @@
              'required' => 'required'
         );
     ?>
+             <input type="hidden"  name='Participant[owner_uid]' value='<?php echo Yii::app()->user->id ; ?>' />
         <div class='form-group'>
+
             <label class='control-label col-sm-2'>
                 <?php eT('First name:'); ?>
             </label>
