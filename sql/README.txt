@@ -1,4 +1,2 @@
 - to modify sql, create a script and prefix it with a number equal to one more of the highest previous prefix.
 - after making changes to the db, clear the tmp/runtime/cache folder.
-- Import lime_tos.sql file
-- Alter lime_users table add "accepted_tos" columns set default value 0. 
