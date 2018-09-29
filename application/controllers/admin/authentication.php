@@ -442,7 +442,7 @@ class Authentication extends Survey_Common_Action {
             if ($companyModel) {
                 $parent_id = $companyModel->parent_id;
                 $model->attributes = Yii::app()->request->getPost('User');
-                $model->company_uid = $cid;
+                $model->company_uid = $companyModel->uid;
                 $model->parent_id = $parent_id;
                 $transaction = Yii::app()->db->beginTransaction();
                 if ($model->validate()) {
