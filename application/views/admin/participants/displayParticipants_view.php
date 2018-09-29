@@ -1,21 +1,30 @@
 <div class="col-xs-12">
     <h3 class="pagetitle row">
         <div class="col-xs-4 ">
-            <?php eT("Central participant management"); ?>
+            <?php eT("Patient List"); ?>
         </div>
         <div class="col-xs-8 text-right">
 
+<div class="dropdown">
+
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+New Patient
+  </button>
             <button class="btn btn-default" id="onSiteAnonymousRequest">
                 <i class="fa fa-plus-circle text-success"></i>
                 &nbsp;
                 <?php eT("On Site Anonymous Request"); ?>
             </button> 
 
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
             <button class="btn btn-default" id="addParticipantToCPP">
                 <i class="fa fa-plus-circle text-success"></i>
                 &nbsp;
-                <?php eT("Add new participant"); ?>
+                <?php eT("Add new Patient"); ?>
             </button>
+
             <button class="btn btn-default" id="sendEmailRequest">
                 <i class="fa fa-plus-circle text-success"></i>
                 &nbsp;
@@ -26,6 +35,10 @@
                 &nbsp;
                 <?php eT("Send On Site Request"); ?>
             </button>
+
+  </div>
+</div>
+
         </div>
     </h3>
 <div class="row" style="margin-bottom: 100px">
