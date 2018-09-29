@@ -30,6 +30,13 @@ class Survey_Common_Action extends CAction
         Yii::app()->request->updateNavigationStack();
         // Make sure viewHelper can be autoloaded
         Yii::import('application.helpers.viewHelper');
+        if (!Yii::app()->user->isGuest) {
+            if(!Yii::app()->session['accepted_tos']){
+                if($id != "terms-of-service"){
+                    $this->getController()->redirect(array("/admin/terms-of-service"));
+                }
+            }
+        }
     }
 
     /**

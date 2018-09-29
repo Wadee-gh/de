@@ -485,8 +485,15 @@ class Company extends LSActiveRecord {
 
         if ($this->isNewRecord) {
             $this->signup_hash = substr(md5(openssl_random_pseudo_bytes(20)), -128);
-        } 
+        }
         return parent::beforeSave();
     }
-
+    public function afterSave() {
+        $tosModel = new Tos();
+        if ($this->isNewRecord) {
+            $tosModel->company_id = $this->uid;
+            $tosModel->save();
+        }
+        parent::afterSave();
+    }
 }
