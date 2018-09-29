@@ -436,7 +436,7 @@ class Participant extends LSActiveRecord
             ),*/
             array(
                 'name' => 'created',
-                'value' => '$data->createdFormatted',
+                'value' => 'date("Y-m-d H:i", strtotime($data->created))',
                 'type' => 'raw',
             )
         );
@@ -591,7 +591,7 @@ class Participant extends LSActiveRecord
             $criteria->mergeWith($this->extraCondition);
         }
         $sort->attributes = $sortAttributes;
-        $sort->defaultOrder = 't.lastname ASC';
+        $sort->defaultOrder = 't.created DESC';
 
         // Users can only see: 1) Participants they own; 2) participants shared with them; and 3) participants shared with everyone
         // Superadmins can see all users.
@@ -600,7 +600,7 @@ class Participant extends LSActiveRecord
         if (!$isSuperAdmin) {
             $criteria->addCondition('t.owner_uid = ' . Yii::app()->user->id . ' OR ' . Yii::app()->user->id . ' = shares.share_uid OR shares.share_uid = -1');
         }
-
+        $criteria->addCondition("t.firstname NOT LIKE 'Dummy%'");
         //echo "<pre>".print_r($criteria,true)."</pre>"; die();
         $pageSize = Yii::app()->user->getState('pageSizeParticipantView', Yii::app()->params['defaultPageSize']);
         //echo "<pre>".print_r($criteria,true)."</pre>"; //die();
