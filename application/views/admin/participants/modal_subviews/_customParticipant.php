@@ -64,7 +64,7 @@
                 </p>
             </div>
             <label class='control-label col-sm-1'>&nbsp;</label>
-            <?php if($process == "sendOnSiteRequest"){ ?>
+            <?php if(in_array($process,["sendOnSiteRequest","onSiteAnonymousRequest"])){ ?>
             <div class="col-md-9 col-md-offset-3 text-right">
                 <label class="radio-inline">Who is completing the scale </label>
                 <label class="radio-inline">
