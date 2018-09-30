@@ -496,4 +496,7 @@ class Company extends LSActiveRecord {
         }
         parent::afterSave();
     }
+    public function getNameWithBranch() {
+      return $this->name . " -  " . $this->branch;
+   }
 }
