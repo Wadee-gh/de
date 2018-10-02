@@ -2,7 +2,7 @@
 
 ### Database
 
-create local database, and restore it from sql/dump.sql
+create local database, and restore it from sql/dump.sql you can find this file on the dev branch. Ask for latest version if you run into any problem using it.
 
 ### configuration
 
