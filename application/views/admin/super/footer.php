@@ -25,6 +25,8 @@
             <!-- Lime survey website -->
             <div class="col-xs-6 col-md-4 col-lg-6 text-right">
                 <a  title='<?php eT("Visit our website!"); ?>' href='http://www.limesurvey.org' target='_blank'>QstConn</a><br /><?php echo $versiontitle."  ".$versionnumber.$buildtext;?>
+                <br />
+                <?php echo shell_exec(" echo; git rev-parse HEAD | head -c 7; echo -n @; git branch | grep \* | cut -d ' ' -f2; echo ' ';  git log -1 --date=local --pretty=format:%cd ") ?>
             </div>
         </div>
     </div>
