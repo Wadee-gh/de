@@ -337,6 +337,14 @@ class User extends LSActiveRecord
         $users = $this->findAll($criteria);
         return $users;
     }
+    public function isSuperAdmin($id){
+        $criteria = new CDbCriteria();
+        $criteria->join = ' JOIN {{permissions}} AS p ON p.uid = t.uid';
+        $criteria->addCondition('p.permission = \'superadmin\'');
+        $criteria->compare('t.uid', $id);
+        $users = $this->findAll($criteria);
+        return $users;
+    }
 
     /**
     * Gets the buttons for the GridView
@@ -448,7 +456,14 @@ class User extends LSActiveRecord
             . $changeOwnership
             . "</div>";
     }
-
+    public function getActiveSwitchbutton(){
+         
+        $inputHtml = "<input type='checkbox' data-user='".$this->uid."' data-size='small' data-on-color='primary' data-off-color='warning' data-off-text='".gT('No')."' data-on-text='".gT('Yes')."' class='action_changeActiveStatus' "
+            . ($this->active == "Y" ? "checked" : "")
+            . "/>";
+        return  $inputHtml;
+     
+    }
     public function getColums(){
         $cols = array(
             array(
@@ -467,6 +482,12 @@ class User extends LSActiveRecord
             array(
                 "name" => 'email',
                 "header" => gT("Email")
+            ),
+            array(
+                "name" => 'active',
+                "value" => '$data->getActiveSwitchbutton()',
+                "type" => "raw",
+                "filter" => array('' => gT("All"), 'N' => gT("No"), 'Y'=>gT('Yes'))
             ),
             array(
                 "name" => 'full_name',
