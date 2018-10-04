@@ -1,11 +1,11 @@
-<div class="col-xs-12">
+<div class="col-xs-12 col-md-12">
     <h3 class="pagetitle row">
-        <div class="col-xs-4 ">
+        <div class="col-xs-12 col-md-4 participant-center-mobile">
             <?php eT("Patient List"); ?>
         </div>
-        <div class="col-xs-8 text-right">
+        <div class="col-xs-12 col-md-12 text-right">
 
-<div class="dropdown">
+<div class="dropdown  participant-center-mobile">
 
   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 New Patient

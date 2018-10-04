@@ -2182,7 +2182,6 @@ table#responsedetail tr td{
 }
 
 #login-panel {
-  width: 400px;
   margin-left: auto;
   margin-right: auto
 }
@@ -2399,4 +2398,16 @@ div.custom_lv2 td.radio input[type=radio] {
   display: none !important;
 }
 
-
+/*Extra small devices (phones, 600px and down) - for navbar brand heading*/
+@media only screen and (max-width: 600px) 
+{
+	.participant-center-mobile
+	{
+    text-align: center;
+    margin: 1px;
+	}
+}  
+/* /admin/survey/sa/listsurveys form custom margin */
+.survey-list-form-margin{
+  margin: 10px;
+}

@@ -14,9 +14,8 @@
 ?>
 
 <!-- Search Box -->
-<div class="row">
-    <div class="pull-right">
-        <div class="form text-right">
+    <div class="row">
+        <div class="form survey-list-form-margin">
             <!-- Begin Form -->
             <?php $form  =  $this->beginWidget('CActiveForm', array(
                 'action' => Yii::app()->createUrl($this->formUrl),
@@ -50,4 +49,3 @@
             <?php $this->endWidget(); ?>
         </div>
     </div>
-</div>
