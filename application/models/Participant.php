@@ -436,7 +436,8 @@ class Participant extends LSActiveRecord
             ),*/
             array(
                 'name' => 'created',
-                'value' => 'date("Y-m-d H:i", strtotime($data->created))',
+             //   'value' => 'date("Y-m-d H:i", strtotime($data->created))',
+                'value' => '$data->createdFormatted',
                 'type' => 'raw',
             )
         );
@@ -2399,6 +2400,7 @@ class Participant extends LSActiveRecord
     public function getCreatedFormatted()
     {
         if ($this->created) {
+            return $today = dateShift($this->created, "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
             $timestamp = strtotime($this->created);
             $dateformatdetails = getDateFormatData(Yii::app()->session['dateformat']);
             $date = date($dateformatdetails['phpdate'], $timestamp);
@@ -2521,5 +2523,12 @@ class Participant extends LSActiveRecord
         if($row == '') $row = array();
         //echo "<pre>".print_r($row,true)."</pre>"; die();
         return($row);
+    }
+    public function afterSave() {
+
+        if ($this->isNewRecord) {
+            $this->created = date("Y-m-d H:i:s");
+        }
+        return parent::afterSave();
     }
 }
