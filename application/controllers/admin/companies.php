@@ -663,4 +663,25 @@ class Companies extends Survey_Common_Action
         parent::_renderWrappedTemplate($sAction, $aViewUrls, $aData);
     }
 
+    public function group($id) {
+        $request = Yii::app()->request;
+        $company = Company::model()->findByPk($id);
+        if (isset($_REQUEST['company_group'])) {
+            $groups = $request->getParam('groups');
+            $groups = $groups ? json_encode($groups) : json_encode([]);
+            $company->selected_groups = $groups;
+            if ($company->save()) {
+                echo json_encode(['status' => 1, "message" => 'Sueecee']);
+            } else {
+                echo json_encode(['status' => 0, "message" => '']);
+            }
+            die();
+        }
+        $selected_groups = json_decode($company->selected_groups);
+
+        $groups = QuestionGroup::model()->findAll();
+        $this->_renderWrappedTemplate('companies', 'editgroup', compact('groups', 'selected_groups', 'company'));
+        die();
+    }
+
 }

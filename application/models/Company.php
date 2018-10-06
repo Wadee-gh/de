@@ -300,6 +300,7 @@ class Company extends LSActiveRecord {
     public function getButtons() {
         $editUser = "";
         $deleteUser = "";
+        $editGroup = "";
         $setPermissionsUser = "";
         $setTemplatePermissionUser = "";
         $changeOwnership = "";
@@ -308,9 +309,18 @@ class Company extends LSActiveRecord {
         $setPermissionsUrl = Yii::app()->getController()->createUrl('admin/companies/sa/setuserpermissions');
         $setTemplatePermissionsUrl = Yii::app()->getController()->createUrl('admin/companies/sa/setusertemplates');
         $changeOwnershipUrl = Yii::app()->getController()->createUrl('admin/companies/sa/setasadminchild');
-
+        $editGroupUrl = Yii::app()->getController()->createUrl('/admin/companies/sa/group', array("id" => $this->uid));
+        
         $oUser = $this->getName($this->uid);
         if ($this->uid == Yii::app()->user->getId()) {
+            
+            
+            $editGroup = "<a data-filter='#edit_company_group' href='javascriptvoid(0);'  title='" . gT("Edit Group") . "'  data-fancybox data-type='ajax' data-src='" . $editGroupUrl . "'class='btn btn-default btn-xs'><span class='fa fa-edit text-success'></span></a>";
+        
+            
+            
+            
+            
             $editUser = "<button
                 data-toggle='tooltip'
                 title='" . gT("Edit this user") . "'
@@ -344,6 +354,8 @@ class Company extends LSActiveRecord {
         } else {
             if (Permission::model()->hasGlobalPermission('superadmin', 'read') || $this->uid == Yii::app()->session['loginID'] || (Permission::model()->hasGlobalPermission('users', 'update') && $this->parent_id == Yii::app()->session['loginID'])) {
                 $editUser = "<button data-toggle='tooltip' data-url='" . $editUrl . "' data-user='" . htmlspecialchars($oUser['full_name']) . "' data-uid='" . $this->uid . "' data-action='modifyuser' title='" . gT("Edit this user") . "' type='submit' class='btn btn-default btn-xs action_usercontrol_button'><span class='fa fa-pencil text-success'></span></button>";
+                $editGroup = "<a data-filter='#edit_company_group'  href='javascriptvoid(0)'  title='" . gT("Edit Group") . "'  data-fancybox data-type='ajax' data-src='" . $editGroupUrl . "'class='btn btn-default btn-xs'><span class='fa fa-edit text-success'></span></a>";
+                
             }
 
             if (((Permission::model()->hasGlobalPermission('superadmin', 'read') &&
@@ -383,9 +395,11 @@ class Company extends LSActiveRecord {
                 $changeOwnership = "<button data-toggle='tooltip' data-url='" . $changeOwnershipUrl . "' data-user='" . htmlspecialchars($oUser['full_name']) . "' data-uid='" . $this->uid . "' data-action='setasadminchild' title='" . gT("Take ownership") . "' class='btn btn-default btn-sm action_usercontrol_button' type='submit'><span class='icon-takeownership text-success'></span></button>";
             }
         }
+        
         return "<div>"
                 . $editUser
                 . $deleteUser
+                .$editGroup
                 . "</div>";
         /* return "<div>"
           . $editUser
