@@ -583,7 +583,7 @@ class Participant extends LSActiveRecord
         $sqlCountActiveSurveys = "(SELECT COUNT(*) FROM ".$DBCountActiveSurveys." cas WHERE cas.participant_id = t.participant_id )";
 
         $criteria->select = array(
-            '*',
+            't.*',
             $sqlCountActiveSurveys . ' AS countActiveSurveys',
             't.participant_id',
             't.participant_id AS id',   // This is need to avoid confusion between t.participant_id and shares.participant_id
