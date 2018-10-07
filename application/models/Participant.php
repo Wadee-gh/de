@@ -682,13 +682,16 @@ class Participant extends LSActiveRecord
         }
     }
 
-    public function createCustomParticipant($id,$vars){
+    public function createCustomParticipant($id,$vars,$participant_id=false){
         $row = CParticipant::model()->getById($id);
         //echo "<pre>".print_r($row,true)."</pre>"; die();
 
         // check if custom participant exists.
         $email = $row['email'];
         $participant = Participant::model()->getByEmail($email);
+        if($participant_id){
+            $participant = Participant::model()->findByPk($participant_id);
+        }
         //$participant = array();
         //echo "<pre>".print_r($participant,true)."</pre>";
 
