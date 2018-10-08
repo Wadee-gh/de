@@ -1528,13 +1528,14 @@ class participantsaction extends Survey_Common_Action
         $participant_id = $vars['participant_id'];
         if($participant_id){
           $participant = Participant::model()->findByPk($participant_id);
-          $flist = "first_name,last_name,dob";
+          $flist = "first_name,last_name,dob,email";
           foreach(explode(",",$flist) as $field){
             $key = str_replace("_","",$field);
             $data[$field] = $participant[$key];
           }
+          $data['participant_id'] = $participant->participant_id;
         }
-
+                    
         // save posted data.
         $row = CParticipant::model()->insertParticipant($data);
         //echo "<pre>".print_r($row,true)."</pre>"; die();
