@@ -2452,9 +2452,6 @@ div.custom_lv2 td.radio input[type=radio] {
 table#responsedetail tr td{
    width: 150px;
 }
-canvas {
-  width: 100% !important;
-}
 
 }  
 /* /admin/survey/sa/listsurveys form custom margin */
