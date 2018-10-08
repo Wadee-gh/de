@@ -21,7 +21,7 @@
 
             <div class="text-right">
                 <div class="form-group">
-                    <div style="display:inline-block;position:relative;top:-65px;">
+                    <div class="completion-state-responses">
                     <label for='completionstate' class="control-label"><?php eT("Include:"); ?> </label>
                     <?php
                     echo CHtml::dropDownList(
