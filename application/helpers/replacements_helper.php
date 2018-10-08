@@ -830,7 +830,16 @@ function doHtmlSaveLinks($move="")
     if($thissurvey['allowsave'] == "Y")
     {
         $sLoadButton = '<li><a href="#" id="loadallbtnlink" >'.gT("Load unfinished survey").'</a></li>';
-        $sSaveButton = '<li><a href="#" id="saveallbtnlink" >'.gT("Resume later").'</a></li>';
+        $sSaveButton="";
+        if(print_r(Yii::app()->getConfig('testing'))){
+            $sSaveButton .= '<li><a href="#" id="survey_autofill" >'.gT("Auto Fill").'</a></li>';
+            $sSaveButton .= '<script>
+                $( "#survey_autofill" ).on( "click", function() {
+                    $( "form input:radio" ).prop("checked", true); $( "input:text").val("1"); $("html, body").animate({ scrollTop: $(document).height() }, "slow"); $( "#movenextbtn" ).trigger( "click" );
+                });
+            </script>';
+        }
+        $sSaveButton .= '<li><a href="#" id="saveallbtnlink" >'.gT("Resume later").'</a></li>';
     }
     else
     {
