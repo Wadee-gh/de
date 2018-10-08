@@ -37,6 +37,7 @@ $internalConfig = array(
 
     'name' => 'QstConn',
     'localeClass' =>  'LSYii_Locale',
+    'timeZone' => 'America/Chicago',
     'defaultController' => 'surveys',
 
     'aliases' => array(
