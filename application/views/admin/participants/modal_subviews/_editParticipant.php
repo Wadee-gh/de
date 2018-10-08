@@ -47,7 +47,7 @@
          </label>
             <div class='col-sm-10'>
                 <div class="input-group">
-                 <input name='Participant[dob]' value='<?php echo date("m/d/Y",strtotime($model->dob)); ?>' type="text" class="form-control" id="datepicker-input">
+                 <input name='Participant[dob]' value='<?php echo $model->dob ? date("m/d/Y",strtotime($model->dob)) : ""; ?>' type="text" class="form-control" id="datepicker-input">
                  <span class="input-group-btn">
                    <button class="btn btn-default" type="button" id="datepicker-btn">
                        <i class="fa fa-calendar" aria-hidden="true"></i>
