@@ -1,4 +1,4 @@
-<div class="side-body <?php echo getSideBodyClass(false); ?>">
+<div class="side-body editing-response-entry<?php echo getSideBodyClass(false); ?>">
     <h3>
     <?php eT("Data entry"); ?> -
     <?php

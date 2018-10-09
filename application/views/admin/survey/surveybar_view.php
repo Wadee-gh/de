@@ -11,9 +11,9 @@
 
         <?php // If there are no save or close buttons, take up some more space (useful for 1366x768 screens) ?>
         <?php if (!isset($surveybar['savebutton']['form']) && (!isset($surveybar['saveandclosebutton'])) && (!isset($surveybar['closebutton']))): ?>
-            <div class="col-md-12 col-xs-6">
+            <div class="col-md-12 col-xs-12">
         <?php else: ?>
-            <div class="col-md-8 col-xs-6">
+            <div class="col-md-8 col-xs-8">
         <?php endif; ?>
 
             <!-- Add a new group -->
@@ -572,7 +572,7 @@
         </div>
 
         <!-- right action buttons -->
-        <div class=" col-md-4 text-right">
+        <div class=" col-md-4 col-xs-4 clear-mobile">
             <?php if(isset($surveybar['savebutton']['form'])):?>
 
                 <!-- Save -->

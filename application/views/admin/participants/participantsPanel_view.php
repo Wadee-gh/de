@@ -53,7 +53,7 @@
 <div class='menubar surveybar' id="participantbar">
     <div class='row'>
 
-        <div class="col-md-9">
+        <div class="col-md-12">
             <?php if (Permission::model()->hasGlobalPermission('superadmin')):?>
             <!-- Display participants -->
             <a class="btn btn-default" href="<?php echo $this->createUrl("admin/participants/sa/displayParticipants"); ?>" role="button">

@@ -1,7 +1,7 @@
 <div class='menubar surveybar' id="browsermenubarid">
     <div class='row container-fluid'>
         <?php if(isset($menu) && isset($menu['edition']) && !$menu['edition']): ?>
-            <div class="col-md-12">
+            <div class="col-md-12 survey-responses-topbar">
             <!-- Show summary information -->
             <?php if (Permission::model()->hasSurveyPermission($surveyid, 'responses', 'read')): ?>
                 <a class="btn btn-default" href='<?php echo $this->createUrl("admin/responses/sa/index/surveyid/$surveyid"); ?>' role="button">
@@ -146,7 +146,7 @@
             <?php endif;?>
         </div>
         <?php else: ?>
-        <div class="col-md-7 text-right col-md-offset-5">
+        <div class="col-md-7 text-right col-md-offset-5 expert-mode-align">
             <?php if(isset($menu['save'])): ?>
                 <a class="btn btn-success" href="#" role="button" id="save-button">
                     <span class="glyphicon glyphicon-ok"></span>
