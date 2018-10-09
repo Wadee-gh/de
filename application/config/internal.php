@@ -15,7 +15,7 @@ if (!file_exists(dirname(__FILE__) .  '/config.php')) {
 if (! date_default_timezone_set(@date_default_timezone_get()))
 {
 
-    date_default_timezone_set('Europe/London');
+    date_default_timezone_set('America/Chicago');
 }
 
 
