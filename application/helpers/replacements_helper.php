@@ -835,7 +835,16 @@ function doHtmlSaveLinks($move="")
             $sSaveButton .= '<li><a href="#" id="survey_autofill" >'.gT("Auto Fill").'</a></li>';
             $sSaveButton .= '<script>
                 $( "#survey_autofill" ).on( "click", function() {
-                    $( "form input:radio" ).prop("checked", true); $( "input:text").val("1"); $("html, body").animate({ scrollTop: $(document).height() }, "slow"); $( "#movenextbtn" ).trigger( "click" );
+                	$("tbody tr, .answer-container .radio-list").each(function () {
+					    var radios = $(this).find("input[type=radio]");
+					    if (radios.length > 0) {
+					        var randomnumber = Math.floor(Math.random() * radios.length);
+					        radios[randomnumber].checked = true;
+					    }
+					});
+
+                    //$( "form input:radio" ).prop("checked", true); 
+                    $( "input:text").val("1"); $("html, body").animate({ scrollTop: $(document).height() }, "slow"); $( "#movenextbtn" ).trigger( "click" );
                 });
             </script>';
         }
