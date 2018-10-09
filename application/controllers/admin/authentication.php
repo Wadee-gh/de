@@ -106,7 +106,7 @@ class Authentication extends Survey_Common_Action {
             $token = $cparticipation['lime_token'];
             if (strlen($token) == 0) {
                 $id = $cparticipation['id'];
-                $result = Participant::model()->createCustomParticipant($id, $vars);
+                $result = Participant::model()->createCustomParticipant($id, $vars, $cparticipation['participant_id']);
                 $cparticipation = CParticipant::model()->getById($id);
             }
             //$this->_renderWrappedTemplate('authentication', 'testsurvey', compact('cparticipation'));
@@ -457,7 +457,7 @@ class Authentication extends Survey_Common_Action {
 
                         Yii::app()->user->setFlash('success', 'Sign Up Successfully');
                         $transaction->commit();
-                        $this->getController()->redirect(array("/admin/authentication/sa/register"));
+                        $this->getController()->redirect(array("/admin/authentication/sa/login"));
                     } catch (Exception $e) {
                         Yii::app()->user->setFlash('error', 'Please try again');
                         $transaction->rollback();

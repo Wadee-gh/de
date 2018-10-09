@@ -50,6 +50,7 @@ class UserAction extends Survey_Common_Action
     */
     public function index()
     {
+        Yii::app()->clientScript->registerPackage('bootstrap-switch');
         if (!Permission::model()->hasGlobalPermission('users','read')) {
             Yii::app()->setFlashMessage(gT("You do not have permission to access this page."),'error');
             $this->getController()->redirect(array("admin/"));
@@ -900,6 +901,21 @@ class UserAction extends Survey_Common_Action
     protected function _renderWrappedTemplate($sAction = 'user', $aViewUrls = array(), $aData = array())
     {
         parent::_renderWrappedTemplate($sAction, $aViewUrls, $aData);
+    }
+    public function changeaStatus() {
+        $user_id = Yii::app()->request->getPost('user_id');
+        $userModel = User::model()->findByPk($user_id);
+        if ($userModel) {
+            if (User::model()->isSuperAdmin($userModel->uid)) {
+                echo json_encode(array("success" => false, 'message' => "This is super admin", "newValue" =>  $userModel->active == "Y" ? true : false));
+            } else {
+                $userModel->active = $userModel->active == "Y" ? "N" : "Y";
+                $userModel->save(false);
+                echo json_encode(array("success" => true, "newValue" => $userModel->active == "Y" ? true : false));
+            }
+        } else {
+            echo json_encode(array("success" => false, 'message' => "Please try again"));
+        }
     }
 
 }

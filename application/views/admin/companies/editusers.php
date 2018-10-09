@@ -1,3 +1,4 @@
+
 <div class="container-fluid">
 <h3 class="pagetitle"><?php eT("Company List");?></h3>
     <div class="row">
@@ -290,3 +291,5 @@
     </div>
 </div>*/
 ?>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.2/dist/jquery.fancybox.min.css" />
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.2/dist/jquery.fancybox.min.js"></script>

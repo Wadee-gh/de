@@ -36,7 +36,7 @@
     <?php elseif ($sideMenuBehaviour == 'alwaysOpen'): ?>
         <!-- Do nothing -->
     <?php endif;?>
-
+<?php if (Permission::model()->hasGlobalPermission('superadmin')):?>
     <!-- To handle correctly the side menu positioning -->
         <div
             class="absolute-wrapper hidden-xs"
@@ -186,3 +186,4 @@
             </div><!-- /.navbar-collapse -->
         </nav>
  </div>
+<?php endif; ?>

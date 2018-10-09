@@ -687,7 +687,7 @@ LS.CPDB = (function() {
         }
 
         /** end of added by mark mirasol **/
-
+        $("#addParticipantToCPP").unbind( "click" );
         $('#addParticipantToCPP').on('click', function(e){
             e.preventDefault();
             var data = {

@@ -436,7 +436,8 @@ class Participant extends LSActiveRecord
             ),*/
             array(
                 'name' => 'created',
-                'value' => 'date("Y-m-d H:i", strtotime($data->created))',
+             //   'value' => 'date("Y-m-d H:i", strtotime($data->created))',
+                'value' => '$data->createdFormatted',
                 'type' => 'raw',
             )
         );
@@ -582,7 +583,7 @@ class Participant extends LSActiveRecord
         $sqlCountActiveSurveys = "(SELECT COUNT(*) FROM ".$DBCountActiveSurveys." cas WHERE cas.participant_id = t.participant_id )";
 
         $criteria->select = array(
-            '*',
+            't.*',
             $sqlCountActiveSurveys . ' AS countActiveSurveys',
             't.participant_id',
             't.participant_id AS id',   // This is need to avoid confusion between t.participant_id and shares.participant_id
@@ -681,13 +682,16 @@ class Participant extends LSActiveRecord
         }
     }
 
-    public function createCustomParticipant($id,$vars){
+    public function createCustomParticipant($id,$vars,$participant_id=false){
         $row = CParticipant::model()->getById($id);
         //echo "<pre>".print_r($row,true)."</pre>"; die();
 
         // check if custom participant exists.
         $email = $row['email'];
         $participant = Participant::model()->getByEmail($email);
+        if($participant_id){
+            $participant = Participant::model()->findByPk($participant_id);
+        }
         //$participant = array();
         //echo "<pre>".print_r($participant,true)."</pre>";
 
@@ -2399,6 +2403,7 @@ class Participant extends LSActiveRecord
     public function getCreatedFormatted()
     {
         if ($this->created) {
+            return $today = dateShift($this->created, "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
             $timestamp = strtotime($this->created);
             $dateformatdetails = getDateFormatData(Yii::app()->session['dateformat']);
             $date = date($dateformatdetails['phpdate'], $timestamp);
@@ -2521,5 +2526,12 @@ class Participant extends LSActiveRecord
         if($row == '') $row = array();
         //echo "<pre>".print_r($row,true)."</pre>"; die();
         return($row);
+    }
+    public function afterSave() {
+
+        if ($this->isNewRecord) {
+            $this->created = date("Y-m-d H:i:s");
+        }
+        return parent::afterSave();
     }
 }
