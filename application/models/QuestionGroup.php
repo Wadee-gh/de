@@ -246,6 +246,25 @@ class QuestionGroup extends LSActiveRecord
           return([]);
         }
     }
+    
+    function getCompanySelectedGroups($surveyid) {
+        $survey = Survey::model()->with('owner')->findByPk($surveyid);
+        if(isset($survey->owner->company_uid)){
+            $companySelectedGroup = Company::model()->findByPk($survey->owner->company_uid);
+            if($companySelectedGroup){
+                $selectedGroup = json_decode($companySelectedGroup->selected_groups);
+                if($selectedGroup){
+                    //echo "<pre>".print_r($selectedGroup,true)."</pre>"; die();
+                    $criteria = new CDbCriteria;
+                    $criteria->select = "gid, group_name";
+                    $criteria->addInCondition(gid, $selectedGroup);
+                    $question = QuestionGroup::model()->findAll($criteria);
+                    return $question;
+                }
+            }
+        }
+        return $question;
+    }
 
     public static function deleteWithDependency($groupId, $surveyId)
     {

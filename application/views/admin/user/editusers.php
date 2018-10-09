@@ -294,3 +294,25 @@
     </div>
 </div>*/
 ?>
+<script>
+    $(document).ready(function(){
+        $('.action_changeActiveStatus').bootstrapSwitch();
+        $('.action_changeActiveStatus').on('switchChange.bootstrapSwitch', function(event, state){
+            self = this;
+            $.ajax({
+                url: "<?php echo Yii::app()->getController()->createUrl("/admin/user/sa/changeaStatus"); ?>",
+                method: "POST",
+                data: {'user_id': $(this).attr('data-user')},
+                dataType: 'json',
+                success: function(resolve){
+                    if(resolve.success){
+                        $(self).prop("checked", resolve.newValue);
+                    }else{
+                        $(self).bootstrapSwitch('toggleState', true, true);
+                        alert(resolve.message)
+                    }
+                }
+            })
+        });
+    });     
+</script>

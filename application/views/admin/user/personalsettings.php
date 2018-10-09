@@ -40,6 +40,7 @@
                 <?php echo CHtml::passwordField('repeatpassword', '',array('class'=>'form-control','autocomplete'=>"off",'placeholder'=>html_entity_decode(str_repeat("&#9679;",10),ENT_COMPAT,'utf-8'))); ?>
              </div>
         </div>
+    <div style="display: <?= Permission::model()->hasGlobalPermission('superadmin') ? "block" : "none" ?>">
     <!-- form -->
     <h3 class="pagetitle"><?php eT("Your personal settings"); ?></h3>
 
@@ -130,7 +131,7 @@
                 </select>
             </div>
         </div>
-
+</div>
         <!-- Buttons -->
         <p>
             <?php echo CHtml::hiddenField('action', 'savepersonalsettings'); ?>

@@ -144,7 +144,8 @@ class LSUserIdentity extends CUserIdentity {
         Yii::app()->session['questionselectormode'] = $user->questionselectormode;
         Yii::app()->session['dateformat'] = $user->dateformat;
         Yii::app()->session['session_hash'] = hash('sha256',getGlobalSetting('SessionName').$user->users_name.$user->uid);
-
+        Yii::app()->session['accepted_tos'] = $user->accepted_tos;
+        
         // Perform language settings
         if (App()->request->getPost('loginlang', 'default') != 'default')
         {

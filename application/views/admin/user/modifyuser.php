@@ -38,7 +38,7 @@
     <div class="col-sm-3">
         <?php
           $models = Company::model()->findAll();
-          $list = CHtml::listData($models,'uid', 'name');
+          $list = CHtml::listData($models,'uid', 'nameWithBranch');
           echo CHtml::dropDownList('company_uid',$aUserData['company_uid'],$list,array('empty' => '(Select a company)','class'=>"form-control"));
         ?>
     </div>

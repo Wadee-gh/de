@@ -541,8 +541,28 @@ class questiongroups extends Survey_Common_Action
         //echo "<pre>".print_r($groups,true)."</pre>"; //die();
         $freqUsedGroups = QuestionGroup::model()->getFreqUsedGroups($surveyid);
         //echo "<pre>".print_r($freqUsedGroups,true)."</pre>"; die();
-
+        $companySelectedGroups = QuestionGroup::model()->getCompanySelectedGroups($surveyid);
+        //echo "<pre>".print_r($companySelectedGroups,true)."</pre>"; die();
         $html = "";
+        
+        if(!empty($companySelectedGroups)){
+          $html .=
+            '<div class="col-sm-12">
+              <label>Selected Scales:</label>
+            </div>';
+            foreach($companySelectedGroups as $group){
+              $html .=
+                '<div class="col-sm-4">
+                  <label><input type="checkbox" id="check_group_'.$group['gid'].'" name="groups[]" value="'.$group['gid'].'">'.$group['group_name'].'</label>
+                </div>';
+            }
+            $html .=
+            '<div class="col-sm-12">
+              <hr>
+            </div>';
+        }
+        
+        
         if(!empty($freqUsedGroups)){
           $html .=
             '<div class="col-sm-12">
