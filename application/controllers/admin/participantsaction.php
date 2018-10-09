@@ -377,6 +377,7 @@ class participantsaction extends Survey_Common_Action
         // Abort if no permission
         if (!Permission::model()->hasGlobalPermission('participantpanel','delete')) {
             ls\ajax\AjaxHelper::outputNoPermission();
+            die();
         }
 
         $selectoption = Yii::app()->request->getPost('selectedoption');
