@@ -844,7 +844,9 @@ function doHtmlSaveLinks($move="")
 					});
 
                     //$( "form input:radio" ).prop("checked", true); 
-                    $( "input:text").val("1"); $("html, body").animate({ scrollTop: $(document).height() }, "slow"); $( "#movenextbtn" ).trigger( "click" );
+                    $( "input:text").val(Math.floor(Math.random() * 1000 ); 
+                    $( "textarea").val(Math.floor(Math.random() * 1000 ); 
+                    $("html, body").animate({ scrollTop: $(document).height() }, "slow"); $( "#movenextbtn" ).trigger( "click" );
                 });
             </script>';
         }
