@@ -1864,10 +1864,11 @@ class Participant extends LSActiveRecord
 
             // Search for matching participant name/email in the survey token table
             $matchingParticipant = Yii::app()->db->createCommand()->select('tid')->from('{{tokens_' . $surveyId . '}}')
-                ->where('(firstname = :firstname AND lastname = :lastname AND email = :email) OR participant_id = :participant_id')
-                ->bindParam(":firstname", $participant['firstname'], PDO::PARAM_STR)
-                ->bindParam(":lastname", $participant['lastname'], PDO::PARAM_STR)
-                ->bindParam(":email", $participant['email'], PDO::PARAM_STR)
+                //->where('(firstname = :firstname AND lastname = :lastname AND email = :email) OR participant_id = :participant_id')
+                ->where('participant_id = :participant_id')
+                //->bindParam(":firstname", $participant['firstname'], PDO::PARAM_STR)
+                //->bindParam(":lastname", $participant['lastname'], PDO::PARAM_STR)
+                //->bindParam(":email", $participant['email'], PDO::PARAM_STR)
                 ->bindParam(":participant_id", $participantId, PDO::PARAM_STR)
                 ->queryAll();
 

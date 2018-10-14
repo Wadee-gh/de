@@ -1484,7 +1484,9 @@ class participantsaction extends Survey_Common_Action
           $participant = Participant::model()->findByPk($participant_id);
           $email = $participant['email'];
           $tmp = CParticipant::model()->getByEmail($email);
-          $last_groups = implode(",",json_decode($tmp['required_groups'],true));
+          if($tmp){
+            $last_groups = implode(",",json_decode($tmp['required_groups'],true));
+          }
           $ask_email = 0;
           $status = 1;
         }

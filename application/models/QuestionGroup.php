@@ -257,7 +257,7 @@ class QuestionGroup extends LSActiveRecord
                     //echo "<pre>".print_r($selectedGroup,true)."</pre>"; die();
                     $criteria = new CDbCriteria;
                     $criteria->select = "gid, group_name";
-                    $criteria->addInCondition(gid, $selectedGroup);
+                    $criteria->addInCondition('gid', $selectedGroup);
                     $question = QuestionGroup::model()->findAll($criteria);
                     return $question;
                 }
