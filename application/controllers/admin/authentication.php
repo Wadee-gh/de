@@ -83,6 +83,7 @@ class Authentication extends Survey_Common_Action {
         $vars = $_REQUEST;
         if (!isset($token))
             $token = $vars['token'];
+        CParticipant::model()->clearPreviousSurvey($token);
         $cparticipation = CParticipant::model()->getByToken($token);
         //echo "<pre>".print_r($cparticipation,true)."</pre>"; die();
         if (empty($cparticipation)) {
@@ -112,6 +113,9 @@ class Authentication extends Survey_Common_Action {
             //$this->_renderWrappedTemplate('authentication', 'testsurvey', compact('cparticipation'));
             $survey_id = $cparticipation['survey_id'];
             $token = $cparticipation['lime_token'];
+            killSurveySession($survey_id);
+//            unset($_SESSION['survey_' . $survey_id]['LEMtokenResume']);
+//            $_SESSION['survey_' . $survey_id]['step'] = 0;
             $this->getController()->redirect(array("/survey/index/sid/" . $survey_id . "/token/" . $token));
         }
     }

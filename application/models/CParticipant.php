@@ -2479,4 +2479,27 @@ class CParticipant extends LSActiveRecord
             return '';
         }
     }
+    public function clearPreviousSurvey($token) {
+        $tbl = $this->tableName();
+        $model = CParticipant::model()->getByToken($token);
+        if ($model) {
+            $participant_id = $model['participant_id'];
+            $survey_id = $model['survey_id'];
+            $participantModel = Yii::app()->db->createCommand()
+                    ->select('lime_token')
+                    ->where("participant_id='$participant_id' AND lime_token is not null")
+                    ->from($tbl)
+                    ->group('lime_token')
+                    ->queryAll();
+            if (count($participantModel)) {
+                $token = array();
+                foreach ($participantModel as $pm) {
+                    $token[] = '"' . $pm['lime_token'] . '"';
+                }
+                $tokens = implode(',', $token);
+                dbExecuteAssoc('DELETE FROM {{survey_' . $survey_id . '}} WHERE token in(' . $tokens . ') AND submitdate IS NULL');
+            }
+        }
+    }
+
 }
