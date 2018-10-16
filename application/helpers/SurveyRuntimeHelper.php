@@ -931,6 +931,13 @@ class SurveyRuntimeHelper {
 
                 echo templatereplace(file_get_contents($sTemplateViewPath."completed.pstpl"), array('completed' => $completed), $redata, 'SubmitCompleted', false, NULL, array(), true );
                 echo "\n";
+                $surveyAnswerId = $this->getSurveyIdByToken($LEMsessid, $clienttoken);
+                if($surveyAnswerId){
+                    $surveyid = $surveyid; 
+                    $id     = $surveyAnswerId;
+                    $url = Yii::app()->getController()->createUrl("/admin/responses/sa/view/surveyid/{$surveyid}/id/{$id}");
+                    echo  "<br /><br /><a class='publicstatisticslink' href='$url' target='_blank'>View rseults</a><br />\n";
+                }
                 if ((($LEMdebugLevel & LEM_DEBUG_TIMING) == LEM_DEBUG_TIMING))
                 {
                     echo LimeExpressionManager::GetDebugTimingMessage();
@@ -1683,5 +1690,26 @@ class SurveyRuntimeHelper {
         $aReplacement['QUESTION_ESSENTIALS']=CHtml::renderAttributes($aHtmlOptions);
 
         return $aReplacement;
+    }
+    public function getSurveyIdByToken($table, $token){
+        $query = "SELECT * FROM  {{custom_participants}} WHERE lime_token = :lime_token";
+        $data = Yii::app()->db->createCommand($query)->bindParam(":lime_token", $token, PDO::PARAM_STR)->queryRow();
+        if($data){
+            $email = $data['email'];
+            if(substr($email, 0,7) == "dummy15"){
+                $table = Yii::app()->db->tablePrefix.$table;
+                $query2 = "SELECT * FROM  $table WHERE token = :token order by id desc";
+                $data = Yii::app()->db->createCommand($query2)->bindParam(":token", $token, PDO::PARAM_STR)->queryRow();
+                if($data){
+                    return $data['id'];
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            } 
+        }else{
+            return false;
+        }
     }
 }
