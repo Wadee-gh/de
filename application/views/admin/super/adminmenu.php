@@ -184,3 +184,22 @@
         </ul>
     </div><!-- /.nav-collapse -->
 </nav>
+<style>
+
+    @media (max-width: 768px) {
+        .navbar-toggle {
+            background-color: #fafafa;
+        }
+        a.navbar-brand{
+            width: calc(100% - 100px);
+            height: auto !important;
+            padding: 5px 5px;
+        }
+        .navbar-header {
+            position: relative;
+        }
+
+    }
+
+
+</style>
