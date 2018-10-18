@@ -8,4 +8,12 @@
     <input id='subaction' name='subaction' value='all' type='hidden'>
 </form>
 
-
+<script>
+    $( document ).ready(function() {
+        $('.custom_lv2 input[type=text]').each(function () {
+            if( $(this).val().length === 0){
+               $(this).parents('.custom_lv2 ').remove()
+            }
+        })
+    });
+</script>
