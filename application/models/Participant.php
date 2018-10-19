@@ -36,7 +36,7 @@ class Participant extends LSActiveRecord
     public $extraCondition;
     public $countActiveSurveys;
     public $id;
-
+    public $company_name;
     /**
      * Returns the static model of Settings table
      *
@@ -146,8 +146,9 @@ class Participant extends LSActiveRecord
                     gT("Share this participant"),
                     'share'
                 );
-                $buttons .= vsprintf($raw_button_template, $infoData);
-
+                if($this->countActiveSurveys){
+                    $buttons .= vsprintf($raw_button_template, $infoData);
+                }
             }
             else {
                 // Invisible button
@@ -441,7 +442,13 @@ class Participant extends LSActiveRecord
                 'type' => 'raw',
             )
         );
-
+        if(Permission::model()->hasGlobalPermission('superadmin')){
+            $cols[] = array(
+                'header' => 'Company',
+                'value' => '$data->company_name',
+                'type' => 'raw',
+            );
+        }
         $extraAttributeParams = Yii::app()->request->getParam('extraAttribute');
         foreach($this->allExtraAttributes as $name => $attribute){
             if($attribute['visible'] == "FALSE") continue;
@@ -537,8 +544,8 @@ class Participant extends LSActiveRecord
 
         $criteria = new CDbCriteria;
         $join = 'LEFT JOIN {{participant_shares}} AS shares ON t.participant_id = shares.participant_id AND (shares.share_uid = ' . Yii::app()->user->id . ' OR shares.share_uid = -1)';
+        $join .= ' LEFT JOIN {{users}} AS p ON p.uid = t.owner_uid  LEFT JOIN {{companies}} AS c ON c.uid = p.company_uid';
         if(!$superAdmin){
-          $join .= ' LEFT JOIN {{users}} AS p ON p.uid = t.owner_uid';
           $criteria->addCondition('p.company_uid = \''.$companyUid.'\'');
         }
         $criteria->join = $join;
@@ -584,6 +591,7 @@ class Participant extends LSActiveRecord
 
         $criteria->select = array(
             't.*',
+            'c.name as company_name',
             $sqlCountActiveSurveys . ' AS countActiveSurveys',
             't.participant_id',
             't.participant_id AS id',   // This is need to avoid confusion between t.participant_id and shares.participant_id
@@ -2486,7 +2494,7 @@ class Participant extends LSActiveRecord
           //echo $token; die();
           $row2 = Yii::app()->db->createCommand()
               ->select('*')
-              ->where("token IN ('".$token."')")
+              ->where("token IN ('".$token."') AND submitdate is not null")
               ->from('{{survey_'.$sid.'}}')
               ->order('id DESC')
               ->queryRow();
