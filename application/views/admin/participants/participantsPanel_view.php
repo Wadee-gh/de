@@ -267,3 +267,9 @@
         </div>
     </div>
 </div>
+<style>
+    .dropdown-menu{
+        right: 0px;
+        left: unset
+    }
+</style>
