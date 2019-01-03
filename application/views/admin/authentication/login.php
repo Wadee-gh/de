@@ -7,7 +7,10 @@
 <div class="container-fluid welcome">
     <div class="row text-center">
         <div id="login-panel">
-            <div class="panel panel-primary login-panel" id="panel-1">
+	<br />
+	<br />
+	<br />
+            <div class="panel panel-primary login-panel col-xs-12 col-sm-10 col-md-3" style="float: none; margin: 0 auto;" id="panel-1">
 
                 <!-- Header -->
                 <div class="panel-body">
