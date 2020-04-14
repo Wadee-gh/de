@@ -112,6 +112,7 @@
                                     {
                                         ?>
                       <!--                  <a href='<?php echo $this->createUrl("admin/authentication/sa/forgotpassword"); ?>'><?php eT("Forgot your password?"); ?></a><br />-->
+                                        <a href='<?php echo $this->createUrl("admin/authentication/sa/register"); ?>'><?php eT("New User? SignUp Here."); ?></a><br />
 <br />
 Request Demo : info@qc.md
 
