@@ -456,7 +456,8 @@ class participantsaction extends Survey_Common_Action
             'model' => $model,
             'editType' => $operationType,
             'extraAttributes' => $extraAttributes,
-            'users' => User::model()->findAll()
+            'users' => User::model()->findAll(),
+            'owner'=> User::model()->findByPk(Yii::app()->user->id)
         );
 
         $html = $this->getController()->renderPartial(
