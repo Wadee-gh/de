@@ -36,24 +36,14 @@
                 <div class="row login-content login-content-form">
                     <div class="col-lg-12">
                         <span>
-                            <label for="name"><?php eT('Name'); ?></label>
-                            <?php echo $form->textField($model, 'full_name', ['class' => 'form-control']); ?>
-                            <?php echo $form->error($model, 'full_name'); ?>
-                        </span>
-                        <span>
-                            <label for="user"><?php eT('User name'); ?></label>
-                            <?php echo $form->textField($model, 'users_name', ['class' => 'form-control']); ?>
-                            <?php echo $form->error($model, 'users_name'); ?>
+                            <label for="email"><?php eT('Email'); ?></label>
+                            <?php echo $form->textField($model, 'email', ['class' => 'form-control']); ?>
+                            <?php echo $form->error($model, 'email'); ?>
                         </span>
                         <span>
                             <label for="password"><?php eT('Password'); ?></label>
                             <?php echo $form->passwordField($model, 'password', ['class' => 'form-control']); ?>
                             <?php echo $form->error($model, 'password'); ?>
-                        </span>
-                        <span>
-                            <label for="email"><?php eT('Email'); ?></label>
-                            <?php echo $form->textField($model, 'email', ['class' => 'form-control']); ?>
-                            <?php echo $form->error($model, 'email'); ?>
                         </span>
                     </div>
                 </div>

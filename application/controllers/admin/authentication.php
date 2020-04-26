@@ -475,6 +475,8 @@ class Authentication extends Survey_Common_Action {
             $model->attributes = Yii::app()->request->getPost('User');
             $model->company_uid = $companyModel->uid;
             $model->parent_id = $parent_id;
+            $model->users_name = $model->email;
+            $model->full_name = explode("@", $model->email)[0];
             $transaction = Yii::app()->db->beginTransaction();
             if ($model->validate()) {
                 try {
@@ -502,9 +504,11 @@ class Authentication extends Survey_Common_Action {
     private function _registerCompany(){
         $vars = array();
         $users=Yii::app()->request->getPost('User');
+        $users['full_name']=explode("@", $users['email'])[0];
         $vars['name']=$users['full_name'];
         $vars['email']= $users['email'];
         $vars['parent_id'] = 1;
+        $vars['selected_groups'] = null;
         return Company::model()->insertUser($vars);
     }
 }
