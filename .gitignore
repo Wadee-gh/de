@@ -38,3 +38,4 @@ launch.json
 !/plugins/Demo/
 !/plugins/AuditLog/
 *.png
+.idea/*

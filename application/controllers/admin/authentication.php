@@ -442,37 +442,73 @@ class Authentication extends Survey_Common_Action {
         $model->scenario = "register";
         if (Yii::app()->request->getPost('action')) {
             $auth = Yii::app()->request->getParam('auth');
-            $companyModel = Company::model()->find("signup_hash='$auth'");
-            if ($companyModel) {
-                $parent_id = $companyModel->parent_id;
-                $model->attributes = Yii::app()->request->getPost('User');
-                $model->company_uid = $companyModel->uid;
-                $model->parent_id = $parent_id;
-                $transaction = Yii::app()->db->beginTransaction();
-                if ($model->validate()) {
-                    try {
-                        $model->password = hash('sha256', $model->password);
-                        $model->save(false);
-                        $iNewUID = $model->uid;
-                        Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => Yii::app()->getConfig("defaulttemplate"), 'entity' => 'template', 'read_p' => 1, 'entity_id' => 0));
-                        Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => 'auth_db', 'entity' => 'global', 'read_p' => 1, 'entity_id' => 0));
-                        Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => 'surveys', 'entity' => 'global', 'read_p' => 1, 'entity_id' => 0));
-                        Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => 'participantpanel', 'entity' => 'global', 'create_p' => 1, 'read_p' => 1, 'update_p' => 1, 'delete_p' => 1, 'export_p' => 1, 'entity_id' => 0));
-
-                        Yii::app()->user->setFlash('success', 'Sign Up Successfully');
-                        $transaction->commit();
-                        $this->getController()->redirect(array("/admin/authentication/sa/login"));
-                    } catch (Exception $e) {
-                        Yii::app()->user->setFlash('error', 'Please try again');
-                        $transaction->rollback();
-                    }
+            if($auth==null){
+                //Register Company
+                $iNewCompany=$this->_registerCompany();
+                //Register User
+                if($iNewCompany) {
+                    $companyModel = Company::model()->findByPk($iNewCompany);
+                    $this->_registerCompanyAsUser($companyModel, $model);
+                }else {
+                    Yii::app()->user->setFlash('error', 'Company Not Created. Check details and try again.');
                 }
-            } else {
-                Yii::app()->user->setFlash('error', 'Not authorized. ');
+            }else{
+                $companyModel = Company::model()->find("signup_hash='$auth'");
+                $this->_registerCompanyAsUser($companyModel, $model);
             }
+
         }
         $model->password = null;
         $this->_renderWrappedTemplate('authentication', 'register', compact('model'));
     }
 
+
+    /**
+     * Register a company as a user to enable login
+     * @param $iNewCompany
+     * @param $model
+     */
+    private function _registerCompanyAsUser($companyModel, $model)
+    {
+        if ($companyModel) {
+            $parent_id = $companyModel->parent_id;
+            $model->attributes = Yii::app()->request->getPost('User');
+            $model->company_uid = $companyModel->uid;
+            $model->parent_id = $parent_id;
+            $model->users_name = $model->email;
+            $model->full_name = explode("@", $model->email)[0];
+            $transaction = Yii::app()->db->beginTransaction();
+            if ($model->validate()) {
+                try {
+                    $model->password = hash('sha256', $model->password);
+                    $model->save(false);
+                    $iNewUID = $model->uid;
+                    Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => Yii::app()->getConfig("defaulttemplate"), 'entity' => 'template', 'read_p' => 1, 'entity_id' => 0));
+                    Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => 'auth_db', 'entity' => 'global', 'read_p' => 1, 'entity_id' => 0));
+                    Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => 'surveys', 'entity' => 'global', 'read_p' => 1, 'entity_id' => 0));
+                    Permission::model()->insertSomeRecords(array('uid' => $iNewUID, 'permission' => 'participantpanel', 'entity' => 'global', 'create_p' => 1, 'read_p' => 1, 'update_p' => 1, 'delete_p' => 1, 'export_p' => 1, 'entity_id' => 0));
+
+                    Yii::app()->user->setFlash('success', 'Sign Up Successfully');
+                    $transaction->commit();
+                    $this->getController()->redirect(array("/admin/authentication/sa/login"));
+                } catch (Exception $e) {
+                    Yii::app()->user->setFlash('error', 'Please try again');
+                    $transaction->rollback();
+                }
+            }
+        } else {
+            Yii::app()->user->setFlash('error', 'Not authorized for signup');
+        }
+    }
+
+    private function _registerCompany(){
+        $vars = array();
+        $users=Yii::app()->request->getPost('User');
+        $users['full_name']=explode("@", $users['email'])[0];
+        $vars['name']=$users['full_name'];
+        $vars['email']= $users['email'];
+        $vars['parent_id'] = 1;
+        $vars['selected_groups'] = null;
+        return Company::model()->insertUser($vars);
+    }
 }
