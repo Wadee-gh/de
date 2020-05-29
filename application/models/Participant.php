@@ -241,14 +241,7 @@ class Participant extends LSActiveRecord
         );
         $buttons .= vsprintf($raw_button_template, $infoData);
         
-        //Add participant to a survey.
-        $infoData = array(
-            'action_participant_addToSurvey',
-            '',
-            gT("Add Participant To a Survey"),
-            'file'
-        );
-        $buttons .= vsprintf($raw_button_template, $infoData);
+        
 
         $buttons .= "</div>";
         return $buttons;
