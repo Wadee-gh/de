@@ -230,6 +230,18 @@ class Participant extends LSActiveRecord
             'desktop'
         );
         $buttons .= vsprintf($raw_button_template, $infoData);
+        
+        
+        // Added Email Request button to allow user to add survey via email invite
+        $infoData = array(
+            'action_participant_sendEmailRequest',
+            '',
+            gT("Send Email Request"),
+            'envelope'
+        );
+        $buttons .= vsprintf($raw_button_template, $infoData);
+        
+        
 
         $buttons .= "</div>";
         return $buttons;
