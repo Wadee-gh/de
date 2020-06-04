@@ -35,7 +35,7 @@ $config['protocol'] = $config['emailmethod'];
 // sendmail  -  use Sendmail Mailer
 // smtp      -  use SMTP relaying
 
-$config['emailsmtphost']      = 'localhost';      // Sets the SMTP host. You can also specify a different port than 25 by using
+$config['emailsmtphost']      = '';      // Sets the SMTP host. You can also specify a different port than 25 by using
 // this format: [hostname:port] (e.g. 'smtp1.example.com:25').
 
 $config['emailsmtpuser']      = '';               // SMTP authorisation username - only set this if your server requires authorization - if you set it you HAVE to set a password too
