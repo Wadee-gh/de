@@ -1513,8 +1513,8 @@ class participantsaction extends Survey_Common_Action
         );
         ls\ajax\AjaxHelper::output($html);
     }
-
-    public function saveCustomParticipant(){
+                     
+   public function saveCustomParticipant(){
         // get post data.
         $vars = $_POST;
         //echo "<pre>".print_r($_POST,true)."</pre>"; die();
@@ -1544,6 +1544,7 @@ class participantsaction extends Survey_Common_Action
         $row = CParticipant::model()->insertParticipant($data);
         //echo "<pre>".print_r($row,true)."</pre>"; die();
         if(isset($row->id)){
+          $message = "Successfully saved custom participation.";
           // successful creation of cparticipant.
           $status = "success";
           if(isset($vars['process'])){
@@ -1554,6 +1555,7 @@ class participantsaction extends Survey_Common_Action
               $token = $vars['token'];
               $survey_id = $vars['survey_id'];
               $success = $this->sendCustomEmail($survey_id,$id);
+              $message = "Email invite sent successfully to join the survey";
             } else
             if(in_array($process,explode(",","onSiteAnonymousRequest"))){
               $id = $row->id;
@@ -1563,7 +1565,7 @@ class participantsaction extends Survey_Common_Action
           if($_POST['complete_by'] == 1){
               Yii::app()->session['complete_by'] = $_POST['token']; 
           }
-          $message = "Successfully saved custom participation.";
+          
         } else {
           // error.
           $status = "error";
