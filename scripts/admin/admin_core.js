@@ -315,6 +315,7 @@ function getToolTip(type){
     if (code == ":") code = "COLON";
     else if(code == "|") code = "PIPE";
     else if(code == "*") code = "EQUATION";
+    else if(code == "_") code = "SIGN";
 
     if (multiple > 0){
         returnval = '';
