@@ -1042,9 +1042,9 @@ class responses extends Survey_Common_Action
         $script_url = $protocol.$_SERVER["SERVER_NAME"] . $_SERVER["SCRIPT_NAME"];
         $base_url = str_replace(basename($_SERVER["PHP_SELF"]),'',$script_url);
         $base_url = str_replace("index.php",'',$base_url);
-        $html = preg_replace($search, '<img height="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
+        $html = preg_replace($search, '<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
         $search = '/<input[\s]+class="radio"[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
-        $html = preg_replace($search, '<img height="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_off_grey_144x144.png".'">', $html);
+        $html = preg_replace($search, '<img height="50" width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_off_grey_144x144.png".'">', $html);
         $search = '/(<img src="radio[^<]+)<br\>/';
         $html = preg_replace($search, "$1", $html);
 
