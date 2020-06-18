@@ -355,6 +355,9 @@ function activateSurvey($iSurveyID, $simulate = false)
             case '*': // Equation
                 $aTableDefinition[$aRow['fieldname']] = "text";
                 break;
+            case '_': // Equation
+                $aTableDefinition[$aRow['fieldname']] = "longtext";
+                break;
             case 'R':
                 /**
                  * See bug #09828: Ranking question : update allowed can broke Survey DB
