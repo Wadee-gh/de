@@ -443,14 +443,21 @@ class Authentication extends Survey_Common_Action {
         if (Yii::app()->request->getPost('action')) {
             $auth = Yii::app()->request->getParam('auth');
             if($auth==null){
-                //Register Company
-                $iNewCompany=$this->_registerCompany();
-                //Register User
-                if($iNewCompany) {
-                    $companyModel = Company::model()->findByPk($iNewCompany);
-                    $this->_registerCompanyAsUser($companyModel, $model);
-                }else {
-                    Yii::app()->user->setFlash('error', 'Company Not Created. Check details and try again.');
+                $users=Yii::app()->request->getPost('User');
+                $companyName=explode("@", $users['email'])[0];
+                $companyModel = Company::model()->find("name='$companyName'");
+                if($companyModel){
+                    Yii::app()->user->setFlash('error', "Email '".$users['email']."' already exists in our database");
+                }else{
+                    //Register Company
+                    $iNewCompany=$this->_registerCompany();
+                    //Register User
+                    if($iNewCompany) {
+                        $companyModel = Company::model()->findByPk($iNewCompany);
+                        $this->_registerCompanyAsUser($companyModel, $model);
+                    }else {
+                        Yii::app()->user->setFlash('error', 'Company Not Created. Check details and try again.');
+                    }
                 }
             }else{
                 $companyModel = Company::model()->find("signup_hash='$auth'");
