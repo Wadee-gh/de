@@ -21,9 +21,17 @@
     </div>
     
     <div class="modal-body form-horizontal">
-        <div class="col-md-9 col-md-offset-3 text-right">
+          <?php  if($nextOperationNotAllow){ ?>
+            <div class="col-md-12">
+            <div class="alert alert-danger" role="alert"><?= $nextOperationNotAllow; ?></div>
+            </div>
+          <?php   }  ?>
+        
+         <div class="col-md-9 col-md-offset-3 text-right">
             <button type="button" class="btn btn-default" data-dismiss="modal"><?php eT('Close') ?></button>
-            <input type="submit" class="btn btn-primary action_save_modal_customParticipant" value='<?php eT('Next')?>' />
+            <?php if(!$nextOperationNotAllow){ ?>
+              <input type="submit" class="btn btn-primary action_save_modal_customParticipant" value='<?php eT('Next')?>' />
+            <?php } ?>
         </div>
         <!-- Comma separated list -->
         <input type='hidden' name='participant_id' value='<?php echo $participant_id; ?>'/>
@@ -118,6 +126,8 @@
 
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><?php eT('Close') ?></button>
-        <input type="submit" class="btn btn-primary action_save_modal_customParticipant" value='<?php eT('Next')?>' />
+         <?php if(!$nextOperationNotAllow){ ?>
+          <input type="submit" class="btn btn-primary action_save_modal_customParticipant" value='<?php eT('Next')?>' />
+        <?php } ?>
     </div>
 <?php $this->endWidget('CActiveForm'); ?>
