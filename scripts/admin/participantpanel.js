@@ -216,11 +216,12 @@ LS.CPDB = (function() {
                 } else
                 if(actionButtonClass == 'action_save_modal_customParticipant'){
                   var process = data.process;
-                  if(process == 'sendEmailRequest'){
-                    checkParticipantExists(action,formData,process);
-                  } else {
-                    postSecond(action,formData);
-                  }
+                  postSecond(action,formData);
+//                  if(process == 'sendEmailRequest'){
+//                    checkParticipantExists(action,formData,process);
+//                  } else {
+//                    postSecond(action,formData);
+//                  }
                 } else {
                   postSecond(action,formData);
                 }
