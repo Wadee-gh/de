@@ -1478,7 +1478,7 @@ class participantsaction extends Survey_Common_Action
         $status = 0;
         if($process == "sendOnSiteRequest") $status = 0;
         if($process == "onSiteAnonymousRequest") $status = 1;
-
+        $nextOperationNotAllow =false;
         $email = "";
         $last_groups = "";
         if($participant_id){
@@ -1490,7 +1490,12 @@ class participantsaction extends Survey_Common_Action
           }
           $ask_email = 0;
           $status = 1;
+          if(($process == 'sendEmailRequest') && ($email == "")){
+                 $nextOperationNotAllow ="Please Update Email Address Before Send Email Request";
+            }
         }
+        
+        
 
         $data = array();
         $data['participant_id'] = $participant_id;
@@ -1502,6 +1507,8 @@ class participantsaction extends Survey_Common_Action
         $data['email'] = $email;
         $data['status'] = $status;
         $data['owner_uid'] = Yii::app()->user->id;
+        $data['nextOperationNotAllow'] = $nextOperationNotAllow;
+        
 
         $surveys = Survey::getSurveysWithTokenTable();
         $data['surveys'] = $surveys;

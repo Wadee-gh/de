@@ -102,7 +102,7 @@
             </label>
             <div class='col-sm-10'>
                 <input class='form-control email' required name='Participant[email]' 
-                value='<?php if ($editType == 'add'): echo rand(10000,1000000000) , "@testmail.com"; else:  echo $model->email; endif; ?>' 
+                value='<?php    echo $model->email  ?>' 
                 data-error="Please enter a valid email" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" />
                 <div class="help-block with-errors"></div>
             </div>
