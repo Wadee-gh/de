@@ -634,6 +634,13 @@ class Question extends LSActiveRecord
                 'hasdefaultvalues' => 0,
                 'assessable' => 0,
                 'answerscales' => 0),
+            "_"=>array(
+                'description' => gT("Signature"),
+                'group' => gT("Mask questions"),
+                'subquestions' => 0,
+                'hasdefaultvalues' => 0,
+                'assessable' => 0,
+                'answerscales' => 0),
         );
         /**
          * @todo Check if this actually does anything, since the values are arrays.
@@ -685,6 +692,7 @@ class Question extends LSActiveRecord
             case ':': return 'array-multi-flexi';
             case ";": return 'array-multi-flexi-text';
             case "|": return 'upload-files';
+            case "_": return 'signature';
             case "*": return 'equation';
             default:  return 'generic_question'; // fallback
         };

@@ -258,6 +258,10 @@ function retrieveAnswers($ia)
         case '*': // Equation
             $values=do_equation($ia);
             break;
+        
+        case '_': // Equation
+            $values=do_signature($ia);
+            break;
     }
 
 
@@ -772,6 +776,22 @@ function do_equation($ia)
     ), true);
 
     $inputnames[] = $ia[1];
+    return array($answer, $inputnames);
+}
+
+function do_signature($ia)
+{
+    $sValue              = $_SESSION['survey_'.Yii::app()->getConfig('surveyID')][$ia[1]];
+    $answer       = doRender('/survey/questions/signature/answer', array(
+        'name'      => $ia[1],
+        'sign_id'=>  $ia[0],
+        'dispVal'=>$sValue
+        
+    ), true);
+    Yii::app()->getClientScript()->registerScriptFile(Yii::app()->getConfig('generalscripts')."signature_lib.js");
+    Yii::app()->getClientScript()->registerCssFile(Yii::app()->getConfig('publicstyleurl') . "signature.css");
+    $inputnames[] = $ia[1];
+   
     return array($answer, $inputnames);
 }
 
