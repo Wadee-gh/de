@@ -832,7 +832,7 @@ function doHtmlSaveLinks($move="")
         $sLoadButton = '<li><a href="#" id="loadallbtnlink" >'.gT("Load unfinished survey").'</a></li>';
         $sSaveButton="";
         if(print_r(Yii::app()->getConfig('testing'))){
-            $sSaveButton .= '<li><a href="#" id="survey_autofill" >'.gT("Auto Fill").'</a></li>';
+            $sSaveButton .= '<li><a href="#" id="survey_autofill" style="visibility:hidden;">'.gT("Auto Fill").'</a></li>';
             $sSaveButton .= '<script>
                 $( "#survey_autofill" ).on( "click", function() {
                 	$("tbody tr, .answer-container .radio-list").each(function () {
