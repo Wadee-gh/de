@@ -207,10 +207,15 @@ class QuestionGroup extends LSActiveRecord
           //echo "<pre>".print_r($rgroups,true)."</pre>"; //die();
           $fgs = array();
           foreach($rgroups as $row){
-            $rgs = json_decode($row['required_groups'],true);
-            foreach($rgs as $rg){
-              if(!isset($fgs[$rg])) $fgs[$rg] = 0;
-              $fgs[$rg]++;
+            //echo "<pre>".print_r($row,true)."</pre>";
+            if($row['required_groups']){
+              $rgs = json_decode($row['required_groups'],true);
+              if(is_array($rgs)){
+                foreach($rgs as $rg){
+                  if(!isset($fgs[$rg])) $fgs[$rg] = 0;
+                  $fgs[$rg]++;
+                }
+              }
             }
           }
           //echo "<pre>".print_r($fgs,true)."</pre>"; //die();
@@ -249,6 +254,7 @@ class QuestionGroup extends LSActiveRecord
     
     function getCompanySelectedGroups($surveyid) {
         $survey = Survey::model()->with('owner')->findByPk($surveyid);
+        $ret = array();
         if(isset($survey->owner->company_uid)){
             $companySelectedGroup = Company::model()->findByPk($survey->owner->company_uid);
             if($companySelectedGroup){
@@ -263,7 +269,7 @@ class QuestionGroup extends LSActiveRecord
                 }
             }
         }
-        return $question;
+        return $ret;
     }
 
     public static function deleteWithDependency($groupId, $surveyId)
