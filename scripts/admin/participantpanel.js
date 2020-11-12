@@ -21,7 +21,9 @@ function groupSelectionActions(){
     }
   });
   //console.log(defaultId);
-  $('#survey_div').children().hide();
+  //$('#survey_div').children().hide();
+  $('#survey_div').find('label').remove();
+  $('#survey_div').children().show();
   if(defaultId == 0){
     $('#survey_div #survey_text').html('No survey named \'Default\' found.');
     $('#survey_div #survey_text').show();
@@ -651,7 +653,9 @@ LS.CPDB = (function() {
             }
           });
           //console.log(defaultId);
-          $('#survey_div').children().hide();
+          //$('#survey_div').children().hide();
+          $('#survey_div').find('label').remove();
+          $('#survey_div').children().show();
           if(defaultId == 0){
             $('#survey_div #survey_text').html('No survey named \'Default\' found.');
             $('#survey_div #survey_text').show();
