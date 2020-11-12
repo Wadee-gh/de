@@ -2825,6 +2825,193 @@ function SendEmailMessage($body, $subject, $to, $from, $sitename, $ishtml=false,
     return $sent;
 }
 
+function SendEmailMessage2($body, $subject, $to, $from, $sitename, $ishtml=false, $bouncemail=null, $attachments=null, $customheaders="")
+{
+    global $maildebug, $maildebugbody;
+    require_once(APPPATH.'/third_party/html2text/src/Html2Text.php');
+
+    $emailmethod = Yii::app()->getConfig('emailmethod');
+    $emailsmtphost = Yii::app()->getConfig("emailsmtphost");
+    $emailsmtpuser = Yii::app()->getConfig("emailsmtpuser");
+    $emailsmtppassword = Yii::app()->getConfig("emailsmtppassword");
+    $emailsmtpdebug = Yii::app()->getConfig("emailsmtpdebug");
+    $emailsmtpssl = Yii::app()->getConfig("emailsmtpssl");
+    $defaultlang = Yii::app()->getConfig("defaultlang");
+    $emailcharset = Yii::app()->getConfig("emailcharset");
+
+    if ($emailcharset!='utf-8')
+    {
+        $body=mb_convert_encoding($body,$emailcharset,'utf-8');
+        $subject=mb_convert_encoding($subject,$emailcharset,'utf-8');
+        $sitename=mb_convert_encoding($sitename,$emailcharset,'utf-8');
+    }
+
+    if (!is_array($to)){
+        $to=array($to);
+    }
+
+
+
+    if (!is_array($customheaders) && $customheaders == '')
+    {
+        $customheaders=array();
+    }
+    if (Yii::app()->getConfig('demoMode'))
+    {
+        $maildebug=gT('Email was not sent because demo-mode is activated.');
+        $maildebugbody='';
+        return false;
+    }
+
+    if (is_null($bouncemail) )
+    {
+        $sender=$from;
+    }
+    else
+    {
+        $sender=$bouncemail;
+    }
+
+
+    require_once(APPPATH.'/third_party/phpmailer/PHPMailerAutoload.php');
+    $mail = new PHPMailer;
+    $mail->SMTPAutoTLS=false;
+    if (!$mail->SetLanguage($defaultlang,APPPATH.'/third_party/phpmailer/language/'))
+    {
+        $mail->SetLanguage('en',APPPATH.'/third_party/phpmailer/language/');
+    }
+    $mail->CharSet = $emailcharset;
+    if (isset($emailsmtpssl) && trim($emailsmtpssl)!=='' && $emailsmtpssl!==0) {
+        if ($emailsmtpssl===1) {$mail->SMTPSecure = "ssl";}
+        else {$mail->SMTPSecure = $emailsmtpssl;}
+    }
+
+    $fromname='';
+    $fromemail=$from;
+    if (strpos($from,'<'))
+    {
+        $fromemail=substr($from,strpos($from,'<')+1,strpos($from,'>')-1-strpos($from,'<'));
+        $fromname=trim(substr($from,0, strpos($from,'<')-1));
+    }
+
+    $sendername='';
+    $senderemail=$sender;
+    if (strpos($sender,'<'))
+    {
+        $senderemail=substr($sender,strpos($sender,'<')+1,strpos($sender,'>')-1-strpos($sender,'<'));
+        $sendername=trim(substr($sender,0, strpos($sender,'<')-1));
+    }
+
+    switch ($emailmethod) {
+        case "qmail":
+            $mail->IsQmail();
+            break;
+        case "smtp":
+            $mail->IsSMTP();
+            if ($emailsmtpdebug>0)
+            {
+                $mail->SMTPDebug = $emailsmtpdebug;
+            }
+            if (strpos($emailsmtphost,':')>0)
+            {
+                $mail->Host = substr($emailsmtphost,0,strpos($emailsmtphost,':'));
+                $mail->Port = substr($emailsmtphost,strpos($emailsmtphost,':')+1);
+            }
+            else {
+                $mail->Host = $emailsmtphost;
+            }
+            $mail->Username =$emailsmtpuser;
+            $mail->Password =$emailsmtppassword;
+            if (trim($emailsmtpuser)!="")
+            {
+                $mail->SMTPAuth = true;
+            }
+            break;
+        case "sendmail":
+            $mail->IsSendmail();
+            break;
+        default:
+            //Set to the default value to rule out incorrect settings.
+            $emailmethod="mail";
+            $mail->IsMail();
+    }
+
+    $mail->SetFrom($fromemail, $fromname);
+    $mail->Sender = $senderemail; // Sets Return-Path for error notifications
+    foreach ($to as $singletoemail)
+    {
+        if (strpos($singletoemail, '<') )
+        {
+            $toemail=substr($singletoemail,strpos($singletoemail,'<')+1,strpos($singletoemail,'>')-1-strpos($singletoemail,'<'));
+            $toname=trim(substr($singletoemail,0, strpos($singletoemail,'<')-1));
+            $mail->AddAddress($toemail,$toname);
+        }
+        else
+        {
+            $mail->AddAddress($singletoemail);
+        }
+    }
+    if (is_array($customheaders))
+    {
+        foreach ($customheaders as $key=>$val) {
+            $mail->AddCustomHeader($val);
+        }
+    }
+    $mail->AddCustomHeader("X-Surveymailer: $sitename Emailer (QstConn.org)");
+    if (get_magic_quotes_gpc() != "0")    {$body = stripcslashes($body);}
+    if ($ishtml)
+    {
+        $mail->IsHTML(true);
+        if(strpos($body,"<html>")===false)
+        {
+            $body="<html>".$body."</html>";
+        }
+        $mail->msgHTML($body,App()->getConfig("publicdir")); // This allow embedded image if we remove the servername from image
+        $html=new \Html2Text\Html2Text($body);
+        $mail->AltBody=$html->getText();
+    }
+    else
+    {
+        $mail->IsHTML(false);
+        $mail->Body = $body;
+    }
+    // Add attachments if they are there.
+    if (is_array($attachments))
+    {
+        foreach ($attachments as $attachment)
+        {
+            // Attachment is either an array with filename and attachment name.
+            if (is_array($attachment))
+            {
+                $mail->AddAttachment($attachment[0], $attachment[1]);
+            }
+            else
+            { // Or a string with the filename.
+                $mail->AddAttachment($attachment);
+            }
+        }
+    }
+    $mail->Subject=$subject;
+
+    if ($emailsmtpdebug>0)
+    {
+        ob_start();
+    }
+    $sent=$mail->Send();
+    $maildebug=$mail->ErrorInfo;
+    if ($emailsmtpdebug>0) {
+        $maildebug .= '<li>'. gT('SMTP debug output:').'</li><pre>'.strip_tags(ob_get_contents()).'</pre>';
+        ob_end_clean();
+    }
+    $maildebugbody=$mail->Body;
+    //if(!$sent) var_dump($maildebug);
+    $ret = compact('sent','maildebug');
+
+    Yii::getLogger()->log(print_r($ret,true));
+
+    return $ret;
+}
+
 
 /**
 *  This functions removes all HTML tags, Javascript, CRs, linefeeds and other strange chars from a given text

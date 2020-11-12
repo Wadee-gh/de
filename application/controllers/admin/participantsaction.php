@@ -1544,6 +1544,7 @@ class participantsaction extends Survey_Common_Action
             $key = str_replace("_","",$field);
             $data[$field] = $participant[$key];
           }
+          unset($data['created']);
           $data['participant_id'] = $participant->participant_id;
         }
                     
@@ -1561,16 +1562,30 @@ class participantsaction extends Survey_Common_Action
               $id = $row->id;
               $token = $vars['token'];
               $survey_id = $vars['survey_id'];
-              $success = $this->sendCustomEmail($survey_id,$id);
-              $message = "Email invite sent successfully to join the survey";
+              $tmp = $this->sendCustomEmail($survey_id,$id);
+              //$message = $success;
+              $success = false;
+              if(isset($tmp['sent'])){
+                if($tmp['sent'] == 1){
+                  $success = true;
+                }
+              }
+              if($success){
+                $message = "Email invite sent successfully to join the survey";
+              } else {
+                $status = "error";
+                $message = isset($tmp['maildebug']) ? $tmp['maildebug'] : "SMTP connect() failed.";
+              }
             } else
             if(in_array($process,explode(",","onSiteAnonymousRequest"))){
               $id = $row->id;
               $result = Participant::model()->createCustomParticipant($id,$vars);
             }
           }
-          if($_POST['complete_by'] == 1){
-              Yii::app()->session['complete_by'] = $_POST['token']; 
+          if(isset($_POST['complete_by'])){
+            if($_POST['complete_by'] == 1){
+                Yii::app()->session['complete_by'] = $_POST['token'];
+            }
           }
           
         } else {
@@ -1613,7 +1628,8 @@ class participantsaction extends Survey_Common_Action
         $bounce = "lime@gmail.com (Administrator)"; // bounce email.
         $aRelevantAttachments = array();
         $customheaders = array('1' => "X-surveyid: " . $iSurveyId,'2' => "X-tokenid: " . $token);
-        $success = SendEmailMessage($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
+        $tmp = SendEmailMessage2($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);
+        return($tmp);
     }
 
     /**
