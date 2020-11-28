@@ -951,6 +951,7 @@ class responses extends Survey_Common_Action
               $data = compact('level','aViewUrls','aData','participant');
               if($_GET['multiple']){
                 $html = $this->create_page($data);
+                //echo $html; die();
                 return($html);
               } else {
                 $pages = array();
@@ -1005,7 +1006,7 @@ class responses extends Survey_Common_Action
         $title = str_replace("DOB:","[ID: ".$participant['mrn_id']."] DOB:",$title);
         $title = str_replace("Group:","<br>Group:",$title);
         $title = str_replace("Submitted:","<br>Submitted:",$title);
-        echo "<br><b>".$title."</b><br /><br />";
+        //echo "<br><b>".$title."</b><br /><br />";
         foreach ($aViewUrls as $sViewKey => $viewUrl)
         {
             if (empty($sViewKey) || !in_array($sViewKey, array('message', 'output')))
@@ -1035,18 +1036,36 @@ class responses extends Survey_Common_Action
         $html = preg_replace($search, "$1".' border="1" cellpadding="10" ', $html);
 
         // radio button fixes.
-        $search = '/<input[\s]+class="radio"[^<]+CHECKED[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
         //$base_url = str_replace("index.php","",$this->getController()->createUrl("/"));
         //echo "<pre>".print_r($_SERVER,true)."</pre>"; die();
         $protocol = "http" . (($_SERVER["HTTPS"] == "on") ? "s" : "") . "://";
         $script_url = $protocol.$_SERVER["SERVER_NAME"] . $_SERVER["SCRIPT_NAME"];
         $base_url = str_replace(basename($_SERVER["PHP_SELF"]),'',$script_url);
         $base_url = str_replace("index.php",'',$base_url);
+
+        // for array questions.
+        $search = '/(<td[^<]+)<input[\s]+class="radio"[^<]+CHECKED[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
+        $html = preg_replace($search, "$1".'<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
+
+        $search = '/(<td[^<]+)<input[\s]+class="radio"[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
+        $html = preg_replace($search, "$1".'<img height="50" width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_off_grey_144x144.png".'">', $html);
+
+        // for list radio questions.
+        $search = '/<input[\s]+class="radio"[^<]+CHECKED[^<]+<label[^<]+<\/label>/';
         $html = preg_replace($search, '<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
-        $search = '/<input[\s]+class="radio"[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
+
+        $search = '/<input[\s]+class="radio"[^<]+<label[^<]+<\/label>/';
         $html = preg_replace($search, '<img height="50" width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_off_grey_144x144.png".'">', $html);
+
         $search = '/(<img src="radio[^<]+)<br\>/';
         $html = preg_replace($search, "$1", $html);
+
+        // for multiple choice questions.
+        $search = '/<input[\s]+class="checkbox"[^<]+CHECKED[^<]+<label[^<]+<\/label>/';
+        $html = preg_replace($search, '<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/checkbox_on.png".'">', $html);
+
+        $search = '/<input[\s]+class="checkbox"[^<]+<label[^<]+<\/label>/';
+        $html = preg_replace($search, '<img height="50" width="50" src="'.$base_url."/styles/Bay_of_Many/images/checkbox_off.png".'">', $html);
 
         // remove divs.
         $html = preg_replace('/<input type="hidden"[^<]+/', "", $html);
@@ -1058,8 +1077,14 @@ class responses extends Survey_Common_Action
         $html = preg_replace('/<a[^>]+\>/', "", $html);
         $html = preg_replace('/<\/a\>/', "", $html);
         $html = preg_replace('#(<br */?>\s*)(<br */?>\s*)+#i', '<br /><br />', $html);
+
+        // strip javascript.
+        $html = stripJavaScript($html);
+
         $html = '<body>'.$html.'</body>';
-        //echo "<pre>".htmlspecialchars($html)."</pre>"; //die();
+        if(isset($_GET['html']) && isset($_GET['print'])){
+          echo "<pre>".htmlspecialchars($html)."</pre>"; die();
+        }
         //echo $html; die();
         return($html);
     }

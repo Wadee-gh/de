@@ -37,7 +37,3 @@ launch.json
 !/plugins/index.html
 !/plugins/Demo/
 !/plugins/AuditLog/
-<<<<<<< HEAD
-**/logo*.png
-*.png
-.idea/*
