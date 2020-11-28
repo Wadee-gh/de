@@ -16,7 +16,7 @@
     </button>
 
     <!-- List of actions -->
-    <ul class="dropdown-menu listActions" aria-labelledby="<?php echo $this->dropupId; ?>">
+    <ul class="dropdown-menu listActions" aria-labelledby="<?php echo $this->dropupId; ?>"style="margin-right: -100px;">
 
         <?php foreach($this->aActions as $key => $aAction):?>
             <?php
