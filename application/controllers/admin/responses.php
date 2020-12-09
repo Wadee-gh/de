@@ -682,7 +682,7 @@ class responses extends Survey_Common_Action
 
                 $oCriteria->order = 'completed DESC';
                 $iIdresult = SurveyDynamic::model($iSurveyID)->findAllAsArray($oCriteria);
-                //echo "<pre>".print_r($iIdresult,true)."</pre>"; //die();
+                //echo "<pre>".print_r($iIdresult,true)."</pre>"; die();
                 $aData['iIdresult'] = $iIdresult;
 
                 $chide = "token,id,responsedid,startlanguage,ipaddress,referrerurl,firstname,lastname,email,completed,submitdate";
@@ -771,7 +771,7 @@ class responses extends Survey_Common_Action
                     //echo "<pre>".print_r($_SESSION['survey_'.$iSurveyID],true)."</pre>"; die();
                     $saved_id = $r['id'];
                     $token = $r['token'];
-                    $redata = compact('saved_id','token');
+                    $redata = compact('saved_id','token','r');
                     //echo "<pre>".print_r($redata,true)."</pre>"; die();
                     $gid = $_GET['group'];
                     $qanda = $this->get_qanda($gid,'survey_'.$iSurveyID,$r);
@@ -783,9 +783,11 @@ class responses extends Survey_Common_Action
                     //echo "<pre>".print_r($qanda,true)."</pre>"; die();
                     foreach($qanda as $qa){
                       $output = $this->get_question_output($surveyid,$qa,$redata);
+                      //echo "<pre>".print_r($output,true)."</pre>";
                       $aData['output'] = $output;
                       $aViewUrls['browseidrowlv2_view'][] = $aData;
                     }
+                    //echo "<pre>".print_r($aViewUrls,true)."</pre>"; die();
 
                     $submitdate = $r['submitdate'];
                     $token = $r['token'];
@@ -984,6 +986,53 @@ class responses extends Survey_Common_Action
         }
     }
 
+    public function removeDomNodes($html, $xpathString){
+        $dom = new DOMDocument;
+        $dom->loadHtml($html);
+
+        $xpath = new DOMXPath($dom);
+        while ($node = $xpath->query($xpathString)->item(0))
+        {
+            $node->parentNode->removeChild($node);
+        }
+        return $dom->saveHTML();
+    }
+
+    public function replaceTextFields($html){
+        $dom = new DOMDocument;
+        $dom->loadHtml($html);
+
+        $xpath = new DOMXPath($dom);
+        $xpathString = "//input[@type='text']";
+        while ($node = $xpath->query($xpathString)->item(0))
+        {
+            $name = $node->getAttribute('name');
+            $value = $node->getAttribute('value');
+            //$newnode = $dom->createTextNode($name." : ".$value);
+            //$node->parentNode->replaceChild($newnode, $node);
+            $tpl = new DOMDocument;
+            $tpl->loadHtml('<span name="'.$name.'" class="text-div">'.$value.'</span>');
+            $newnode = $dom->importNode($tpl->documentElement, true);
+            $node->parentNode->replaceChild($newnode,$node);
+        }
+        $html = $dom->saveHTML();
+        $html = str_replace("<br><br><html><body><span","<span",$html);
+        $html = str_replace("</span></body></html>","</span>",$html);
+        return($html);
+    }
+
+    public function setDomValue($html, $xpathString, $value){
+        $dom = new DOMDocument;
+        $dom->loadHtml($html);
+
+        $xpath = new DOMXPath($dom);
+        $node = $xpath->query($xpathString)->item(0);
+        $node->setAttribute('value',$value);
+
+        $html = $dom->saveHTML();
+        return($html);
+    }
+
     public function create_page($data){
         ob_start();
         //echo "print friendly version"; //die();
@@ -1067,9 +1116,24 @@ class responses extends Survey_Common_Action
         $search = '/<input[\s]+class="checkbox"[^<]+<label[^<]+<\/label>/';
         $html = preg_replace($search, '<img height="50" width="50" src="'.$base_url."/styles/Bay_of_Many/images/checkbox_off.png".'">', $html);
 
+        // remove hidden labels and divs.
+        $html = $this->removeDomNodes($html, "//label[@class='hidden']");
+        $html = $this->removeDomNodes($html, "//label[@class='hide label']");
+        $html = $this->removeDomNodes($html, "//input[@type='hidden']");
+        $html = $this->removeDomNodes($html, "//div[@class='hidden nodisplay']");
+
+        // remove help tips.
+        $html = $this->removeDomNodes($html, "//p[@class='tip help-block']");
+
+        // remove scripts.
+        $html = $this->removeDomNodes($html, "//script");
+
+        // remove signature pad.
+        $html = $this->removeDomNodes($html, "//div[@class='signature-pad']");
+
         // remove divs.
-        $html = preg_replace('/<input type="hidden"[^<]+/', "", $html);
-        $search = '/<div class="em_equation equation hidden"[^<]+<span[^<]+<\/span[^<]+<\/div\>/';
+        //$html = preg_replace('/<input type="hidden"[^<]+/', "", $html);
+        //$search = '/<div class="em_equation equation hidden"[^<]+<span[^<]+<\/span[^<]+<\/div\>/';
         $search = '/<span[^<]+<\/span\>/';
         $html = preg_replace($search, "", $html);
         $html = preg_replace('/<div[^>]+\>/', "", $html);
@@ -1078,12 +1142,13 @@ class responses extends Survey_Common_Action
         $html = preg_replace('/<\/a\>/', "", $html);
         $html = preg_replace('#(<br */?>\s*)(<br */?>\s*)+#i', '<br /><br />', $html);
 
-        // strip javascript.
-        $html = stripJavaScript($html);
+        // for text fields.
+        $html = $this->replaceTextFields($html);
 
-        $html = '<body>'.$html.'</body>';
+        $html = trim($html);
         if(isset($_GET['html']) && isset($_GET['print'])){
-          echo "<pre>".htmlspecialchars($html)."</pre>"; die();
+          //echo "<pre>".htmlspecialchars($html)."</pre>"; //die();
+          $html = "<pre>".htmlspecialchars($html)."</pre><br>".$html;
         }
         //echo $html; die();
         return($html);
@@ -2171,7 +2236,9 @@ class responses extends Survey_Common_Action
 
         ob_start();
 
-            //echo "<pre>".print_r($qa,true)."</pre>";
+            //echo "<pre>".print_r(compact('qa','redata'),true)."</pre>"; //die();
+            //echo "<pre>".print_r($redata,true)."</pre>"; //die();
+            //echo "<pre>".print_r($qa,true)."</pre>"; die();
             $qid = $qa[4];
             $qinfo = LimeExpressionManager::GetQuestionStatus($qid);
             //echo "qinfo:<br><pre>".print_r($qinfo,true)."</pre>";
@@ -2203,7 +2270,7 @@ class responses extends Survey_Common_Action
 
             //echo $sTemplateViewPath.'question.pstpl'."<br>"; die();
             $question_template = file_get_contents($sTemplateViewPath.'question.pstpl');
-            //echo "<pre>".print_r(compact('question_template'),true)."</pre>"; die();
+            //echo "<pre>".print_r(compact('question_template'),true)."</pre>"; //die();
             // Fix old template : can we remove it ? Old template are surely already broken by another issue
             if (preg_match('/\{QUESTION_ESSENTIALS\}/', $question_template) === false || preg_match('/\{QUESTION_CLASS\}/', $question_template) === false)
             {
@@ -2217,8 +2284,18 @@ class responses extends Survey_Common_Action
 
             $aQuestionReplacement= $this->getQuestionReplacement($qa);
             //echo "qa:<br><pre>".print_r($qa,true)."</pre>";
-            //echo "data:<br><pre>".print_r(compact('question_template','aQuestionReplacement','redata'),true)."</pre>";
-            echo templatereplace($question_template, $aQuestionReplacement, $redata, false, false, $qa[4]); //die();
+            //echo "data:<br><pre>".print_r(compact('question_template','aQuestionReplacement','qa','redata'),true)."</pre>"; die();
+            $html = templatereplace($question_template, $aQuestionReplacement, $redata, false, false, $qa[4]); //die();
+            if($qa[8] == 'D'){
+              $xpathString = "//input[@type='text']";
+              $value = date("Y-m-d",strtotime($redata['r'][$qa[7]]));
+              //echo "<pre>".print_r(compact('qa','redata','value'),true)."</pre>"; //die();
+              $html = $this->setDomValue($html,$xpathString,$value);
+            }
+            /*if(isset($_GET['html'])){
+              echo "<pre>".print_r(htmlspecialchars($html),true)."</pre>"; die();
+            }*/
+            echo $html."<br>";
 
         $output = ob_get_contents();
         ob_end_clean();
@@ -2311,6 +2388,7 @@ class responses extends Survey_Common_Action
         // Core value : user text
         $aReplacement['QUESTION_TEXT'] = $aQuestionQanda[0]['text'];
         $type = $aQuestionQanda[8];
+        //echo "<pre>".print_r(compact('type'),true)."</pre>";
         if($type == '*'){
           //echo "qa:<br><pre>".print_r($aQuestionQanda,true)."</pre>";
           $LEMsessid = "survey_".$iSurveyId;
@@ -2353,8 +2431,11 @@ class responses extends Survey_Common_Action
         }
         $aReplacement['QUESTION_MAN_CLASS']=!empty($aMandatoryClass) ? " ".implode(" ",$aMandatoryClass) : "";
         $aReplacement['QUESTION_INPUT_ERROR_CLASS']=$aQuestionQanda[0]['input_error_class'];
+
         // Core value : LS text : EM and not
-        $aReplacement['ANSWER']=$aQuestionQanda[1];
+        $answer = stripJavaScript($aQuestionQanda[1]);
+
+        $aReplacement['ANSWER'] = $answer;
         $aReplacement['QUESTION_HELP']=$aQuestionQanda[0]['help'];// Core help only, not EM
         $aReplacement['QUESTION_VALID_MESSAGE']=$aQuestionQanda[0]['valid_message'];// $lemQuestionInfo['validTip']
         $aReplacement['QUESTION_FILE_VALID_MESSAGE']=$aQuestionQanda[0]['file_valid_message'];// $lemQuestionInfo['??']
