@@ -1016,7 +1016,7 @@ class responses extends Survey_Common_Action
             $node->parentNode->replaceChild($newnode,$node);
         }
         $html = $dom->saveHTML();
-        $html = str_replace("<br><br><html><body><span","<span",$html);
+        $html = str_replace("<html><body><span","<span",$html);
         $html = str_replace("</span></body></html>","</span>",$html);
         return($html);
     }
@@ -1096,11 +1096,17 @@ class responses extends Survey_Common_Action
         $search = '/(<td[^<]+)<input[\s]+class="radio"[^<]+CHECKED[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
         $html = preg_replace($search, "$1".'<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
 
+        $search = '/(<td[^<]+)<input[\s]+class="radio"[^<]+checked[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
+        $html = preg_replace($search, "$1".'<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
+
         $search = '/(<td[^<]+)<input[\s]+class="radio"[^<]+<label[^<]+<\/label[^<]+[\S]+[^<]+/';
         $html = preg_replace($search, "$1".'<img height="50" width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_off_grey_144x144.png".'">', $html);
 
         // for list radio questions.
         $search = '/<input[\s]+class="radio"[^<]+CHECKED[^<]+<label[^<]+<\/label>/';
+        $html = preg_replace($search, '<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
+
+        $search = '/<input[\s]+class="radio"[^<]+checked[^<]+<label[^<]+<\/label>/';
         $html = preg_replace($search, '<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/radio_button_on_grey_192x192.png".'">', $html);
 
         $search = '/<input[\s]+class="radio"[^<]+<label[^<]+<\/label>/';
@@ -1110,10 +1116,13 @@ class responses extends Survey_Common_Action
         $html = preg_replace($search, "$1", $html);
 
         // for multiple choice questions.
-        $search = '/<input[\s]+class="checkbox"[^<]+CHECKED[^<]+<label[^<]+<\/label>/';
+        $search = '/<input[\s]+class="checkbox[^<]+CHECKED[^<]+<label[^<]+<\/label>/';
         $html = preg_replace($search, '<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/checkbox_on.png".'">', $html);
 
-        $search = '/<input[\s]+class="checkbox"[^<]+<label[^<]+<\/label>/';
+        $search = '/<input[\s]+class="checkbox[^<]+checked[^<]+<label[^<]+<\/label>/';
+        $html = preg_replace($search, '<img height="50"  width="50" src="'.$base_url."/styles/Bay_of_Many/images/checkbox_on.png".'">', $html);
+
+        $search = '/<input[\s]+class="checkbox[^<]+<label[^<]+<\/label>/';
         $html = preg_replace($search, '<img height="50" width="50" src="'.$base_url."/styles/Bay_of_Many/images/checkbox_off.png".'">', $html);
 
         // remove hidden labels and divs.
