@@ -1016,7 +1016,7 @@ class responses extends Survey_Common_Action
             $node->parentNode->replaceChild($newnode,$node);
         }
         $html = $dom->saveHTML();
-        $html = str_replace("<html><body><span","<span",$html);
+        $html = str_replace("<br><br><html><body><span","<span",$html);
         $html = str_replace("</span></body></html>","</span>",$html);
         return($html);
     }
