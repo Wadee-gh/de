@@ -1617,15 +1617,15 @@ class participantsaction extends Survey_Common_Action
         $email = $cparticipation['email'];
         $redirect = $this->getController()->createAbsoluteUrl('/admin/authentication/customRedirect',compact('token'));
         $modmessage = '
-        Click <a href="'.$redirect.'" target="_blank">here</a> to do the survey.<br>
+        Click <a href="'.$redirect.'" target="_blank">here</a> to start.<br>
         <br>
         </div></div>
         '; // body, html.
         $modsubject = "Invitation to participate in a survey"; // subject text.
         $to = $email; // to email.
-        $from = "lime@gmail.com (Administrator)"; // from email.
+        $from = "admin@questionnaireconnect.com (Questionnaire Connect)"; // from email.
         $bHtml = true; // boolean.
-        $bounce = "lime@gmail.com (Administrator)"; // bounce email.
+        $bounce = "admin@questionnaireconnect.com (Questionnaire Connect)"; // bounce email.
         $aRelevantAttachments = array();
         $customheaders = array('1' => "X-surveyid: " . $iSurveyId,'2' => "X-tokenid: " . $token);
         $tmp = SendEmailMessage2($modmessage, $modsubject, $to, $from, Yii::app()->getConfig("sitename"), $bHtml, $bounce, $aRelevantAttachments, $customheaders);

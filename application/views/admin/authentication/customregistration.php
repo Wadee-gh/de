@@ -19,6 +19,15 @@
                     </div>
                 </div>
 
+<div id="termsofservice" class="login-content-form">
+          <iframe class="form-group" src="https://docs.google.com/document/d/e/2PACX-1vRwgLyjiU_ArurMFU1dBF3dxbdw0VoAuJkdzf1kmxOBOlljFJLWi1nQJKeIz5RlwYo-QY5swbHL8tIQ/pub?embedded=true" width="85%" height="500px"></iframe>
+          <div class="form-group">
+            <button type="button" class="btn btn-default" style="margin-top: 15px;margin-bottom:15px" onclick="showSurveys()">I agree to the Terms of Services</button>
+          </div>
+        </div>
+<div id="other">
+
+
                 <!-- Action Name -->
                 <div class="row login-title login-content">
                       <div class="col-lg-12">
@@ -114,7 +123,17 @@
 <!-- Set focus on user input -->
 <script type='text/javascript'>
 $( document ).ready(function() {
-    $('#user').focus();
+    $('#other').hide();
+	$('#user').focus();
     $("#width").val($(window).width());
 });
 </script>
+</div>
+<script>
+
+function showSurveys() {
+    $('#termsofservice').hide();
+    $('#other').show();
+
+}</script>
+

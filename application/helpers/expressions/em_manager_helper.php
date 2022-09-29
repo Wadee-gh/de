@@ -1084,7 +1084,7 @@
                 }
                 $questionNum = $qinfo['qid'];
                 $type = $qinfo['type'];
-                $hasSubqs = (isset($qinfo['subqs']) && count($qinfo['subqs'] > 0));
+                $hasSubqs = (isset($qinfo['subqs']) && count(array($qinfo['subqs'] > 0)));
                 $qattr = isset($this->qattr[$questionNum]) ? $this->qattr[$questionNum] : array();
                 if (isset($qattr['input_boxes']) && $qattr['input_boxes'] == '1')
                 {
